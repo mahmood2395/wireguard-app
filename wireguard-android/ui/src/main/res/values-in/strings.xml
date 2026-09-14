@@ -65,7 +65,6 @@
     <string name="bad_config_reason_unknown_attribute">Atribut tak diketahui</string>
     <string name="bad_config_reason_unknown_section">Bagian tak diketahui</string>
     <string name="bad_config_reason_value_out_of_range">Nilai di luar rentang</string>
-    <string name="bad_extension_error">Berkas harus .conf atau .zip</string>
     <string name="error_no_qr_found">Kode QR tidak ditemukan dalam gambar</string>
     <string name="error_qr_checksum">Verifikasi ceksum kode QR gagal</string>
     <string name="cancel">Batalkan</string>
@@ -76,7 +75,7 @@
     <string name="config_rename_error">Tidak bisa mengganti nama konfigurasi “%s”</string>
     <string name="config_save_error">Konfigurasi “%1$s”: %2$s tidak bisa disimpan</string>
     <string name="config_save_success">Konfigurasi “%s” berhasil disimpan</string>
-    <string name="create_activity_title">Buat tunel WireGuard</string>
+    <string name="create_activity_title">Buat tunel</string>
     <string name="create_bin_dir_error">Tidak dapat membuat direktori biner lokal</string>
     <string name="create_downloads_file_error">Tidak dapat membuat file di direktori download</string>
     <string name="create_empty">Buat dari awal</string>
@@ -130,7 +129,7 @@
     <string name="latest_handshake_ago">%s yang lalu</string>
     <string name="listen_port">Isi port</string>
     <string name="log_export_error">Log tidak bisa diekspor: %s</string>
-    <string name="log_export_subject">Berkas Log WireGuard Android</string>
+    <string name="log_export_subject">Berkas Log Portway Android</string>
     <string name="log_export_success">Simpan ke “%s”</string>
     <string name="log_export_title">Ekspor file log</string>
     <string name="log_saver_activity_label">Simpan log</string>
@@ -163,8 +162,8 @@
     <string name="parse_error_integer">angka</string>
     <string name="parse_error_reason">%1$s “%2$s” Tidak dapat diuraikan</string>
     <string name="peer">Rekan</string>
-    <string name="permission_description">mengontrol terowongan WireGuard, mengaktifkan dan menonaktifkannya sesuka hati, berpotensi salah melalu lintas Internet</string>
-    <string name="permission_label">Kontrol tunel WireGuard</string>
+    <string name="permission_description">mengontrol terowongan Portway, mengaktifkan dan menonaktifkannya sesuka hati, berpotensi salah melalu lintas Internet</string>
+    <string name="permission_label">Kontrol tunel Portway</string>
     <string name="persistent_keepalive">Keepalive persisten</string>
     <string name="pre_shared_key">Kunci Pra-bersama</string>
     <string name="pre_shared_key_enabled">diaktifkan</string>
@@ -186,7 +185,7 @@
     <string name="shell_start_error">Gagal memulai shell: %d</string>
     <string name="success_application_will_restart">Berhasil. Sekarang aplikasi akan memulai ulang…</string>
     <string name="toggle_all">Matikan semua</string>
-    <string name="toggle_error">Tunel WireGuard %s gagal dialihkan</string>
+    <string name="toggle_error">Tunel %s gagal dialihkan</string>
     <string name="tools_installer_already">wg and wg-quick sudah terpasang</string>
     <string name="tools_installer_failure">Tidak dapat memasang alat command-line (tidak root?)</string>
     <string name="tools_installer_initial">Pasang alat opsional untuk skrip</string>
@@ -219,20 +218,10 @@
     <string name="type_name_go_userspace">Ke userspace</string>
     <string name="type_name_kernel_module">Modul kernel</string>
     <string name="unknown_error">Eror tidak diketahui</string>
-    <string name="updater_avalable">Pembaruan aplikasi tersedia. Perbarui sekarang.</string>
-    <string name="updater_action">Unduh &amp; Pembaruan</string>
-    <string name="updater_rechecking">Mengambil pembaharuan metadata…</string>
-    <string name="updater_download_progress">Mengunduh pembaruan: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">Mengunduh pembaruan: %s</string>
-    <string name="updater_installing">Gagal menginstall…</string>
-    <string name="updater_failure">Pembaruan gagal. %s. akan dicoba kembali sementara waktu…</string>
-    <string name="updater_corrupt_title">Aplikasi Rusak</string>
-    <string name="updater_corrupt_message">Aplikasi ini rusak. Silahkan unduh ulang APK-nya di website bawah ini. Setelah itu, Hapus instalan aplikasi ini dan install ulang dari APK yang telah diunduh.</string>
-    <string name="updater_corrupt_navigate">Buka Website</string>
     <string name="version_summary">%1$s dengan v%2$s</string>
     <string name="version_summary_checking">Mengecek versi backend %s</string>
     <string name="version_summary_unknown">Versi %s Tidak diketahui</string>
-    <string name="version_title">WireGuard untuk Android v%s</string>
+    <string name="version_title">Portway untuk Android v%s</string>
     <string name="vpn_not_authorized_error">Layanan VPN tidak diotorisasi oleh pengguna</string>
     <string name="vpn_start_error">Tidak dapat memulai layanan VPN Android</string>
     <string name="zip_export_error">Tunel %s tidak bisa diekspor</string>

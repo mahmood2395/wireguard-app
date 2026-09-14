@@ -8,8 +8,16 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Portway: the APK is hand-distributed, so the app updates itself from the panel. This
+         also lets it take the tunnel down before the replace, which is what avoids Android 16's
+         post-update network-stack corruption. Restricted on Play; this build does not ship there. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Portway: the app's only notification, warning before a plan runs out. Android already
+         posts its own notice for an active VpnService, so there is nothing else worth asking for. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Portway: NetworkMonitor watches for the underlying network changing under a live tunnel. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
         android:name="android.permission.SYSTEM_ALERT_WINDOW"
         android:minSdkVersion="34" />
@@ -38,8 +46,11 @@
         android:label="@string/permission_label"
         android:protectionLevel="dangerous" />
 
+    <!-- Cleartext allowed: self-hosted panels commonly live on plain HTTP inside a LAN,
+         and the account-info fetch must reach them. Prefer HTTPS where available. -->
     <application
         android:name=".Application"
+        android:usesCleartextTraffic="true"
         android:allowBackup="false"
         android:banner="@mipmap/banner"
         android:enableOnBackInvokedCallback="true"
@@ -49,18 +60,53 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Portway: lets AppCompat persist the in-app language choice on API 24-32, where the
+             framework has no per-app language store of its own. Without this the picker in
+             Settings works until the app is next launched and then silently reverts to the
+             phone's language — the exact failure it exists to prevent. On API 33+ the framework
+             holds the value instead and this is inert. Declared disabled and unexported: it is a
+             metadata holder, never started. -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
         <activity
             android:name=".activity.TunnelToggleActivity"
             android:excludeFromRecents="true"
             android:theme="@style/NoBackgroundTheme" />
 
+        <!-- Portway: the three-step introduction. Launched by MainActivity on first run and
+             finished back into it, so it never becomes a task root. -->
+        <activity
+            android:name=".activity.OnboardingActivity"
+            android:theme="@style/OnboardingTheme" />
+
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Portway fork: direct config import, e.g.
+                 portway://import?c=<base64url .conf>&name=<tunnel name> -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="import"
+                    android:scheme="${importScheme}" />
             </intent-filter>
 
             <intent-filter>
@@ -108,20 +154,46 @@
             android:exported="false"
             android:grantUriPermissions="true" />
 
+        <!-- Portway: periodic plan-expiry check. Armed regardless of tunnel state, unlike the
+             watchdog alarm — an expiring account often has its tunnel already down. -->
+        <receiver
+            android:name=".util.ExpiryNotifier$CheckReceiver"
+            android:exported="false" />
+
+        <!-- Portway: receives the outcome of a self-update install session. Not exported:
+             only our own PendingIntent targets it. -->
+        <receiver
+            android:name=".util.UpdateInstaller$StatusReceiver"
+            android:exported="false" />
+
+        <!-- Portway: "Use here instead" on an account-in-use notification. Not exported: only
+             our own PendingIntent targets it. -->
+        <receiver
+            android:name=".util.SessionGuard$TakeoverReceiver"
+            android:exported="false" />
+
+        <!-- Portway: notices an update that landed while a tunnel was running, so the app can
+             explain Android 16's post-update network-stack bug rather than look broken. -->
+        <receiver
+            android:name=".PackageReplacedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Portway: fires the stalled-tunnel check from a while-idle alarm, so the watchdog
+             is not blind during Doze. Not exported: only our own alarm targets it. -->
+        <receiver
+            android:name=".model.WatchdogAlarm$AlarmReceiver"
+            android:exported="false" />
+
         <receiver
             android:name=".BootShutdownReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".updater.Updater$AppUpdatedReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 

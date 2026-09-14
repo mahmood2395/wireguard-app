@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The prototype puts "Add" on the same 56dp row as the "Configs" title. That row is the action
+  ~ bar, so the button belongs here — as its own row underneath it read as a second header.
+  -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_add_config"
+        android:title="@string/add"
+        app:actionLayout="@layout/add_config_button"
+        app:showAsAction="always" />
+</menu>

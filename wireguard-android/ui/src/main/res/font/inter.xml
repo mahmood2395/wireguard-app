@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Inter, SIL Open Font License 1.1 — bundled, so no Play Services dependency and no
+  ~ network fetch. Static instances rather than the variable font: variable fonts need
+  ~ API 26 and this app's floor is 24.
+  ~ Two weights only, per the design rule that hierarchy comes from size and weight
+  ~ contrast rather than a ladder of similar weights. It also halves the APK cost.
+  -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font android:font="@font/inter_regular" android:fontWeight="400" android:fontStyle="normal"
+        app:font="@font/inter_regular" app:fontWeight="400" app:fontStyle="normal" />
+    <font android:font="@font/inter_semibold" android:fontWeight="600" android:fontStyle="normal"
+        app:font="@font/inter_semibold" app:fontWeight="600" app:fontStyle="normal" />
+</font-family>

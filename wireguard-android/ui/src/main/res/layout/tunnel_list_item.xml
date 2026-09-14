@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Modified by Portway: the row is a soft-depth surface. The root MUST stay
+  ~ MultiselectableRelativeLayout — TunnelListFragment casts to it in onConfigureRow and in
+  ~ viewForTunnel — but that class now extends ClayCardView, so children lay out as in a
+  ~ FrameLayout and the old alignParent/toStartOf rules are gone.
+  ~
+  ~ The variable names collection / key / item / fragment are load-bearing: the RecyclerView
+  ~ binding adapter injects them by id, and setVariable returns false silently for unknown
+  ~ names, which shows up as blank rows rather than an error.
   -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,7 +19,7 @@
 
         <import type="com.wireguard.android.model.ObservableTunnel" />
 
-        <import type="com.wireguard.android.backend.Tunnel.State" />
+        <import type="com.wireguard.android.util.PeerMeta" />
 
         <variable
             name="collection"
@@ -29,38 +38,91 @@
             type="com.wireguard.android.fragment.TunnelListFragment" />
     </data>
 
+    <!-- Nocturne: rows are not cards. The class name stays MultiselectableRelativeLayout
+         because TunnelListFragment casts the row root to it in onConfigureRow and viewForTunnel;
+         it now extends a plain FrameLayout, so children lay out by gravity, not RelativeLayout
+         rules. Selection paints the face rather than adding a border. -->
     <com.wireguard.android.widget.MultiselectableRelativeLayout
         android:id="@+id/tunnel_list_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_item_background"
+        android:background="@drawable/row_top_rule"
         android:descendantFocusability="beforeDescendants"
-        android:focusable="true"
-        android:nextFocusRight="@+id/tunnel_switch"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        android:focusable="true">
 
-        <TextView
-            android:id="@+id/tunnel_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@{key}"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            tools:text="@sample/interface_names.json/names/names/name" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="22dp"
+            android:paddingVertical="15dp">
 
-        <com.wireguard.android.widget.ToggleSwitch
-            android:id="@+id/tunnel_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:nextFocusLeft="@+id/tunnel_list_item"
-            app:checked="@{item.state == State.UP}"
-            app:onBeforeCheckedChanged="@{fragment::setTunnelState}"
-            tools:checked="@sample/interface_names.json/names/checked/checked" />
+            <!-- Accent when this config is up, quiet at rest, muted red when its peer is
+                 unreachable. The eye should go to the one that is connected. -->
+            <View
+                android:id="@+id/ping_state_dot"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_marginEnd="13dp"
+                android:background="@drawable/handshake_dot"
+                app:pingState="@{item.pingState}" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tunnel_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@{key}"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="15sp"
+                    tools:text="beta-frankfurt" />
+
+                <!-- The meta line carries what the row is, not the name twice: the place the
+                     peer's traffic surfaces in, or its address when no place has been resolved.
+                     Every value the line reads is passed in, because those arguments are what
+                     databinding watches — see PeerMeta. -->
+                <TextView
+                    android:id="@+id/tunnel_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@{PeerMeta.line(context, item.state, item.pingState, item.geoLabel, item.endpointHost)}"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="12.5sp"
+                    tools:text="Connected · Frankfurt, DE" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tunnel_ping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:fontFeatureSettings="tnum"
+                android:text='@{item.pingMillis == null ? "" : String.format("%.0f ms", item.pingMillis)}'
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/clay_text_muted"
+                android:textSize="12.5sp"
+                tools:text="42 ms" />
+
+            <!-- Tapping the row switches to this config; the chevron opens its detail. -->
+            <ImageView
+                android:id="@+id/tunnel_detail_chevron"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/a11y_open_details"
+                android:src="@drawable/ic_caret_right" />
+        </LinearLayout>
     </com.wireguard.android.widget.MultiselectableRelativeLayout>
 </layout>

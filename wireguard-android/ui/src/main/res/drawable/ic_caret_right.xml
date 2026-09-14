@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~ Phosphor CaretRight, 256 viewport, single path, drawn on currentColor.
+  ~ autoMirrored: this is a direction-of-travel arrow, not a glyph — under an RTL layout
+  ~ the row it discloses reads right-to-left, so the caret has to point left with it.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:autoMirrored="true"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256"
+    android:tint="@color/icon_muted">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M181.66,133.66l-80,80a8,8 0,0 1,-11.32 -11.32L164.69,128 90.34,53.66a8,8 0,0 1,11.32 -11.32l80,80A8,8 0,0 1,181.66 133.66Z" />
+</vector>

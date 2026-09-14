@@ -104,7 +104,6 @@
     <string name="bad_config_reason_unknown_attribute">Neznan atribut</string>
     <string name="bad_config_reason_unknown_section">Neznani odsek</string>
     <string name="bad_config_reason_value_out_of_range">Vrednost je zunaj veljavnega območja</string>
-    <string name="bad_extension_error">Datoteka mora biti .conf ali .zip</string>
     <string name="error_no_qr_found">Ne najdem kode QR v sliki</string>
     <string name="error_qr_checksum">Napaka pri preverjanju kontrolne vsote kode QR</string>
     <string name="cancel">Prekliči</string>
@@ -115,7 +114,7 @@
     <string name="config_rename_error">Konfiguracijske datoteke „%s“ ni bilo mogoče preimenovati</string>
     <string name="config_save_error">Konfiguracijske datoteke za „%1$s“ ni bilo mogoče shraniti: %2$s</string>
     <string name="config_save_success">Konfiguracijska datoteka za „%s“ uspešno shranjena</string>
-    <string name="create_activity_title">Ustvarite tunel WireGuard</string>
+    <string name="create_activity_title">Ustvarite tunel</string>
     <string name="create_bin_dir_error">Lokalnega imenika za aplikacijo ni bilo mogoče ustvariti</string>
     <string name="create_downloads_file_error">Datoteke v mapi prenosov ni bilo mogoče ustvariti</string>
     <string name="create_empty">Ustvari na novo</string>
@@ -169,7 +168,7 @@
     <string name="latest_handshake_ago">%s nazaj</string>
     <string name="listen_port">Vrata poslušanja</string>
     <string name="log_export_error">Dnevnika ni bilo mogoče izvoziti: %s</string>
-    <string name="log_export_subject">Dnevniška datoteka WireGuard za Android</string>
+    <string name="log_export_subject">Dnevniška datoteka Portway za Android</string>
     <string name="log_export_success">Shranjeno v „%s“</string>
     <string name="log_export_title">Izvozi dnevniško datoteko</string>
     <string name="log_saver_activity_label">Shrani dnevnik</string>
@@ -202,8 +201,8 @@
     <string name="parse_error_integer">število</string>
     <string name="parse_error_reason">Ni mogoče razčleniti %1$s „%2$s“</string>
     <string name="peer">Vrstnik</string>
-    <string name="permission_description">upravljanje tunelov WireGuard, aktivacija in deaktivacija tunela, zaradi česar bo internetni promet mogoče napačno usmerjen</string>
-    <string name="permission_label">upravljanje tunelov WireGuard</string>
+    <string name="permission_description">upravljanje tunelov Portway, aktivacija in deaktivacija tunela, zaradi česar bo internetni promet mogoče napačno usmerjen</string>
+    <string name="permission_label">upravljanje tunelov Portway</string>
     <string name="persistent_keepalive">Trajno ohranjanje povezave</string>
     <string name="pre_shared_key">Ključ v skupni rabi</string>
     <string name="pre_shared_key_enabled">omogočeno</string>
@@ -225,7 +224,7 @@
     <string name="shell_start_error">Lupina se ni mogla zagnati: %d</string>
     <string name="success_application_will_restart">Uspešno. Aplikacija se bo znova zagnala …</string>
     <string name="toggle_all">Preklopi vse</string>
-    <string name="toggle_error">Napaka pri preklopu tunela WireGuard: %s</string>
+    <string name="toggle_error">Napaka pri preklopu tunela Portway: %s</string>
     <string name="tools_installer_already">wg in wg-quick sta že nameščena</string>
     <string name="tools_installer_failure">Orodij ukazne vrstice ni bilo mogoče namestiti (ni dostopa root?)</string>
     <string name="tools_installer_initial">Namestitev izbirnih orodij za skripte</string>
@@ -258,20 +257,10 @@
     <string name="type_name_go_userspace">Uporabniški prostor Go</string>
     <string name="type_name_kernel_module">Modul jedra</string>
     <string name="unknown_error">Neznana napaka</string>
-    <string name="updater_avalable">Na voljo je posodobitev aplikacije. Prosimo, posodobite zdaj.</string>
-    <string name="updater_action">Prenesi in posodobi</string>
-    <string name="updater_rechecking">Pridobivanje metapodatkov o posodobitvi …</string>
-    <string name="updater_download_progress">Prenašanje posodobitve: %1$s / %2$s (%3$.2f %%)</string>
-    <string name="updater_download_progress_nototal">Prenašanje posodobitve: %s</string>
-    <string name="updater_installing">Nameščanje posodobitve …</string>
-    <string name="updater_failure">Posodobitev ni uspela: %s. Ponovni poskus kmalu …</string>
-    <string name="updater_corrupt_title">Pokvarjena aplikacija</string>
-    <string name="updater_corrupt_message">Ta aplikacija je pokvarjena. Prosimo, ponovno prenesite APK s spletne strani na spodnji povezavi. Po tem odstranite to aplikacijo in jo ponovno namestite s prenesenim APK-jem.</string>
-    <string name="updater_corrupt_navigate">Odpri spletno stran</string>
     <string name="version_summary">Zaledje %1$s %2$s</string>
     <string name="version_summary_checking">Preverjam verzijo zaledja %s</string>
     <string name="version_summary_unknown">Neznana verzija %s</string>
-    <string name="version_title">WireGuard za Android v%s</string>
+    <string name="version_title">Portway za Android v%s</string>
     <string name="vpn_not_authorized_error">Uporabnik ni odobril storitve VPN</string>
     <string name="vpn_start_error">Storitve Android VPN ni bilo mogoče zagnati</string>
     <string name="zip_export_error">Tunelov ni bilo mogoče izvoziti: %s</string>

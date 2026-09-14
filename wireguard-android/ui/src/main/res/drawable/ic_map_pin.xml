@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~ Phosphor MapPin (filled), 256 viewport. evenOdd so the inner circle stays a hole.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="17dp"
+    android:height="17dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256"
+    android:tint="@color/accent_400">
+    <path
+        android:fillColor="@android:color/white"
+        android:fillType="evenOdd"
+        android:pathData="M128,24a80,80 0,0 0,-80 80c0,72 80,128 80,128s80,-56 80,-128A80,80 0,0 0,128 24Zm0,112a32,32 0,1 1,32 -32A32,32 0,0 1,128 136Z" />
+</vector>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~ The chosen half of the language switch. Darkest accent as a field rather than the accent
+  ~ itself: this sits at the top of the welcome screen and must not outrank the CTA at the foot.
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="6dp" />
+    <solid android:color="@color/accent_900" />
+</shape>

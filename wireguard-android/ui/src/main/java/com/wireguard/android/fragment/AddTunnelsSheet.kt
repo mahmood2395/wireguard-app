@@ -5,7 +5,6 @@
 package com.wireguard.android.fragment
 
 import android.content.pm.PackageManager
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.wireguard.android.R
-import com.wireguard.android.util.resolveAttribute
 
 class AddTunnelsSheet : BottomSheetDialogFragment() {
 
@@ -70,10 +68,9 @@ class AddTunnelsSheet : BottomSheetDialogFragment() {
                 }
             }
         })
-        val gradientDrawable = GradientDrawable().apply {
-            setColor(requireContext().resolveAttribute(com.google.android.material.R.attr.colorSurface))
-        }
-        view.background = gradientDrawable
+        // Portway: a themed drawable, so the sheet keeps its rounded top corners. The old
+        // code built a flat GradientDrawable here, which squared them off.
+        view.setBackgroundResource(R.drawable.bottom_sheet_background)
     }
 
     override fun dismiss() {

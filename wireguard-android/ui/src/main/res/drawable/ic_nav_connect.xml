@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Phosphor Shield (filled), 256 viewport, single path, drawn on currentColor — the prototype's
+  ~ Home icon verbatim. The file name is unchanged so menu/bottom_nav.xml does not move.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="22dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M208,40H48A16,16,0,0,0,32,56v58.78c0,89.61,75.82,119.34,91,124.39a15.53,15.53,0,0,0,10,0c15.2-5.05,91-34.78,91-124.39V56A16,16,0,0,0,208,40Z" />
+</vector>

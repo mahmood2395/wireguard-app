@@ -34,6 +34,7 @@
 
         <ImageView
             android:id="@+id/app_icon"
+            android:contentDescription="@null"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="16dp"
@@ -42,6 +43,7 @@
 
         <TextView
             android:id="@+id/app_name"
+            android:textAlignment="viewStart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

@@ -46,6 +46,7 @@ public final class GoBackend implements Backend {
     private static CompletableFuture<VpnService> vpnService = new CompletableFuture<>();
     private final Context context;
     @Nullable private Config currentConfig;
+    @Nullable private static String fallbackDns;
     @Nullable private Tunnel currentTunnel;
     private int currentTunnelHandle = -1;
 
@@ -65,6 +66,14 @@ public final class GoBackend implements Backend {
      *
      * @param cb Callback to be invoked
      */
+    /**
+     * Portway. DNS pinned into a full-tunnel config that names no DNS server of its own.
+     * Set by the application module, which owns the build property; null or empty disables it.
+     */
+    public static void setFallbackDns(@Nullable final String dns) {
+        fallbackDns = dns;
+    }
+
     public static void setAlwaysOnCallback(final AlwaysOnCallback cb) {
         alwaysOnCallback = cb;
     }
@@ -306,8 +315,11 @@ public final class GoBackend implements Backend {
             for (final InetNetwork addr : config.getInterface().getAddresses())
                 builder.addAddress(addr.getAddress(), addr.getMask());
 
-            for (final InetAddress addr : config.getInterface().getDnsServers())
+            boolean sawDnsServer = false;
+            for (final InetAddress addr : config.getInterface().getDnsServers()) {
                 builder.addDnsServer(addr.getHostAddress());
+                sawDnsServer = true;
+            }
 
             for (final String dnsSearchDomain : config.getInterface().getDnsSearchDomains())
                 builder.addSearchDomain(dnsSearchDomain);
@@ -319,6 +331,21 @@ public final class GoBackend implements Backend {
                         sawDefaultRoute = true;
                     builder.addRoute(addr.getAddress(), addr.getMask());
                 }
+            }
+
+            // Portway: a tunnel that carries every route but configures no DNS server leaves
+            // Android with nothing to resolve against inside the tunnel. That is the exact
+            // condition in Google issue 337961996 (open since Android 14): apps resolving
+            // through the C getaddrinfo path can then leak plaintext queries outside the
+            // tunnel, even with lockdown enabled. Pinning a resolver closes the window.
+            //
+            // Deliberately narrow. Only full-tunnel configs qualify: in a split tunnel the
+            // absence of a DNS line means "keep using the network's resolver", and overriding
+            // that would break name resolution rather than protect it. Configurable through
+            // the portwayFallbackDns gradle property, and skipped entirely when it is blank.
+            if (!sawDnsServer && sawDefaultRoute && fallbackDns != null && !fallbackDns.isEmpty()) {
+                Log.i(TAG, "Config sets no DNS server; pinning " + fallbackDns + " to avoid a leak window");
+                builder.addDnsServer(fallbackDns);
             }
 
             // "Kill-switch" semantics

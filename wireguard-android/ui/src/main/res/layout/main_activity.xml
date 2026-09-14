@@ -1,19 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
+  ~ Modified by Portway: hosts the bottom navigation. The fragment container keeps its id
+  ~ but loses android:name/android:tag — MainActivity now commits the root fragment itself,
+  ~ because which root it is depends on the selected destination.
   -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_activity_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/clay_canvas_bottom"
     android:fitsSystemWindows="true"
     tools:context=".activity.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/list_detail_container"
-        android:name="com.wireguard.android.fragment.TunnelListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tag="LIST" />
+        android:layout_marginBottom="@dimen/bottom_nav_height" />
+
+    <!-- layout_insetEdge makes every Snackbar in the app ride above the nav bar,
+         which also covers the screens that have no FAB to anchor to. -->
+    <!-- Portway: Nocturne's nav is not a separate surface. It is the ground with a fading
+         hairline across the top, so the bar reads as the base of the page. -->
+    <View
+        android:id="@+id/bottom_nav_rule"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/bottom_nav_height"
+        android:background="@drawable/rule_fading" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/clay_canvas_top"
+        app:activeIndicatorLabelPadding="14dp"
+        app:itemActiveIndicatorStyle="@style/Portway.NavIndicator"
+        app:itemBackground="@drawable/nav_item_mark"
+        app:itemIconTint="@color/nav_icon_tint"
+        app:paddingBottomSystemWindowInsets="false"
+        app:itemTextColor="@color/nav_item_tint"
+        app:layout_insetEdge="bottom"
+        app:menu="@menu/bottom_nav" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

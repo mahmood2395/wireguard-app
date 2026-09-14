@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Nocturne list rows are not cards. They are separated by a hairline at the top of each row,
+  ~ so the list reads as one column rather than a stack of floating objects. Selection paints the
+  ~ face; it does not add a second border.
+  -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+    <item android:gravity="top" android:height="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/rule" />
+        </shape>
+    </item>
+</layer-list>

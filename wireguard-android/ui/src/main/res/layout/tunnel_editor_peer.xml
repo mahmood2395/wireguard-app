@@ -26,15 +26,17 @@
             type="com.wireguard.android.fragment.TunnelEditorFragment" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <com.wireguard.android.widget.ClayCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp">
+        android:layout_marginBottom="4dp"
+            app:clayCornerRadius="26dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:padding="22dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -199,5 +201,5 @@
                 app:layout_constraintTop_toBottomOf="@id/allowed_ips_label_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </com.wireguard.android.widget.ClayCardView>
 </layout>

@@ -55,6 +55,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import com.wireguard.android.util.SessionGuard
 
 class TvMainActivity : AppCompatActivity() {
     private val tunnelFileImportResultLauncher = registerForActivityResult(object : ActivityResultContracts.OpenDocument() {
@@ -93,10 +94,20 @@ class TvMainActivity : AppCompatActivity() {
         pendingTunnel = null
     }
 
-    private fun setTunnelStateWithPermissionsResult(tunnel: ObservableTunnel) {
+    private fun setTunnelStateWithPermissionsResult(tunnel: ObservableTunnel, takeover: Boolean = false) {
         lifecycleScope.launch {
             try {
-                tunnel.setStateAsync(Tunnel.State.TOGGLE)
+                tunnel.setStateAsync(if (takeover) Tunnel.State.UP else Tunnel.State.TOGGLE, takeover = takeover)
+            } catch (e: SessionGuard.AccountInUseException) {
+                val device = e.otherDevice ?: getString(R.string.session_other_device_unknown)
+                MaterialAlertDialogBuilder(this@TvMainActivity)
+                    .setTitle(R.string.session_dialog_title)
+                    .setMessage(getString(R.string.session_dialog_message, tunnel.name, device))
+                    .setPositiveButton(R.string.session_use_here) { _, _ ->
+                        setTunnelStateWithPermissionsResult(tunnel, takeover = true)
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
             } catch (e: Throwable) {
                 val error = ErrorMessages[e]
                 val message = getString(R.string.error_up, error)
@@ -113,13 +124,10 @@ class TvMainActivity : AppCompatActivity() {
     private val filesRoot = ObservableField("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Portway: TV is always dark, but it must not write the phone's persisted
+        // theme preference — different device class, same DataStore.
         if (AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                applicationScope.launch {
-                    UserKnobs.setDarkTheme(true)
-                }
-            }
         }
         super.onCreate(savedInstanceState)
         binding = TvActivityBinding.inflate(layoutInflater)

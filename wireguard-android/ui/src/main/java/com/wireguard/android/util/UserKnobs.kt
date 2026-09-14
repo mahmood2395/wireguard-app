@@ -7,9 +7,11 @@ package com.wireguard.android.util
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.wireguard.android.Application
+import com.wireguard.android.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -29,21 +31,160 @@ object UserKnobs {
         }
     }
 
+    /**
+     * Portway: whether the three-step introduction has been shown.
+     *
+     * Written explicitly when onboarding ends, never inferred from "does the user have a
+     * tunnel" — someone who imports a config from a link before ever opening the app would
+     * otherwise never see it, and someone who deletes their last config would see it again.
+     */
+    private val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
+    val onboardingComplete: Flow<Boolean>
+        get() = Application.getPreferencesDataStore().data.map {
+            it[ONBOARDING_COMPLETE] ?: false
+        }
+
+    suspend fun setOnboardingComplete(complete: Boolean) {
+        Application.getPreferencesDataStore().edit { it[ONBOARDING_COMPLETE] = complete }
+    }
+
     private val MULTIPLE_TUNNELS = booleanPreferencesKey("multiple_tunnels")
     val multipleTunnels: Flow<Boolean>
         get() = Application.getPreferencesDataStore().data.map {
             it[MULTIPLE_TUNNELS] ?: false
         }
 
+    /**
+     * Portway: the theme is a tri-state applied on every API level. Upstream had a
+     * boolean that was silently ignored on API 29+ (hard-coded follow-system, and the
+     * preference was removed from the settings screen), so most users had no control
+     * at all. Aurora Dark is the designed-for theme, hence DARK is the default.
+     */
+    enum class ThemeMode { DARK, LIGHT, SYSTEM }
+
     private val DARK_THEME = booleanPreferencesKey("dark_theme")
-    val darkTheme: Flow<Boolean>
-        get() = Application.getPreferencesDataStore().data.map {
-            it[DARK_THEME] ?: false
+    private val THEME_MODE = stringPreferencesKey("theme_mode")
+
+    val themeMode: Flow<ThemeMode>
+        get() = Application.getPreferencesDataStore().data.map { prefs ->
+            prefs[THEME_MODE]?.let { stored ->
+                ThemeMode.entries.firstOrNull { it.name == stored }
+            } ?: legacyThemeMode(prefs[DARK_THEME])
         }
 
-    suspend fun setDarkTheme(on: Boolean) {
+    /**
+     * One-time read of the old key. `true` genuinely meant dark; `false` only meant light
+     * below API 29 — at and above it the value was ignored and the user got follow-system,
+     * so SYSTEM is the honest reading of a stored `false`.
+     */
+    private fun legacyThemeMode(legacy: Boolean?): ThemeMode = when (legacy) {
+        true -> ThemeMode.DARK
+        false -> ThemeMode.SYSTEM
+        null -> ThemeMode.DARK
+    }
+
+    /**
+     * Writes the effective theme once, on first run, so the stored value and the applied value
+     * always agree. Without this the key stays absent, the preference screen persists whatever
+     * it resolves on first bind, and the app silently ends up on a different mode than the
+     * documented default.
+     */
+    suspend fun migrateThemeMode() {
         Application.getPreferencesDataStore().edit {
-            it[DARK_THEME] = on
+            if (it[THEME_MODE] == null) it[THEME_MODE] = legacyThemeMode(it[DARK_THEME]).name
+        }
+    }
+
+    suspend fun setThemeMode(mode: ThemeMode) {
+        Application.getPreferencesDataStore().edit {
+            it[THEME_MODE] = mode.name
+        }
+    }
+
+    /**
+     * Portway: base URL of the management panel. The baked-in BuildConfig default means the
+     * feature works out of the box; a stored value (typed in Settings, or pushed remotely by
+     * the panel via the info response's panel_url field) overrides it.
+     */
+    private val PANEL_URL = stringPreferencesKey("panel_url")
+    val panelUrl: Flow<String?>
+        get() = Application.getPreferencesDataStore().data.map {
+            // A blank value means "unset", same as setPanelUrl treats it. The Settings field
+            // writes through PreferenceDataStore, which stores an emptied field as "" rather
+            // than removing the key — without this, clearing the field to get back to the
+            // built-in panel instead disabled the panel outright: no account info, no updater,
+            // no endpoint hint, no one-device session check, and nothing to say why.
+            it[PANEL_URL]?.takeIf { url -> url.isNotBlank() }
+                ?: BuildConfig.PANEL_URL.takeIf { url -> url.isNotBlank() }
+        }
+
+    suspend fun setPanelUrl(url: String?) {
+        Application.getPreferencesDataStore().edit {
+            if (url.isNullOrBlank()) it.remove(PANEL_URL) else it[PANEL_URL] = url.trim()
+        }
+    }
+
+    /** Portway: restart a tunnel that is up but not handshaking. See HandshakeWatchdog. */
+    private val AUTO_RECONNECT = booleanPreferencesKey("auto_reconnect")
+    val autoReconnect: Flow<Boolean>
+        get() = Application.getPreferencesDataStore().data.map {
+            it[AUTO_RECONNECT] ?: true
+        }
+
+    /**
+     * Portway: set when the app was replaced while a tunnel was running.
+     *
+     * Android 16 can corrupt the network stack when a VPN app updates with its VPN active —
+     * the tunnel comes back looking connected but carries no traffic, and only a reboot or
+     * reinstall clears it. Reported to Google around September 2025 and still unfixed. It hits
+     * us harder than a Play Store app because users install our APK by hand, at whatever moment
+     * they like, very plausibly while connected. We cannot prevent it; recording it lets the
+     * app explain the symptom instead of leaving the user to conclude the VPN is broken.
+     */
+    private val UPDATED_WHILE_CONNECTED = booleanPreferencesKey("updated_while_connected")
+    val updatedWhileConnected: Flow<Boolean>
+        get() = Application.getPreferencesDataStore().data.map {
+            it[UPDATED_WHILE_CONNECTED] ?: false
+        }
+
+    suspend fun setUpdatedWhileConnected(value: Boolean) {
+        Application.getPreferencesDataStore().edit {
+            if (value) it[UPDATED_WHILE_CONNECTED] = true else it.remove(UPDATED_WHILE_CONNECTED)
+        }
+    }
+
+    /**
+     * Portway: which expiry warning was last shown, as "<tunnel>:<days>".
+     *
+     * Keyed on the day count rather than a timestamp so the user hears once at three days, once
+     * at two, once at one and once on the day itself — never twice for the same number, however
+     * often the account is refetched. Cleared when the count rises back above the threshold, so
+     * a renewal re-arms the whole sequence.
+     */
+    /**
+     * Portway: the advertised version code we last handed to the package installer.
+     *
+     * Exists to break a loop that is otherwise invisible from the client: if a published APK
+     * does not actually contain the version its manifest claims, installing it changes nothing,
+     * the manifest still advertises the higher number, and the card returns forever. Seen in
+     * production when a panel's version field was overridden by hand to 520 while the file was
+     * a 519 build.
+     */
+    private val LAST_ATTEMPTED_UPDATE = intPreferencesKey("last_attempted_update")
+    val lastAttemptedUpdate: Flow<Int>
+        get() = Application.getPreferencesDataStore().data.map { it[LAST_ATTEMPTED_UPDATE] ?: 0 }
+
+    suspend fun setLastAttemptedUpdate(versionCode: Int) {
+        Application.getPreferencesDataStore().edit { it[LAST_ATTEMPTED_UPDATE] = versionCode }
+    }
+
+    private val LAST_EXPIRY_NOTICE = stringPreferencesKey("last_expiry_notice")
+    val lastExpiryNotice: Flow<String?>
+        get() = Application.getPreferencesDataStore().data.map { it[LAST_EXPIRY_NOTICE] }
+
+    suspend fun setLastExpiryNotice(marker: String?) {
+        Application.getPreferencesDataStore().edit {
+            if (marker == null) it.remove(LAST_EXPIRY_NOTICE) else it[LAST_EXPIRY_NOTICE] = marker
         }
     }
 
@@ -117,5 +258,58 @@ object UserKnobs {
             else
                 it[UPDATER_NEWER_VERSION_CONSENTED] = newerVersionConsented
         }
+    }
+
+    /**
+     * Resolved geography, as JSON keyed by endpoint host.
+     *
+     * Persisted because the Configs list names a city for every config, and geography is only
+     * ever resolved while that config's tunnel is up (see [com.wireguard.android.util.GeoResolver]).
+     * Without a cache the list could only ever name the one peer currently carrying traffic.
+     */
+    /**
+     * v2 since 2026-09-13. Before then a lookup on a split-tunnel config could leave outside the
+     * tunnel and cache the USER'S OWN city against a server's endpoint — see GeoResolver. Those
+     * entries cannot be told apart from honest ones, so the old key is read once, only its
+     * panel-sourced entries survive, and the key is removed rather than left on disk.
+     */
+    private val GEO_CACHE = stringPreferencesKey("geo_cache_v2")
+    private val LEGACY_GEO_CACHE = stringPreferencesKey("geo_cache")
+    val geoCache: Flow<String?>
+        get() = Application.getPreferencesDataStore().data.map {
+            it[GEO_CACHE]
+        }
+
+    /** Returns the pre-v2 cache, if any, and deletes it in the same edit. */
+    suspend fun takeLegacyGeoCache(): String? {
+        var legacy: String? = null
+        Application.getPreferencesDataStore().edit {
+            legacy = it[LEGACY_GEO_CACHE]
+            it.remove(LEGACY_GEO_CACHE)
+        }
+        return legacy
+    }
+
+    suspend fun setGeoCache(json: String?) {
+        Application.getPreferencesDataStore().edit {
+            if (json == null)
+                it.remove(GEO_CACHE)
+            else
+                it[GEO_CACHE] = json
+        }
+    }
+
+    /**
+     * Portway: this install's identity for the one-device-at-a-time session check. A random
+     * UUID, deliberately NOT derived from hardware — a reinstall is a new device as far as the
+     * panel is concerned, which is fine, and nothing here can be used to track the phone.
+     * Created lazily by SessionGuard; null until then.
+     */
+    private val DEVICE_ID = stringPreferencesKey("session_device_id")
+    val deviceId: Flow<String?>
+        get() = Application.getPreferencesDataStore().data.map { it[DEVICE_ID] }
+
+    suspend fun setDeviceId(id: String) {
+        Application.getPreferencesDataStore().edit { it[DEVICE_ID] = id }
     }
 }

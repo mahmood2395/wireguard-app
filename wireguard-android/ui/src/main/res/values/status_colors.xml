@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<resources>
+    <!-- Portway: used by the backend-failure card on Connect. Readable on the dark canvas. -->
+    <color name="status_error">#C62A31</color>
+</resources>

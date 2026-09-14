@@ -8,6 +8,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
 import com.wireguard.android.Application
 import com.wireguard.android.R
@@ -85,7 +86,11 @@ class ZipExporterPreference(context: Context, attrs: AttributeSet?) : Preference
 
     override fun onClick() {
         if (AdminKnobs.disableConfigExport) return
-        val fragment = activity.supportFragmentManager.fragments.first()
+        // Portway: was fragments.first(), which is only correct when the preference screen
+        // is the sole fragment. Hosted inside MainActivity that picks the wrong fragment,
+        // so the biometric prompt would attach to the tunnel list.
+        val fragment = activity.supportFragmentManager.fragments
+            .lastOrNull { it is PreferenceFragmentCompat } ?: return
         BiometricAuthenticator.authenticate(R.string.biometric_prompt_zip_exporter_title, fragment) {
             when (it) {
                 // When we have successful authentication, or when there is no biometric hardware available.

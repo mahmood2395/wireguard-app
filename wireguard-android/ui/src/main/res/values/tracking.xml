@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Letter-spacing, as resources rather than literals in twenty-six layout attributes.
+  ~
+  ~ Nocturne tracks small uppercase labels OUT and large display text IN — a Latin typesetting
+  ~ convention that Inter is drawn for. Applied to Persian or Arabic it is not a refinement but
+  ~ a defect: those scripts are cursive, and Android implements letter-spacing by inserting
+  ~ space between glyphs, which pulls the joins apart and leaves words visibly broken into
+  ~ pieces. Negative values overlap them instead. Either way the text stops reading.
+  ~
+  ~ So every tracking value in the app is named here and zeroed in values-fa. Names describe the
+  ~ role in the type scale, not the number, so the Persian override stays correct if a value is
+  ~ retuned. Declared as float dimens: android:letterSpacing takes an em multiple, not a length.
+  -->
+<resources>
+    <!-- Tracked out: small labels set in caps, where the extra space is what makes them read
+         as a label rather than as small body text. -->
+    <item name="tracking_kicker" type="dimen" format="float">0.2</item>
+    <item name="tracking_label" type="dimen" format="float">0.14</item>
+    <item name="tracking_micro" type="dimen" format="float">0.02</item>
+    <item name="tracking_tiny" type="dimen" format="float">0.01</item>
+
+    <!-- Tightened: optical correction that grows with size, so a 34sp figure does not look
+         loose beside 13sp body text. -->
+    <item name="tracking_body" type="dimen" format="float">-0.01</item>
+    <item name="tracking_subhead" type="dimen" format="float">-0.015</item>
+    <item name="tracking_heading" type="dimen" format="float">-0.02</item>
+    <item name="tracking_display" type="dimen" format="float">-0.03</item>
+    <item name="tracking_hero" type="dimen" format="float">-0.035</item>
+</resources>

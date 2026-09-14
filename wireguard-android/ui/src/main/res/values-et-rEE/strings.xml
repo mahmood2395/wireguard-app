@@ -78,7 +78,6 @@
     <string name="bad_config_reason_unknown_attribute">Tundmatu atribuut</string>
     <string name="bad_config_reason_unknown_section">Tundmatu sektsioon</string>
     <string name="bad_config_reason_value_out_of_range">Väärtus lubatud vahemikust väljas</string>
-    <string name="bad_extension_error">Faililaiend peab olema .conf või .zip</string>
     <string name="error_no_qr_found">QR-koodi ei leitud pildilt</string>
     <string name="error_qr_checksum">QR-koodi kontrollsumma verifitseerimine ebaõnnestus</string>
     <string name="cancel">Tühista</string>
@@ -89,7 +88,7 @@
     <string name="config_rename_error">Seadistusfaili \"%s\" ümbernimetamine ebaõnnestus</string>
     <string name="config_save_error">\"%1$s\" seadistuse salvestamine ebaõnnestus: %2$s</string>
     <string name="config_save_success">\"%s\" seadistus salvestatud</string>
-    <string name="create_activity_title">Loo WireGuard tunnel</string>
+    <string name="create_activity_title">Loo tunnel</string>
     <string name="create_bin_dir_error">Lokaalse programmfaili kataloogi tekitamine ebaõnnestus</string>
     <string name="create_downloads_file_error">Faili loomine allalaadimiste kataloogis ebaõnnestus</string>
     <string name="create_empty">Sisesta käsitsi</string>
@@ -144,7 +143,7 @@ Aitäh veelkord sinu panuse eest.</string>
     <string name="latest_handshake_ago">%s tagasi</string>
     <string name="listen_port">Kuulamisport</string>
     <string name="log_export_error">Logifaili eksportimine ebaõnnestus: %s</string>
-    <string name="log_export_subject">WireGuard Android logifail</string>
+    <string name="log_export_subject">Portway Android logifail</string>
     <string name="log_export_success">Salvestatud faili \"%s\"</string>
     <string name="log_export_title">Ekspordi logifail</string>
     <string name="log_saver_activity_label">Salvesta logi</string>
@@ -177,8 +176,8 @@ Aitäh veelkord sinu panuse eest.</string>
     <string name="parse_error_integer">number</string>
     <string name="parse_error_reason">Ei saa töödelda %1$s “%2$s”</string>
     <string name="peer">Partner</string>
-    <string name="permission_description">kontrollida WireGuard tunneleid, neid sisse ja välja lülitades, potentsiaalselt võrguliiklust kõrvale juhtides</string>
-    <string name="permission_label">kontrollida WireGuard tunneleid</string>
+    <string name="permission_description">kontrollida tunneleid, neid sisse ja välja lülitades, potentsiaalselt võrguliiklust kõrvale juhtides</string>
+    <string name="permission_label">kontrollida tunneleid</string>
     <string name="persistent_keepalive">Püsiv ühendushoidik</string>
     <string name="pre_shared_key">Eeljagatud võti</string>
     <string name="pre_shared_key_enabled">lubatud</string>
@@ -197,7 +196,7 @@ Aitäh veelkord sinu panuse eest.</string>
     <string name="shell_start_error">Kesta käivitumine ebaõnnestus: %d</string>
     <string name="success_application_will_restart">Tegevus õnnestus. Rakendus taaskäivitub…</string>
     <string name="toggle_all">Vaheta kõik</string>
-    <string name="toggle_error">WireGuard tunneli lülitamine ebaõnnestus: %s</string>
+    <string name="toggle_error">tunneli lülitamine ebaõnnestus: %s</string>
     <string name="tools_installer_already">wg ja wg-quick on juba paigaldatud</string>
     <string name="tools_installer_failure">Käsurea tööriistade paigaldamine ebaõnnestus (juurkasutaja õigused puuduvad?)</string>
     <string name="tools_installer_initial">Paigalda täiendavad tööriistad skriptimiseks</string>
@@ -230,20 +229,10 @@ Aitäh veelkord sinu panuse eest.</string>
     <string name="type_name_go_userspace">Go kasutajamaa</string>
     <string name="type_name_kernel_module">Tuumamoodul</string>
     <string name="unknown_error">Tundmatu viga</string>
-    <string name="updater_avalable">Rakenduse uuendus on saadaval. Palun uuenda nüüd.</string>
-    <string name="updater_action">Laadi alla ja uuenda</string>
-    <string name="updater_rechecking">Uuenduse andmete laadimine…</string>
-    <string name="updater_download_progress">Uuenduse allalaadimine: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">Uuenduse allalaadimine: %s</string>
-    <string name="updater_installing">Uuenduse paigaldamine…</string>
-    <string name="updater_failure">Uuendamine ebaõnnestus: %s. Uus katse hetke pärast…</string>
-    <string name="updater_corrupt_title">Rakendus rikutud</string>
-    <string name="updater_corrupt_message">See rakendus on rikutud. Palun laadi APK uuesti allpool lingitud veebilehelt. Pärast seda desinstalli rakendus ja installi allalaaditud APK uuesti.</string>
-    <string name="updater_corrupt_navigate">Ava veebileht</string>
     <string name="version_summary">%1$s taustsüsteem %2$s</string>
     <string name="version_summary_checking">Kontrollin %s taustsüsteemi versiooni</string>
     <string name="version_summary_unknown">Tundmatu %s versioon</string>
-    <string name="version_title">WireGuard Androidile v%s</string>
+    <string name="version_title">Portway Androidile v%s</string>
     <string name="vpn_not_authorized_error">Kasutaja ei lubanud VPN teenust</string>
     <string name="vpn_start_error">Androidi VPN teenuse käivitamine ebaõnnestus</string>
     <string name="zip_export_error">Tunnelite eksportimine ebaõnnestus: %s</string>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~ Solid, matching the TOP of the canvas gradient. Using the gradient itself here stacks two
+  ~ gradients — the window's and the fragment's — and the restart shows as a seam under the
+  ~ action bar.
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/clay_canvas_top" />
+</shape>

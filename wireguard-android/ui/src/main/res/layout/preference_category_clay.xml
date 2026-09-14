@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Nocturne's section label: 10.5sp/500/+0.14em uppercase in the accent, 26dp above and 4dp
+  ~ below, on the same 22dp gutter as every row. The accent-to-ground pair is tuned to ~3:1 —
+  ~ fine for chrome at this size, which is why body copy never uses it.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="22dp"
+    android:paddingTop="26dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@android:id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="@dimen/tracking_label"
+        android:textAllCaps="true"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
+        android:textColor="@color/accent"
+        android:textSize="10.5sp" />
+</LinearLayout>

@@ -28,6 +28,25 @@ object QuantityFormatter {
         }
     }
 
+    /**
+     * Portway: H:MM:SS / MM:SS for the live session timer. formatEpochAgo is not a
+     * substitute — it renders prose like "3 minutes ago", which cannot tick.
+     */
+    fun formatDuration(totalSeconds: Long): String {
+        val seconds = totalSeconds.coerceAtLeast(0)
+        val h = seconds / 3600
+        val m = (seconds % 3600) / 60
+        val s = seconds % 60
+        return if (h > 0) String.format(Locale.getDefault(), "%d:%02d:%02d", h, m, s)
+        else String.format(Locale.getDefault(), "%02d:%02d", m, s)
+    }
+
+    /** Reuses formatBytes so units stay consistent and already-translated. */
+    fun formatBytesPerSecond(bytesPerSecond: Double): String =
+        Application.get().applicationContext.getString(
+            R.string.transfer_rate, formatBytes(bytesPerSecond.toLong())
+        )
+
     fun formatEpochAgo(epochMillis: Long): String {
         var span = (System.currentTimeMillis() - epochMillis) / 1000
 

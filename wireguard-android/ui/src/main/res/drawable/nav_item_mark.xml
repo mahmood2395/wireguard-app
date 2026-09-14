@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Nocturne marks the active destination with an 18x2dp accent bar above the icon. Material's
+  ~ own active indicator cannot draw this — it takes a colour and a shape and centres it behind
+  ~ the icon — so the indicator stays disabled (code-only, `isItemActiveIndicatorEnabled`) and
+  ~ the mark is delivered as the item background instead.
+  -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item android:gravity="top|center_horizontal" android:top="0dp">
+                <shape android:shape="rectangle">
+                    <size android:width="18dp" android:height="2dp" />
+                    <solid android:color="@color/accent" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:drawable="@android:color/transparent" />
+</selector>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Vazirmatn UI, SIL Open Font License 1.1 — https://github.com/rastikerdar/vazirmatn
+  ~ Full licence text in licenses/OFL-Vazirmatn.txt.
+  ~
+  ~ Why this file is called inter.xml: Inter has no Arabic coverage at all, so every Persian
+  ~ string in the app was being drawn by whatever the system fell back to — a different face
+  ~ with different metrics from the Latin around it, varying by vendor and by Android version.
+  ~ The whole type system flows through @font/inter in values/styles.xml, so a locale-qualified
+  ~ resource of the SAME NAME swaps the face for Persian in one place, with no style, layout or
+  ~ code change and no risk of a site being missed. Read "@font/inter" as "the UI face".
+  ~
+  ~ The UI cut, not the standard one: Vazirmatn's default vertical metrics are generous enough
+  ~ to grow every line box in this fairly dense layout. The UI cut is drawn to the same outlines
+  ~ with metrics that sit in an Inter-shaped line.
+  ~
+  ~ And deliberately NOT the Farsi-Digits cut: this app puts IP addresses, ports, MTUs, byte
+  ~ counts and base64 keys on screen, and rendering those in ۰۱۲۳ would make them wrong to read
+  ~ back and impossible to copy against. Persian text, Latin numerals.
+  ~
+  ~ Two weights, matching inter.xml — hierarchy is size and weight contrast, not a weight ladder.
+  -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font android:font="@font/vazirmatn_regular" android:fontWeight="400" android:fontStyle="normal"
+        app:font="@font/vazirmatn_regular" app:fontWeight="400" app:fontStyle="normal" />
+    <font android:font="@font/vazirmatn_semibold" android:fontWeight="600" android:fontStyle="normal"
+        app:font="@font/vazirmatn_semibold" app:fontWeight="600" app:fontStyle="normal" />
+</font-family>

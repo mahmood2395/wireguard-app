@@ -15,12 +15,14 @@
             type="com.wireguard.config.Peer" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <com.wireguard.android.widget.ClayCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        android:layout_margin="8dp"
+            app:clayCornerRadius="26dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:padding="22dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -226,5 +228,5 @@
                 tools:text="4 minutes, 27 seconds ago"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </com.wireguard.android.widget.ClayCardView>
 </layout>

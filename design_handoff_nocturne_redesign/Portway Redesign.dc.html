@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/nocturne-3ac99476-319d-49e9-8948-874d666c2091/styles.css">
+<script src="_ds/nocturne-3ac99476-319d-49e9-8948-874d666c2091/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pw-a:#9184d9;--pw-a-900:#2b2741;--pw-a-800:#423a6a;--pw-a-700:#5d5294;--pw-a-600:#796cbf;--pw-a-400:#b5abfc;--pw-a-300:#d2cefd;--pw-a-glow:rgba(145,132,217,.22);--pw-a-sweep:rgba(145,132,217,.28)}
+body{margin:0;background:#0f1018;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--pw-a-400);text-decoration:none}a:hover{color:var(--pw-a-300)}
+[data-om-starter="android-frame"] *::-webkit-scrollbar{width:0;height:0}
+[data-om-starter="android-frame"] *{scrollbar-width:none}
+@keyframes pw-spin{to{transform:rotate(360deg)}}
+@keyframes pw-breathe{0%,100%{opacity:.3}50%{opacity:.95}}
+@keyframes pw-glow{0%,100%{opacity:.35}50%{opacity:.8}}
+@keyframes pw-rise{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes pw-sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+</style>
+</helmet>
+
+<section style="padding:56px 64px 40px;color:#e9e9ed">
+  <div style="max-width:76ch;margin:0 0 20px">
+    <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--pw-a);margin-bottom:16px">Turn 2 · Last handshake, five readings</div>
+    <h2 style="font:500 30px/1.15 Inter,sans-serif;letter-spacing:-.03em;margin:0 0 16px">The datum is one age, so give it a limit</h2>
+    <p style="font:400 15px/1.7 Inter,sans-serif;color:#b2b6ca;margin:0 0 14px;text-wrap:pretty">A handshake age on its own is unreadable — twelve seconds and ninety seconds both mean "fine", and only the 180-second cutoff, where WireGuard treats the peer as gone, makes the number mean anything. Each of these draws the age against that limit rather than as a bare figure. They sit at home-card width so you can drop one straight into the hero.</p>
+    <p style="font:400 14px/1.7 Inter,sans-serif;color:#9397ab;margin:0;text-wrap:pretty"><strong style="font-weight:500;color:#e9e9ed">2a is the one that shipped</strong> — it now sits on the home hero, the 1d home screen and the config detail below, replacing the heartbeat lane. The other four stay here as a record. All five are live off the same clock; connect the phone in <a href="#1d">1d</a> and they run.</p>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start;margin-top:36px">
+
+    <div id="2a" style="display:flex;flex-direction:column;gap:11px;width:322px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#2a" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">2a</a>Decay bar to the cutoff</div>
+      <div style="border:1px solid #3f424d;border-radius:8px;background:#232532;padding:17px 18px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Last handshake</div>
+          <div style="font:500 13px/1 Inter,sans-serif;color:{{ hsInk }};font-variant-numeric:tabular-nums">{{ hsAgeText }}</div>
+        </div>
+        <div style="margin-top:15px;position:relative;height:12px">
+          <div style="position:absolute;left:0;right:0;top:3px;height:6px;border-radius:3px;background:#2f313c;overflow:hidden">
+            <div style="height:100%;border-radius:3px;background:{{ hsInk }};width:{{ hsBarPct }};transition:width .9s linear"></div>
+          </div>
+          <div style="position:absolute;top:0;bottom:0;width:1px;background:#6b7183;left:{{ hsBarMark }}"></div>
+        </div>
+        <div style="margin-top:9px;position:relative;height:12px;font:400 11px/1 Inter,sans-serif;color:#9397ab">
+          <span style="position:absolute;left:0;top:0">0s</span>
+          <span style="position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;left:{{ hsBarMark }}">rekey due</span>
+          <span style="position:absolute;right:0;top:0">3m gone</span>
+        </div>
+      </div>
+      <div style="font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">The whole scale is the 3-minute cutoff, with a hairline where the rekey is due. One glance says how much room is left, and the bar only ever grows — no ticking figure to read.</div>
+    </div>
+
+    <div id="2b" style="display:flex;flex-direction:column;gap:11px;width:322px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#2b" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">2b</a>Countdown to next rekey</div>
+      <div style="border:1px solid #3f424d;border-radius:8px;background:#232532;padding:17px 18px;display:flex;align-items:center;gap:18px">
+        <div style="position:relative;width:78px;height:78px;flex:none">
+          <svg width="78" height="78" viewBox="0 0 78 78">
+            <circle cx="39" cy="39" r="34" fill="none" stroke="#2f313c" stroke-width="3"></circle>
+            <circle cx="39" cy="39" r="34" fill="none" stroke="{{ hsInk }}" stroke-width="3" stroke-linecap="round" stroke-dasharray="{{ hsGaugeDash }}" transform="rotate(-90 39 39)"></circle>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:500 14px/1 Inter,sans-serif;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ hsGaugeText }}</div>
+        </div>
+        <div>
+          <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Next rekey</div>
+          <div style="margin-top:7px;font:400 13px/1.5 Inter,sans-serif;color:#b2b6ca;text-wrap:pretty">Handshake {{ hsAgeText }}</div>
+        </div>
+      </div>
+      <div style="font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Turns the age into a forward-looking figure: the arc empties toward the next handshake. Reassuring while it cycles, and an arc stuck at empty is unmistakable.</div>
+    </div>
+
+    <div id="2c" style="display:flex;flex-direction:column;gap:11px;width:322px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#2c" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">2c</a>Words, no figure</div>
+      <div style="border:1px solid #3f424d;border-radius:8px;background:#232532;padding:17px 18px;display:flex;align-items:flex-start;gap:13px">
+        <div style="width:9px;height:9px;border-radius:5px;background:{{ hsInk }};margin-top:5px;flex:none"></div>
+        <div>
+          <div style="font:500 16px/1.2 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">{{ hsWord }}</div>
+          <div style="margin-top:6px;font:400 13px/1.5 Inter,sans-serif;color:#9397ab;text-wrap:pretty">{{ hsWordSub }}</div>
+        </div>
+      </div>
+      <div style="font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">The honest minimum: three states — Just now, Fresh, Due now, Peer silent — and one dot. Nothing animates, nothing to interpret. Put the numbers behind a tap on the detail screen.</div>
+    </div>
+
+    <div id="2d" style="display:flex;flex-direction:column;gap:11px;width:322px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#2d" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">2d</a>Handshake log</div>
+      <div style="border:1px solid #3f424d;border-radius:8px;background:#232532;padding:17px 18px">
+        <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Handshakes</div>
+        <div style="margin-top:13px;display:flex;flex-direction:column;gap:11px">
+          <sc-for list="{{ hsLog }}" as="h" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:11px">
+              <div style="width:7px;height:7px;border-radius:4px;background:{{ h.dot }};flex:none"></div>
+              <div style="flex:1;font:500 13.5px/1 Inter,sans-serif;color:{{ h.ink }};font-variant-numeric:tabular-nums">{{ h.clock }}</div>
+              <div style="font:400 12px/1 Inter,sans-serif;color:#9397ab;font-variant-numeric:tabular-nums">{{ h.gap }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">The data-rich reading: real timestamps and the interval between them, so a ragged link shows as uneven gaps. Belongs on the config detail screen rather than the hero.</div>
+    </div>
+
+    <div id="2e" style="display:flex;flex-direction:column;gap:11px;width:322px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#2e" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">2e</a>Age as rings</div>
+      <div style="border:1px solid #3f424d;border-radius:8px;background:#232532;padding:17px 18px;display:flex;align-items:center;gap:18px">
+        <div style="position:relative;width:96px;height:96px;flex:none;display:flex;align-items:center;justify-content:center">
+          <sc-for list="{{ hsRings }}" as="r" hint-placeholder-count="3">
+            <div style="position:absolute;border-radius:50%;border:1.5px solid {{ r.border }};width:{{ r.size }};height:{{ r.size }};opacity:{{ r.opacity }};transition:opacity .9s ease"></div>
+          </sc-for>
+          <div style="width:9px;height:9px;border-radius:5px;background:{{ hsInk }}"></div>
+        </div>
+        <div>
+          <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Last handshake</div>
+          <div style="margin-top:7px;font:500 17px/1 Inter,sans-serif;letter-spacing:-.02em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ hsAgeText }}</div>
+          <div style="margin-top:6px;font:400 12.5px/1.4 Inter,sans-serif;color:#9397ab">A ring per 40 seconds</div>
+        </div>
+      </div>
+      <div style="font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Age as spread rather than length: rings light outward as the handshake gets older and collapse to the centre dot on each rekey. The most decorative of the five — best if the hero needs a figure of its own.</div>
+    </div>
+
+  </div>
+</section>
+
+<section style="padding:16px 64px 72px;color:#e9e9ed">
+  <div style="max-width:76ch;margin:0 0 20px">
+    <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--pw-a);margin-bottom:16px">Turn 1 · Portway on Nocturne</div>
+    <h1 style="font:500 46px/1.04 Inter,sans-serif;letter-spacing:-.03em;margin:0 0 20px">A VPN for someone who was handed a config</h1>
+    <p style="font:400 15px/1.7 Inter,sans-serif;color:#b2b6ca;margin:0 0 14px;text-wrap:pretty">The clay material is gone. It was a beautiful piece of engineering — two blurred shadows, a software layer, a generated nav puck — and it cost the screens 21dp of gutter on every side of every surface, which is why the current Connect screen reads as five objects floating in a field rather than one product. Nocturne's answer to depth on a dark ground is <strong style="font-weight:500;color:#e9e9ed">an edge plus ambient darkness</strong>: a 1px hairline, an 8px radius, and the accent spent as a line or a glow rather than a fill. Every surface below is that.</p>
+    <p style="font:400 15px/1.7 Inter,sans-serif;color:#b2b6ca;margin:0 0 14px;text-wrap:pretty">The second change is vocabulary. Portway has no server list — what a user owns is a set of configs someone handed them. So "Tunnels" becomes <strong style="font-weight:500;color:#e9e9ed">Configs</strong>, the public key moves behind a disclosure, and the city shown in the ring is <strong style="font-weight:500;color:#e9e9ed">resolved from the peer's IP</strong> rather than chosen from a menu — a fact about where your traffic actually surfaces, not a product promise.</p>
+    <p style="font:400 15px/1.7 Inter,sans-serif;color:#b2b6ca;margin:0 0 14px;text-wrap:pretty">The third change is the handshake. "12 seconds ago" re-renders every second and says nothing — a number that never sits still is a number nobody reads. It becomes a <strong style="font-weight:500;color:#e9e9ed">decay bar</strong> (<a href="#2a">2a</a>): the whole scale is WireGuard's 180-second cutoff, where the peer counts as gone, with a hairline at the point the rekey is due. The age still ticks, but it now has a limit to tick against — one glance says how much room is left, and a bar past the hairline is the news.</p>
+    <p style="font:400 14px/1.7 Inter,sans-serif;color:#9397ab;margin:0;text-wrap:pretty">One deliberate loss worth flagging: JetBrains Mono for figures is dropped. Nocturne is Inter over Inter, so figures here are Inter with tabular numerals. It ticks in place just as well and saves the 1.1 MB of bundled fonts — but the mono had character, and if you want it back it is one token.</p>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:44px;align-items:flex-start;margin-top:44px">
+
+    <div id="1a" style="display:flex;flex-direction:column;gap:11px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#1a" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">1a</a>Line hero — no shape at all</div>
+      <div style="width:322px;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">The most Nocturne-faithful reading: the accent is a rule that draws itself across the screen as the handshake lands. State is carried by type size and one line. Tap the status block.</div>
+      <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="428px,908px">
+        <div style="min-height:100%;box-sizing:border-box;background:#161826;display:flex;flex-direction:column;position:relative">
+          <div style="height:56px;display:flex;align-items:center;padding:0 22px;flex:none">
+            <span style="font:600 19px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">portway</span>
+          </div>
+          <div onClick="{{ toggleA }}" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 22px 96px;cursor:pointer">
+            <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:{{ aKicker }}">{{ aKickerText }}</div>
+            <div style="margin-top:14px;font:500 52px/1.02 Inter,sans-serif;letter-spacing:-.035em;color:#e9e9ed;text-wrap:balance">{{ aHeadline }}</div>
+            <div style="position:relative;height:2px;margin:26px 0 0;background:#292b31;overflow:hidden;border-radius:1px">
+              <div style="position:absolute;inset:0;transform-origin:left center;background:linear-gradient(90deg,transparent 0,var(--pw-a) 14%,var(--pw-a) 86%,transparent 100%);transition:transform .9s cubic-bezier(.2,.8,.2,1);transform:scaleX({{ aLineScale }})"></div>
+            </div>
+            <div style="margin-top:26px;display:flex;align-items:flex-end;gap:26px">
+              <div>
+                <div style="font:500 12px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#9397ab">Session</div>
+                <div style="margin-top:8px;font:500 38px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ elapsed }}</div>
+              </div>
+              <div style="padding-bottom:5px">
+                <div style="font:500 12px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#9397ab">Ping</div>
+                <div style="margin-top:8px;font:500 20px/1 Inter,sans-serif;letter-spacing:-.02em;color:{{ pingColor }};font-variant-numeric:tabular-nums">{{ pingText }}</div>
+              </div>
+            </div>
+            <div style="margin-top:30px;font:400 14px/1.6 Inter,sans-serif;color:#9397ab;max-width:32ch;text-wrap:pretty">{{ aSub }}</div>
+            <div style="margin-top:24px;display:flex;gap:10px">
+              <div style="padding:9px 16px;border:1px solid {{ aBtnBorder }};border-radius:8px;font:500 13.5px/1 Inter,sans-serif;color:{{ aBtnColor }}">{{ aBtnLabel }}</div>
+              <div style="padding:9px 16px;border-radius:8px;font:500 13.5px/1 Inter,sans-serif;color:#9397ab">{{ geoLine }}</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="1b" style="display:flex;flex-direction:column;gap:11px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#1b" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">1b</a>Ring hero — a stroke, not a puck</div>
+      <div style="width:322px;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Keeps the familiar consumer tap-target, but the ring is a 1.5px accent stroke with a glow behind it — the accent as a line, at 240px. Connecting spins a gap; connected breathes. Tap the ring.</div>
+      <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="428px,908px">
+        <div style="min-height:100%;box-sizing:border-box;background:#161826;display:flex;flex-direction:column;position:relative">
+          <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex:none">
+            <span style="font:600 19px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">portway</span>
+            <span style="padding:4px 9px;border:1px solid var(--pw-a-800);border-radius:999px;font:500 11.5px/1.4 Inter,sans-serif;color:var(--pw-a-300)">23 days left</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 22px 96px">
+            <div onClick="{{ toggleB }}" style="position:relative;width:248px;height:248px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+              <div style="position:absolute;inset:22px;border-radius:50%;background:radial-gradient(circle,var(--pw-a-glow) 0%,transparent 68%);opacity:{{ bGlow }};animation:{{ bGlowAnim }};transition:opacity .5s ease"></div>
+              <svg width="248" height="248" viewBox="0 0 248 248" style="position:absolute;inset:0;animation:{{ bSpinAnim }}">
+                <circle cx="124" cy="124" r="112" fill="none" stroke="{{ bRingTrack }}" stroke-width="1.5"></circle>
+                <circle cx="124" cy="124" r="112" fill="none" stroke="{{ bRingStroke }}" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="{{ bRingDash }}" transform="rotate(-90 124 124)" style="transition:stroke .4s ease"></circle>
+              </svg>
+              <div style="text-align:center;padding:0 30px">
+                <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:{{ aKicker }}">{{ aKickerText }}</div>
+                <div style="margin-top:14px;font:500 42px/1 Inter,sans-serif;letter-spacing:-.035em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ bBigFigure }}</div>
+                <div style="margin-top:9px;font:400 13px/1.5 Inter,sans-serif;color:#9397ab">{{ bCaption }}</div>
+              </div>
+            </div>
+            <div style="margin-top:34px;align-self:stretch;height:1px;background:linear-gradient(90deg,transparent 0,#292b31 48px,#292b31 calc(100% - 48px),transparent 100%)"></div>
+            <div style="margin-top:20px;align-self:stretch;display:flex;gap:12px">
+              <div style="flex:1;border:1px solid #3f424d;border-radius:8px;padding:13px 15px;background:#232532">
+                <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Down</div>
+                <div style="margin-top:7px;font:500 19px/1 Inter,sans-serif;letter-spacing:-.02em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ rxText }}</div>
+              </div>
+              <div style="flex:1;border:1px solid #3f424d;border-radius:8px;padding:13px 15px;background:#232532">
+                <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Up</div>
+                <div style="margin-top:7px;font:500 19px/1 Inter,sans-serif;letter-spacing:-.02em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ txText }}</div>
+              </div>
+            </div>
+            <div style="margin-top:24px;align-self:stretch">
+              <div style="display:flex;align-items:baseline;justify-content:space-between">
+                <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Last handshake</div>
+                <div style="font:500 11.5px/1 Inter,sans-serif;letter-spacing:.01em;color:{{ hsInk }};font-variant-numeric:tabular-nums">{{ hsAgeText }}</div>
+              </div>
+              <div style="margin-top:15px;position:relative;height:12px">
+                <div style="position:absolute;left:0;right:0;top:3px;height:6px;border-radius:3px;background:#2f313c;overflow:hidden">
+                  <div style="height:100%;border-radius:3px;background:{{ hsInk }};width:{{ hsBarPct }};transition:width .9s linear"></div>
+                </div>
+                <div style="position:absolute;top:0;bottom:0;width:1px;background:#6b7183;left:{{ hsBarMark }}"></div>
+              </div>
+              <div style="margin-top:9px;position:relative;height:12px;font:400 11px/1 Inter,sans-serif;color:#9397ab">
+                <span style="position:absolute;left:0;top:0">0s</span>
+                <span style="position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;left:{{ hsBarMark }}">rekey due</span>
+                <span style="position:absolute;right:0;top:0">3m gone</span>
+              </div>
+              <div style="margin-top:12px;font:400 12.5px/1.5 Inter,sans-serif;color:#9397ab;text-wrap:pretty">{{ hsWordSub }}</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="1c" style="display:flex;flex-direction:column;gap:11px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#1c" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">1c</a>Thumb hero — the action is where the thumb is</div>
+      <div style="width:322px;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">No centre target to stretch for. The screen is a live throughput field with the location and the action stacked in the bottom third. Tap the wide button.</div>
+      <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="428px,908px">
+        <div style="min-height:100%;box-sizing:border-box;background:#161826;display:flex;flex-direction:column;position:relative;overflow:hidden">
+          <div style="height:56px;display:flex;align-items:center;padding:0 22px;flex:none">
+            <span style="font:600 19px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">portway</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;padding:0 22px 96px">
+            <div style="padding-top:10px">
+              <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:{{ aKicker }}">{{ aKickerText }}</div>
+              <div style="margin-top:12px;font:500 40px/1 Inter,sans-serif;letter-spacing:-.035em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ elapsed }}</div>
+            </div>
+            <div style="margin-top:22px;height:150px;position:relative;border-bottom:1px solid #292b31;display:flex;align-items:flex-end;gap:3px">
+              <sc-for list="{{ spark }}" as="s" hint-placeholder-count="34">
+                <div style="flex:1;border-radius:1px;background:{{ s.fill }};height:{{ s.h }};transition:height .6s ease"></div>
+              </sc-for>
+            </div>
+            <div style="margin-top:10px;display:flex;justify-content:space-between;font:400 11.5px/1 Inter,sans-serif;color:#9397ab"><span>60s ago</span><span>{{ rxText }} down · {{ txText }} up</span></div>
+            <div style="flex:1"></div>
+            <div style="border:1px solid #3f424d;border-radius:8px;background:#232532;padding:15px 17px;display:flex;align-items:center;gap:14px">
+              <div style="width:34px;height:34px;border-radius:6px;background:var(--pw-a-900);border:1px solid var(--pw-a-800);display:flex;align-items:center;justify-content:center;flex:none">
+                <svg width="18" height="18" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,24a80,80,0,0,0-80,80c0,72,80,128,80,128s80-56,80-128A80,80,0,0,0,128,24Zm0,112a32,32,0,1,1,32-32A32,32,0,0,1,128,136Z" fill="currentColor" style="color:var(--pw-a-400)"></path></svg>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font:500 15px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">{{ configName }}</div>
+                <div style="margin-top:3px;font:400 12.5px/1.3 Inter,sans-serif;color:#9397ab">{{ geoLine }}</div>
+              </div>
+              <span style="font:500 12.5px/1 Inter,sans-serif;color:var(--pw-a-400)">Change</span>
+            </div>
+            <div onClick="{{ toggleC }}" style="margin-top:12px;height:54px;border-radius:8px;border:1px solid {{ aBtnBorder }};background:{{ cBtnBg }};display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:background .35s ease,border-color .35s ease">
+              <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,var(--pw-a-sweep),transparent);display:{{ cSweepDisplay }};animation:pw-sweep 1.1s linear infinite"></div>
+              <span style="font:500 15px/1 Inter,sans-serif;letter-spacing:-.01em;color:{{ aBtnColor }};position:relative">{{ aBtnLabel }}</span>
+            </div>
+            <div style="margin-top:12px;text-align:center;font:400 12.5px/1.5 Inter,sans-serif;color:#9397ab">{{ aSub }}</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <div id="1d" style="display:flex;flex-direction:column;gap:11px;scroll-margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab"><a href="#1d" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:var(--pw-a-300)">1d</a>The whole app, working</div>
+      <div style="width:322px;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Onboarding → QR import → home with the handshake decay bar and usage history → Configs → detail → settings, on <a href="#1b">1b</a>'s hero. Everything here is tappable; use the nav bar and the back arrows. Hero style is a tweak, so this frame can wear <a href="#1a">1a</a> or <a href="#1c">1c</a> instead.</div>
+      <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="428px,908px">
+        <div style="min-height:100%;box-sizing:border-box;background:#161826;display:flex;flex-direction:column;position:relative;overflow:hidden">
+
+          <sc-if value="{{ isOnboard }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;padding:34px 26px 26px">
+              <div style="display:flex;gap:6px">
+                <div style="width:26px;height:2px;border-radius:1px;background:{{ ob1 }}"></div>
+                <div style="width:26px;height:2px;border-radius:1px;background:{{ ob2 }}"></div>
+                <div style="width:26px;height:2px;border-radius:1px;background:{{ ob3 }}"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;animation:pw-rise .45s cubic-bezier(.2,.8,.2,1)">
+                <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--pw-a)">{{ obKicker }}</div>
+                <div style="margin-top:16px;font:500 40px/1.06 Inter,sans-serif;letter-spacing:-.035em;color:#e9e9ed;text-wrap:balance">{{ obTitle }}</div>
+                <div style="margin-top:18px;height:1px;width:64px;background:var(--pw-a)"></div>
+                <div style="margin-top:18px;font:400 15px/1.65 Inter,sans-serif;color:#b2b6ca;max-width:34ch;text-wrap:pretty">{{ obBody }}</div>
+              </div>
+              <div onClick="{{ obNext }}" style="height:50px;border-radius:8px;border:1px solid var(--pw-a);display:flex;align-items:center;justify-content:center;cursor:pointer">
+                <span style="font:500 15px/1 Inter,sans-serif;color:var(--pw-a-300)">{{ obCta }}</span>
+              </div>
+              <div onClick="{{ obSkip }}" style="margin-top:10px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                <span style="font:400 13.5px/1 Inter,sans-serif;color:#9397ab">Skip — I already have a config file</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;background:#0f1018">
+              <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 20px;flex:none">
+                <div onClick="{{ goHome }}" style="cursor:pointer;display:flex"><svg width="22" height="22" viewBox="0 0 256 256" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z" fill="#e9e9ed"></path></svg></div>
+                <span style="font:500 16px/1 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">Scan provider code</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 26px">
+                <div style="position:relative;width:250px;height:250px;background:#1b1d29;border-radius:8px;overflow:hidden">
+                  <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#20222f 0 9px,#1b1d29 9px 18px)"></div>
+                  <div style="position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--pw-a),transparent);animation:pw-glow 1.6s ease-in-out infinite"></div>
+                  <div style="position:absolute;left:16px;top:16px;width:30px;height:30px;border-left:2px solid var(--pw-a);border-top:2px solid var(--pw-a)"></div>
+                  <div style="position:absolute;right:16px;top:16px;width:30px;height:30px;border-right:2px solid var(--pw-a);border-top:2px solid var(--pw-a)"></div>
+                  <div style="position:absolute;left:16px;bottom:16px;width:30px;height:30px;border-left:2px solid var(--pw-a);border-bottom:2px solid var(--pw-a)"></div>
+                  <div style="position:absolute;right:16px;bottom:16px;width:30px;height:30px;border-right:2px solid var(--pw-a);border-bottom:2px solid var(--pw-a)"></div>
+                </div>
+                <div style="margin-top:26px;font:400 14.5px/1.6 Inter,sans-serif;color:#b2b6ca;text-align:center;max-width:30ch;text-wrap:pretty">Point the camera at the QR code your provider sent you. Nothing leaves the phone.</div>
+                <div onClick="{{ scanFound }}" style="margin-top:22px;padding:11px 18px;border:1px solid var(--pw-a);border-radius:8px;cursor:pointer;font:500 13.5px/1 Inter,sans-serif;color:var(--pw-a-300)">Simulate a successful scan</div>
+                <div style="margin-top:14px;font:400 13px/1 Inter,sans-serif;color:#9397ab">or import a .conf file instead</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isConfirm }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;padding:34px 24px 24px;animation:pw-rise .4s cubic-bezier(.2,.8,.2,1)">
+              <div style="width:38px;height:38px;border-radius:8px;border:1px solid var(--pw-a-800);background:var(--pw-a-900);display:flex;align-items:center;justify-content:center">
+                <svg width="20" height="20" viewBox="0 0 256 256" aria-hidden="true"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,0,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z" fill="currentColor" style="color:var(--pw-a-400)"></path></svg>
+              </div>
+              <div style="margin-top:20px;font:500 32px/1.1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">{{ configName }} is ready</div>
+              <div style="margin-top:12px;font:400 14.5px/1.65 Inter,sans-serif;color:#b2b6ca;max-width:34ch;text-wrap:pretty">One peer, routing all traffic. Its IP puts it in {{ geoCity }} — give it a name you will recognise in the list.</div>
+              <div style="margin-top:24px">
+                <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Name</div>
+                <div style="margin-top:9px;height:46px;border:1px solid var(--pw-a);border-radius:8px;background:#232532;display:flex;align-items:center;padding:0 14px;font:400 15px/1 Inter,sans-serif;color:#e9e9ed">Frankfurt</div>
+              </div>
+              <div style="margin-top:22px;border:1px solid #3f424d;border-radius:8px;background:#232532;overflow:hidden">
+                <sc-for list="{{ confirmRows }}" as="r" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 15px;border-top:1px solid #292b31">
+                    <div style="flex:1;font:400 13px/1.4 Inter,sans-serif;color:#9397ab">{{ r.label }}</div>
+                    <div style="font:400 13px/1.4 Inter,sans-serif;color:#e9e9ed;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:190px">{{ r.value }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="flex:1"></div>
+              <div onClick="{{ saveConfig }}" style="height:50px;border-radius:8px;border:1px solid var(--pw-a);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="font:500 15px/1 Inter,sans-serif;color:var(--pw-a-300)">Save and connect</span></div>
+              <div onClick="{{ goHome }}" style="margin-top:10px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:400 13.5px/1 Inter,sans-serif;color:#9397ab">Not now</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column">
+              <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex:none">
+                <span style="font:600 19px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">portway</span>
+                <div onClick="{{ goSettings }}" style="cursor:pointer;padding:4px 9px;border:1px solid var(--pw-a-800);border-radius:999px;font:500 11.5px/1.4 Inter,sans-serif;color:var(--pw-a-300)">23 days left</div>
+              </div>
+              <div style="flex:1;overflow:auto;padding:0 22px 118px">
+                <div style="display:flex;justify-content:center;padding-top:6px">
+                  <div onClick="{{ toggleB }}" style="position:relative;width:236px;height:236px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                    <div style="position:absolute;inset:20px;border-radius:50%;background:radial-gradient(circle,var(--pw-a-glow) 0%,transparent 68%);opacity:{{ bGlow }};animation:{{ bGlowAnim }};transition:opacity .5s ease"></div>
+                    <svg width="236" height="236" viewBox="0 0 236 236" style="position:absolute;inset:0;animation:{{ bSpinAnim }}">
+                      <circle cx="118" cy="118" r="106" fill="none" stroke="{{ bRingTrack }}" stroke-width="1.5"></circle>
+                      <circle cx="118" cy="118" r="106" fill="none" stroke="{{ bRingStroke }}" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="{{ bRingDashHome }}" transform="rotate(-90 118 118)" style="transition:stroke .4s ease"></circle>
+                    </svg>
+                    <div style="text-align:center;padding:0 28px">
+                      <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:{{ aKicker }}">{{ aKickerText }}</div>
+                      <div style="margin-top:13px;font:500 40px/1 Inter,sans-serif;letter-spacing:-.035em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ bBigFigure }}</div>
+                      <div style="margin-top:8px;font:400 12.5px/1.5 Inter,sans-serif;color:#9397ab">{{ bCaption }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top:14px;font:400 13.5px/1.6 Inter,sans-serif;color:#9397ab;text-align:center;text-wrap:pretty">{{ aSub }}</div>
+
+                <div style="margin-top:22px;height:1px;background:linear-gradient(90deg,transparent 0,#292b31 48px,#292b31 calc(100% - 48px),transparent 100%)"></div>
+
+                <div style="margin-top:20px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between">
+                    <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Last handshake</div>
+                    <div style="font:500 11.5px/1 Inter,sans-serif;letter-spacing:.01em;color:{{ hsInk }};font-variant-numeric:tabular-nums">{{ hsAgeText }}</div>
+                  </div>
+                  <div style="margin-top:14px;position:relative;height:12px">
+                    <div style="position:absolute;left:0;right:0;top:3px;height:6px;border-radius:3px;background:#2f313c;overflow:hidden">
+                      <div style="height:100%;border-radius:3px;background:{{ hsInk }};width:{{ hsBarPct }};transition:width .9s linear"></div>
+                    </div>
+                    <div style="position:absolute;top:0;bottom:0;width:1px;background:#6b7183;left:{{ hsBarMark }}"></div>
+                  </div>
+                  <div style="margin-top:9px;position:relative;height:12px;font:400 11px/1 Inter,sans-serif;color:#9397ab">
+                    <span style="position:absolute;left:0;top:0">0s</span>
+                    <span style="position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;left:{{ hsBarMark }}">rekey due</span>
+                    <span style="position:absolute;right:0;top:0">3m gone</span>
+                  </div>
+                  <div style="margin-top:12px;font:400 12.5px/1.5 Inter,sans-serif;color:#9397ab;text-wrap:pretty">{{ hsWordSub }}</div>
+                </div>
+
+                <div onClick="{{ goLocations }}" style="margin-top:22px;border:1px solid #3f424d;border-radius:8px;background:#232532;padding:14px 16px;display:flex;align-items:center;gap:13px;cursor:pointer">
+                  <div style="width:32px;height:32px;border-radius:6px;background:var(--pw-a-900);border:1px solid var(--pw-a-800);display:flex;align-items:center;justify-content:center;flex:none">
+                    <svg width="17" height="17" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,24a80,80,0,0,0-80,80c0,72,80,128,80,128s80-56,80-128A80,80,0,0,0,128,24Zm0,112a32,32,0,1,1,32-32A32,32,0,0,1,128,136Z" fill="currentColor" style="color:var(--pw-a-400)"></path></svg>
+                  </div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font:500 14.5px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">{{ configName }}</div>
+                    <div style="margin-top:2px;font:400 12px/1.3 Inter,sans-serif;color:#9397ab">{{ geoLine }}</div>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 256 256" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z" fill="#75798c"></path></svg>
+                </div>
+
+                <div style="margin-top:12px;display:flex;gap:12px">
+                  <div style="flex:1;border:1px solid #3f424d;border-radius:8px;padding:12px 14px;background:#232532">
+                    <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Down</div>
+                    <div style="margin-top:6px;font:500 18px/1 Inter,sans-serif;letter-spacing:-.02em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ rxText }}</div>
+                  </div>
+                  <div style="flex:1;border:1px solid #3f424d;border-radius:8px;padding:12px 14px;background:#232532">
+                    <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Up</div>
+                    <div style="margin-top:6px;font:500 18px/1 Inter,sans-serif;letter-spacing:-.02em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ txText }}</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:26px;display:flex;align-items:baseline;justify-content:space-between">
+                  <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">This month</div>
+                  <div style="font:400 12.5px/1 Inter,sans-serif;color:#9397ab;font-variant-numeric:tabular-nums">12.4 of 30 GB</div>
+                </div>
+                <div style="margin-top:13px;height:78px;display:flex;align-items:flex-end;gap:3px;border-bottom:1px solid #292b31;padding-bottom:1px">
+                  <sc-for list="{{ history }}" as="d" hint-placeholder-count="30">
+                    <div style="flex:1;border-radius:1px 1px 0 0;background:{{ d.fill }};height:{{ d.h }}"></div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:8px;display:flex;justify-content:space-between;font:400 11px/1 Inter,sans-serif;color:#9397ab"><span>1 Aug</span><span>today</span></div>
+                <div style="margin-top:16px;height:4px;border-radius:2px;background:#292b31;overflow:hidden"><div style="height:100%;width:41%;background:var(--pw-a)"></div></div>
+                <div style="margin-top:9px;font:400 12.5px/1.5 Inter,sans-serif;color:#9397ab">Renews 29 September · 17.6 GB remaining</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isLocations }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column">
+              <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex:none">
+                <span style="font:500 19px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">Configs</span>
+                <div onClick="{{ goScan }}" style="cursor:pointer;padding:7px 12px;border:1px solid var(--pw-a);border-radius:8px;font:500 12.5px/1 Inter,sans-serif;color:var(--pw-a-300)">Add</div>
+              </div>
+              <div style="flex:1;overflow:auto;padding:6px 22px 118px">
+                <sc-for list="{{ locations }}" as="l" hint-placeholder-count="4">
+                  <div onClick="{{ l.pick }}" style="display:flex;align-items:center;gap:13px;padding:15px 0;border-top:1px solid #292b31;cursor:pointer">
+                    <div style="width:9px;height:9px;border-radius:50%;flex:none;background:{{ l.dot }}"></div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font:500 15px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:{{ l.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.name }}</div>
+                      <div style="margin-top:3px;font:400 12.5px/1.3 Inter,sans-serif;color:#9397ab">{{ l.meta }}</div>
+                    </div>
+                    <div style="font:400 12.5px/1 Inter,sans-serif;color:#9397ab;font-variant-numeric:tabular-nums">{{ l.ping }}</div>
+                    <div onClick="{{ l.open }}" style="display:flex;cursor:pointer"><svg width="18" height="18" viewBox="0 0 256 256" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z" fill="#75798c"></path></svg></div>
+                  </div>
+                </sc-for>
+                <div style="border-top:1px solid #292b31"></div>
+                <div style="margin-top:22px;font:400 13px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">These are the configs you were given — Portway has no server list of its own. The city under each name is resolved from the peer's IP, not chosen from a menu. Tapping one switches to it; only one is up at a time unless you allow several in Settings.</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column">
+              <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 20px;flex:none">
+                <div onClick="{{ goLocations }}" style="cursor:pointer;display:flex"><svg width="22" height="22" viewBox="0 0 256 256" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z" fill="#e9e9ed"></path></svg></div>
+                <span style="font:500 19px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">{{ configName }}</span>
+              </div>
+              <div style="flex:1;overflow:auto;padding:6px 22px 118px">
+                <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:{{ aKicker }}">{{ aKickerText }}</div>
+                <div style="margin-top:12px;font:500 34px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ elapsed }}</div>
+                <div style="margin-top:9px;font:400 13.5px/1.6 Inter,sans-serif;color:#9397ab">{{ aSub }}</div>
+                <div style="margin-top:20px;display:flex;gap:12px">
+                  <div style="flex:1;border:1px solid #3f424d;border-radius:8px;padding:12px 14px;background:#232532">
+                    <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Down</div>
+                    <div style="margin-top:6px;font:500 18px/1 Inter,sans-serif;letter-spacing:-.02em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ rxText }}</div>
+                    <div style="margin-top:4px;font:400 11.5px/1.3 Inter,sans-serif;color:#9397ab">4.1 GB this session</div>
+                  </div>
+                  <div style="flex:1;border:1px solid #3f424d;border-radius:8px;padding:12px 14px;background:#232532">
+                    <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Up</div>
+                    <div style="margin-top:6px;font:500 18px/1 Inter,sans-serif;letter-spacing:-.02em;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ txText }}</div>
+                    <div style="margin-top:4px;font:400 11.5px/1.3 Inter,sans-serif;color:#9397ab">820 MB this session</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:26px;font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Last 14 days</div>
+                <div style="margin-top:13px;height:96px;display:flex;align-items:flex-end;gap:6px;border-bottom:1px solid #292b31;padding-bottom:1px">
+                  <sc-for list="{{ history14 }}" as="d" hint-placeholder-count="14">
+                    <div style="flex:1;border-radius:2px 2px 0 0;background:{{ d.fill }};height:{{ d.h }}"></div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:8px;display:flex;justify-content:space-between;font:400 11px/1 Inter,sans-serif;color:#9397ab"><span>23 Aug</span><span>5 Sep</span></div>
+
+                <div style="margin-top:28px;display:flex;align-items:baseline;justify-content:space-between">
+                  <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9397ab">Last handshake</div>
+                  <div style="font:500 11.5px/1 Inter,sans-serif;letter-spacing:.01em;color:{{ hsInk }};font-variant-numeric:tabular-nums">{{ hsAgeText }}</div>
+                </div>
+                <div style="margin-top:14px;position:relative;height:12px">
+                  <div style="position:absolute;left:0;right:0;top:3px;height:6px;border-radius:3px;background:#2f313c;overflow:hidden">
+                    <div style="height:100%;border-radius:3px;background:{{ hsInk }};width:{{ hsBarPct }};transition:width .9s linear"></div>
+                  </div>
+                  <div style="position:absolute;top:0;bottom:0;width:1px;background:#6b7183;left:{{ hsBarMark }}"></div>
+                </div>
+                <div style="margin-top:9px;position:relative;height:12px;font:400 11px/1 Inter,sans-serif;color:#9397ab">
+                  <span style="position:absolute;left:0;top:0">0s</span>
+                  <span style="position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;left:{{ hsBarMark }}">rekey due</span>
+                  <span style="position:absolute;right:0;top:0">3m gone</span>
+                </div>
+                <div style="margin-top:12px;font:400 12.5px/1.5 Inter,sans-serif;color:#9397ab;text-wrap:pretty">{{ hsWordSub }}</div>
+
+                <div style="margin-top:24px">
+                  <sc-for list="{{ health }}" as="h" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:11px;padding:12px 0;border-top:1px solid #292b31">
+                      <div style="width:7px;height:7px;border-radius:50%;flex:none;background:{{ h.dot }}"></div>
+                      <div style="flex:1;font:400 13.5px/1.4 Inter,sans-serif;color:#9397ab">{{ h.label }}</div>
+                      <div style="font:400 13.5px/1.4 Inter,sans-serif;color:#e9e9ed;font-variant-numeric:tabular-nums">{{ h.value }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div onClick="{{ toggleConfig }}" style="margin-top:24px;display:flex;align-items:center;gap:9px;cursor:pointer;padding:12px 0;border-top:1px solid #292b31;border-bottom:1px solid #292b31">
+                  <div style="flex:1;font:500 13.5px/1.4 Inter,sans-serif;color:#e9e9ed">Configuration</div>
+                  <span style="font:400 12.5px/1.4 Inter,sans-serif;color:#9397ab">{{ configHint }}</span>
+                </div>
+                <sc-if value="{{ configOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="animation:pw-rise .3s ease">
+                    <sc-for list="{{ configRows }}" as="r" hint-placeholder-count="6">
+                      <div style="padding:12px 0;border-bottom:1px solid #292b31">
+                        <div style="font:400 11.5px/1 Inter,sans-serif;letter-spacing:.02em;color:#9397ab">{{ r.label }}</div>
+                        <div style="margin-top:5px;font:400 13.5px/1.5 Inter,sans-serif;color:#e9e9ed;word-break:break-all">{{ r.value }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <div style="margin-top:26px;display:flex;gap:10px">
+                  <div onClick="{{ toggleB }}" style="flex:1;height:46px;border:1px solid {{ aBtnBorder }};border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 14px/1 Inter,sans-serif;color:{{ aBtnColor }}">{{ aBtnLabel }}</div>
+                  <div style="height:46px;padding:0 16px;border:1px solid #3f424d;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 14px/1 Inter,sans-serif;color:#9397ab">Edit</div>
+                </div>
+                <div style="margin-top:14px;text-align:center;font:400 13px/1 Inter,sans-serif;color:#9397ab">Remove this location</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column">
+              <div style="height:56px;display:flex;align-items:center;padding:0 22px;flex:none">
+                <span style="font:500 19px/1 Inter,sans-serif;letter-spacing:-.03em;color:#e9e9ed">Settings</span>
+              </div>
+              <div style="flex:1;overflow:auto;padding:6px 22px 118px">
+                <div style="border:1px solid var(--pw-a-800);border-radius:8px;background:var(--pw-a-900);padding:15px 16px">
+                  <div style="display:flex;align-items:baseline;gap:9px">
+                    <div style="flex:1;font:500 15px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">ali-reza</div>
+                    <div style="font:400 12.5px/1.3 Inter,sans-serif;color:var(--pw-a-300)">30 GB plan</div>
+                  </div>
+                  <div style="margin-top:12px;height:4px;border-radius:2px;background:rgba(233,233,237,.14);overflow:hidden"><div style="height:100%;width:41%;background:var(--pw-a-400)"></div></div>
+                  <div style="margin-top:9px;display:flex;justify-content:space-between;font:400 12px/1 Inter,sans-serif;color:#b2b6ca;font-variant-numeric:tabular-nums"><span>12.4 GB used</span><span>23 days left</span></div>
+                </div>
+                <sc-for list="{{ prefGroups }}" as="g" hint-placeholder-count="3">
+                  <div>
+                    <div style="padding:26px 0 4px;font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--pw-a)">{{ g.title }}</div>
+                    <sc-for list="{{ g.items }}" as="p" hint-placeholder-count="3">
+                      <div onClick="{{ p.toggle }}" style="display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid #292b31;cursor:pointer">
+                        <div style="flex:1;min-width:0">
+                          <div style="font:500 14.5px/1.35 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">{{ p.title }}</div>
+                          <div style="margin-top:3px;font:400 12.5px/1.5 Inter,sans-serif;color:#9397ab;text-wrap:pretty">{{ p.summary }}</div>
+                        </div>
+                        <div style="flex:none;width:42px;height:24px;border-radius:12px;position:relative;box-sizing:border-box;border:1px solid {{ p.swBorder }};background:{{ p.swBg }};display:{{ p.swDisplay }};transition:background .25s ease,border-color .25s ease">
+                          <div style="position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:{{ p.knob }};left:{{ p.knobLeft }};transition:left .25s cubic-bezier(.2,.8,.2,1),background .25s ease"></div>
+                        </div>
+                        <div style="flex:none;font:400 13px/1 Inter,sans-serif;color:#9397ab;display:{{ p.valDisplay }}">{{ p.value }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+                <div style="margin-top:26px;border-top:1px solid #292b31;padding-top:18px;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab">Portway 1.0.1 · WireGuard 1.0.20250521<br>Free software under the GPL. Your keys never leave this device.</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute;left:0;right:0;bottom:0;background:#161826;padding:0 22px 14px">
+              <div style="height:1px;background:linear-gradient(90deg,transparent 0,#292b31 48px,#292b31 calc(100% - 48px),transparent 100%)"></div>
+              <div style="display:flex;padding-top:9px">
+                <div onClick="{{ goHome }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer">
+                  <div style="width:18px;height:2px;border-radius:1px;background:{{ navHomeMark }}"></div>
+                  <svg width="22" height="22" viewBox="0 0 256 256" aria-hidden="true"><path d="M208,40H48A16,16,0,0,0,32,56v58.78c0,89.61,75.82,119.34,91,124.39a15.53,15.53,0,0,0,10,0c15.2-5.05,91-34.78,91-124.39V56A16,16,0,0,0,208,40Z" fill="{{ navHomeIcon }}"></path></svg>
+                  <span style="font:500 11px/1 Inter,sans-serif;color:{{ navHomeIcon }}">Home</span>
+                </div>
+                <div onClick="{{ goLocations }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer">
+                  <div style="width:18px;height:2px;border-radius:1px;background:{{ navLocMark }}"></div>
+                  <svg width="22" height="22" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,112a24,24,0,1,1,24-24A24,24,0,0,1,128,128Z" fill="{{ navLocIcon }}"></path></svg>
+                  <span style="font:500 11px/1 Inter,sans-serif;color:{{ navLocIcon }}">Configs</span>
+                </div>
+                <div onClick="{{ goSettings }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer">
+                  <div style="width:18px;height:2px;border-radius:1px;background:{{ navSetMark }}"></div>
+                  <svg width="22" height="22" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.6,107.6,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.29,107.29,0,0,0-26.25-10.86,8,8,0,0,0-7.06,1.48L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,126q-.06,2.16,0,4.32L25.11,148.94a8,8,0,0,0-1.48,7.06,107.6,107.6,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Z" fill="{{ navSetIcon }}"></path></svg>
+                  <span style="font:500 11px/1 Inter,sans-serif;color:{{ navSetIcon }}">Settings</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </x-import>
+    </div>
+
+  </div>
+
+  <p style="margin:40px 0 0;font:400 13px/1.7 Inter,sans-serif;color:#9397ab;max-width:78ch;text-wrap:pretty">Try next: "take <a href="#1a">1a</a>'s line rule into <a href="#1d">1d</a>'s home screen" · "make <a href="#1c">1c</a> the default hero and drop the ring" · "I want the editor and the always-on / kill-switch screen designed too" · "bring back JetBrains Mono for figures".</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;ring&quot;,&quot;line&quot;,&quot;thumb&quot;],&quot;default&quot;:&quot;ring&quot;,&quot;tsType&quot;:&quot;'ring'|'line'|'thumb'&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#9184d9&quot;,&quot;#5B4BD6&quot;,&quot;#8FB6FF&quot;,&quot;#6FD9B8&quot;],&quot;default&quot;:&quot;#6FD9B8&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Hero&quot;}}">
+const ACCENT = '#9184d9';
+const GROUND = '#161826';
+const PAPER = '#f3f5fe';
+const RAIL = '#292b31';
+
+// Nocturne carries the accent as ONE role with a 100–900 ramp on a shared lightness
+// scale, so the accent tweak has to move the whole ramp. Anything less and a teal ring
+// ends up sitting on a violet glow — two accents, which the system forbids.
+function mix(a, b, t) {
+  const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [ar, ag, ab] = p(a), [br, bg, bb] = p(b);
+  const c = (x, y) => Math.round(x + (y - x) * t).toString(16).padStart(2, '0');
+  return '#' + c(ar, br) + c(ag, bg) + c(ab, bb);
+}
+
+function ramp(accent) {
+  return {
+    a: accent,
+    l300: mix(accent, PAPER, 0.54),
+    l400: mix(accent, PAPER, 0.28),
+    d600: mix(accent, GROUND, 0.22),
+    d700: mix(accent, GROUND, 0.42),
+    d800: mix(accent, GROUND, 0.62),
+    d900: mix(accent, GROUND, 0.78),
+  };
+}
+const MUTED = '#9397ab';
+const DIM = '#9397ab';
+const TEXT = '#e9e9ed';
+
+// Portway has no server list — the city is a lookup on the peer's endpoint IP,
+// which is a fact about where traffic surfaces rather than a product promise.
+const GEO = { ip: '5.9.44.12', city: 'Frankfurt', region: 'Hesse', country: 'DE' };
+
+const CIRC_248 = 2 * Math.PI * 112;
+const CIRC_236 = 2 * Math.PI * 106;
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+class Component extends DCLogic {
+  state = {
+    phase: 'connected',
+    seconds: 724,
+    screen: 'onboard',
+    obStep: 0,
+    configOpen: false,
+    prefs: { reconnect: true, boot: false, multi: false, killswitch: true },
+    tick: 0,
+  };
+
+  // The template's literals read var(--pw-a*) so they paint at parse time from the
+  // helmet defaults; this republishes the ramp whenever the accent tweak changes.
+  publishRamp() {
+    const r = ramp(this.props.accentColor ?? ACCENT);
+    const s = document.documentElement.style;
+    s.setProperty('--pw-a', r.a);
+    s.setProperty('--pw-a-300', r.l300);
+    s.setProperty('--pw-a-400', r.l400);
+    s.setProperty('--pw-a-600', r.d600);
+    s.setProperty('--pw-a-700', r.d700);
+    s.setProperty('--pw-a-800', r.d800);
+    s.setProperty('--pw-a-900', r.d900);
+    s.setProperty('--pw-a-glow', mix(r.a, GROUND, 0.66));
+    s.setProperty('--pw-a-sweep', mix(r.a, GROUND, 0.6));
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.accentColor !== this.props.accentColor) this.publishRamp();
+  }
+
+  componentDidMount() {
+    this.publishRamp();
+    this.timer = setInterval(() => {
+      this.setState((s) => ({
+        seconds: s.phase === 'connected' ? s.seconds + 1 : s.seconds,
+        tick: s.tick + 1,
+      }));
+    }, 1000);
+  }
+
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  setPhase(next, after) {
+    this.setState({ phase: next });
+    if (after) {
+      clearTimeout(this.phaseTimer);
+      this.phaseTimer = setTimeout(() => this.setState({ phase: after.phase, seconds: after.seconds ?? this.state.seconds }), after.delay);
+    }
+  }
+
+  toggle = () => {
+    const p = this.state.phase;
+    if (p === 'connected') this.setPhase('disconnecting', { phase: 'idle', delay: 900, seconds: 0 });
+    else if (p === 'idle') this.setPhase('connecting', { phase: 'connected', delay: 1900, seconds: 0 });
+  };
+
+  renderVals() {
+    const { phase, seconds, screen, obStep, configOpen, prefs, tick } = this.state;
+    const heroStyle = this.props.heroStyle ?? 'ring';
+    const accent = this.props.accentColor ?? ACCENT;
+    const R = ramp(accent);
+    const ACCENT_LIGHT = R.l300;
+    const connected = phase === 'connected';
+    const busy = phase === 'connecting' || phase === 'disconnecting';
+
+    const kicker = {
+      connected: ['Protected', accent],
+      idle: ['Not protected', DIM],
+      connecting: ['Connecting', accent],
+      disconnecting: ['Disconnecting', DIM],
+    }[phase];
+
+    const mm = Math.floor(seconds / 60);
+    const elapsed = connected ? pad(Math.floor(mm / 60)) + ':' + pad(mm % 60) + ':' + pad(seconds % 60) : '—';
+
+    const rxBase = connected ? 1.6 + 0.9 * Math.sin(tick / 3) : 0;
+    const txBase = connected ? 0.42 + 0.3 * Math.sin(tick / 2.2) : 0;
+
+    const headline = {
+      connected: 'Your traffic leaves in Frankfurt.',
+      idle: 'Your traffic leaves from here.',
+      connecting: 'Opening the tunnel…',
+      disconnecting: 'Closing the tunnel…',
+    }[phase];
+
+    const sub = {
+      connected: 'Your traffic surfaces in ' + GEO.city + ', resolved from the peer\u2019s IP.',
+      idle: 'Nothing is encrypted right now. Tap to connect.',
+      connecting: 'Waiting for the first handshake.',
+      disconnecting: 'Tearing down the interface.',
+    }[phase];
+
+
+
+    // Turn 2 — five ways to render the one datum the heartbeat was hiding: how
+    // old the last handshake is, against WireGuard's 180s "peer is gone" cutoff.
+    const HS_REKEY = 118;
+    const HS_LIMIT = 180;
+    const hsAge = connected ? seconds % HS_REKEY : HS_LIMIT;
+    const hsSecs = (s) => (s >= 60 ? Math.floor(s / 60) + 'm ' + pad(s % 60) + 's' : s + 's');
+    const hsLate = hsAge > 150;
+    const hsInk = !connected ? '#8a5560' : hsLate ? '#c8a24a' : ACCENT_LIGHT;
+
+    const hsAgeText = connected ? hsSecs(hsAge) + ' ago' : 'none in 3m';
+    const hsBarPct = Math.min(100, (hsAge / HS_LIMIT) * 100).toFixed(1) + '%';
+    const hsBarMark = ((HS_REKEY / HS_LIMIT) * 100).toFixed(1) + '%';
+
+    const HS_C = 2 * Math.PI * 34;
+    const hsLeft = Math.max(0, HS_REKEY - hsAge);
+    const hsGaugeDash = ((hsLeft / HS_REKEY) * HS_C).toFixed(1) + ' ' + HS_C.toFixed(1);
+    const hsGaugeText = connected ? hsSecs(hsLeft) : '\u2014';
+
+    const hsWord = !connected ? 'Peer silent' : hsLate ? 'Due now' : hsAge < 30 ? 'Just now' : 'Fresh';
+    const hsWordSub = !connected
+      ? 'Last handshake over three minutes ago'
+      : hsLate
+        ? 'Rekey overdue — still inside the 3m window'
+        : 'Handshake inside the last two minutes';
+
+    // Build the timestamp series first, then read every gap off consecutive
+    // entries — the printed interval is the difference between the two clocks
+    // beside it, not an independently generated number.
+    const HS_GAPS = [121, 108, 136, 94];
+    const hsStamps = [14 * 3600 + 38 * 60 + 2];
+    HS_GAPS.forEach((g) => hsStamps.push(hsStamps[hsStamps.length - 1] - g));
+    const hsLog = hsStamps.map((t, i) => ({
+      clock: pad(Math.floor(t / 3600)) + ':' + pad(Math.floor((t % 3600) / 60)) + ':' + pad(t % 60),
+      gap: i === 0 ? hsAgeText : hsSecs(hsStamps[i - 1] - t) + ' apart',
+      dot: i === 0 ? (connected ? accent : '#8a5560') : R.d700,
+      ink: i === 0 ? TEXT : MUTED,
+    }));
+
+    const hsRings = [0, 1, 2].map((i) => {
+      const reached = connected && hsAge >= i * 40;
+      return {
+        size: 34 + i * 30 + 'px',
+        border: reached ? (i === 0 ? accent : R.d600) : RAIL,
+        opacity: reached ? (1 - i * 0.28).toFixed(2) : '0.35',
+      };
+    });
+
+    const btnLabel = { connected: 'Disconnect', idle: 'Connect', connecting: 'Cancel', disconnecting: 'Disconnecting' }[phase];
+
+    const spark = Array.from({ length: 34 }, (_, i) => {
+      const seed = Math.sin((i + tick) * 0.7) * Math.cos((i + tick) * 0.31);
+      const h = connected ? 18 + Math.abs(seed) * 82 : 3;
+      return { h: h.toFixed(1) + '%', fill: connected ? (i > 28 ? accent : R.d700) : RAIL };
+    });
+
+    const history = Array.from({ length: 30 }, (_, i) => {
+      const v = Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6));
+      return { h: (12 + v * 88).toFixed(1) + '%', fill: i === 29 ? accent : R.d800 };
+    });
+
+    const history14 = Array.from({ length: 14 }, (_, i) => {
+      const v = Math.abs(Math.sin(i * 2.1) * Math.cos(i * 0.9));
+      return { h: (14 + v * 86).toFixed(1) + '%', fill: i === 13 ? accent : R.d800 };
+    });
+
+    const dashFor = (circ) => {
+      if (busy) return (circ * 0.22).toFixed(1) + ' ' + (circ * 0.78).toFixed(1);
+      if (connected) return circ.toFixed(1) + ' 0';
+      return '0 ' + circ.toFixed(1);
+    };
+
+    const health = [
+      { label: 'Ping', value: connected ? '42 ms' : '—', dot: connected ? R.l400 : '#595d6c' },
+      { label: 'Endpoint', value: GEO.ip + ':51820', dot: '#595d6c' },
+      { label: 'Resolved location', value: GEO.city + ', ' + GEO.country, dot: '#595d6c' },
+    ];
+
+    const configRows = [
+      { label: 'Public key', value: 'wOs2eguFEohqIZxlSJ1CAT9584tc6ejj9hfGFsoBVkA=' },
+      { label: 'Addresses', value: 'fc00:bbbb:bbbb:bb11::3:368b/128' },
+      { label: 'DNS servers', value: '1.1.1.1, 1.0.0.1' },
+      { label: 'Allowed IPs', value: '0.0.0.0/0, ::/0' },
+      { label: 'Persistent keepalive', value: '25 seconds' },
+      { label: 'MTU', value: '1420' },
+    ];
+
+    const confirmRows = [
+      { label: 'Endpoint', value: '5.9.44.12:51820' },
+      { label: 'Routes', value: 'All traffic' },
+      { label: 'DNS', value: '1.1.1.1' },
+      { label: 'Plan', value: '30 GB · 23 days left' },
+    ];
+
+    const pick = (name) => () => this.setState({ screen: 'home' });
+    const locations = [
+      { name: 'beta-frankfurt', meta: connected ? 'Connected · Frankfurt, DE' : 'Frankfurt, DE · 5.9.44.12', ping: connected ? '42 ms' : '—', dot: connected ? accent : '#595d6c', nameColor: TEXT },
+      { name: 'alpha-ams', meta: 'Amsterdam, NL · 45.83.107.4', ping: '58 ms', dot: '#595d6c', nameColor: TEXT },
+      { name: 'home-nas', meta: 'No route to peer · 81.4.22.9', ping: '—', dot: '#8a5560', nameColor: TEXT },
+      { name: 'work', meta: 'London, GB · 51.15.9.201', ping: '91 ms', dot: '#595d6c', nameColor: TEXT },
+    ].map((l) => ({
+      ...l,
+      pick: pick(l.name),
+      // The chevron sits inside the row's tap target, so it has to claim the event.
+      open: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ screen: 'detail' }); },
+    }));
+
+    const swOn = (on) => ({
+      swBg: on ? accent : 'transparent',
+      swBorder: on ? accent : '#595d6c',
+      knob: on ? '#161826' : '#9397ab',
+      knobLeft: on ? '22px' : '4px',
+      swDisplay: 'block',
+      valDisplay: 'none',
+      value: '',
+    });
+    const swVal = (v) => ({ swBg: 'transparent', swBorder: '#595d6c', knob: DIM, knobLeft: '4px', swDisplay: 'none', valDisplay: 'block', value: v });
+    const flip = (k) => () => this.setState((s) => ({ prefs: { ...s.prefs, [k]: !s.prefs[k] } }));
+    const noop = () => {};
+
+    const prefGroups = [
+      { title: 'Protection', items: [
+        { title: 'Kill switch', summary: 'Block all traffic if the tunnel drops', ...swOn(prefs.killswitch), toggle: flip('killswitch') },
+        { title: 'Reconnect stalled tunnels', summary: 'If a tunnel is up but stops handshaking, restart it', ...swOn(prefs.reconnect), toggle: flip('reconnect') },
+        { title: 'Connect at startup', summary: 'Bring the last location up when the phone boots', ...swOn(prefs.boot), toggle: flip('boot') },
+      ] },
+      { title: 'Advanced', items: [
+        { title: 'Allow several locations at once', summary: 'Off means turning one on turns the others off', ...swOn(prefs.multi), toggle: flip('multi') },
+        { title: 'Provider panel', summary: 'Where account and usage figures come from', ...swVal('Not set'), toggle: noop },
+        { title: 'Export locations', summary: 'Save every config to an encrypted zip', ...swVal(''), toggle: noop },
+      ] },
+      { title: 'App', items: [
+        { title: 'Quick Settings tile', summary: 'A one-tap toggle in the notification shade', ...swOn(true), toggle: noop },
+        { title: 'Application log', summary: 'Useful if something will not connect', ...swVal(''), toggle: noop },
+      ] },
+    ];
+
+    const ob = [
+      { kicker: 'Welcome', title: 'Portway is a door, not a service.', body: 'It carries your traffic to a server you or your provider control. There is no account here and nothing to subscribe to — only the config you were given.', cta: 'Continue' },
+      { kicker: 'Step 1 of 2', title: 'Add the code your provider sent.', body: 'A QR code or a .conf file. Portway reads it once, keeps the private key on this device, and never sends it anywhere.', cta: 'Scan a QR code' },
+      { kicker: 'Step 2 of 2', title: 'Android will ask for permission.', body: 'A VPN needs the system\u2019s consent to route traffic. Android shows its own dialog — Portway cannot skip or fake it.', cta: 'Understood' },
+    ][obStep];
+
+    return {
+      heroStyle,
+      elapsed,
+      pingText: connected ? '42 ms' : '—',
+      pingColor: connected ? TEXT : DIM,
+      rxText: connected ? rxBase.toFixed(1) + ' MB/s' : '—',
+      txText: connected ? (txBase * 1000).toFixed(0) + ' KB/s' : '—',
+
+      aKickerText: kicker[0],
+      aKicker: kicker[1],
+      aHeadline: headline,
+      aSub: sub,
+      aLineScale: connected ? 1 : busy ? 0.45 : 0.06,
+      aBtnLabel: btnLabel,
+      aBtnBorder: connected ? '#595d6c' : accent,
+      aBtnColor: connected ? MUTED : ACCENT_LIGHT,
+
+      bRingTrack: RAIL,
+      bRingStroke: connected ? accent : busy ? accent : 'transparent',
+      bRingDash: dashFor(CIRC_248),
+      bRingDashHome: dashFor(CIRC_236),
+      bGlow: connected ? 1 : busy ? 0.6 : 0,
+      bGlowAnim: connected ? 'pw-glow 3.4s ease-in-out infinite' : 'none',
+      bSpinAnim: busy ? 'pw-spin 1.1s linear infinite' : 'none',
+      bBigFigure: connected ? elapsed : busy ? '···' : 'Off',
+      bCaption: connected ? GEO.city + ', ' + GEO.country + ' · 42 ms' : busy ? GEO.city + ', ' + GEO.country : 'Tap to connect',
+
+      configName: 'beta-frankfurt',
+      geoCity: GEO.city,
+      geoLine: GEO.city + ', ' + GEO.country + ' · from ' + GEO.ip,
+
+      hsAgeText,
+      hsBarPct,
+      hsBarMark,
+      hsInk,
+      hsGaugeDash,
+      hsGaugeText,
+      hsWord,
+      hsWordSub,
+      hsLog,
+      hsRings,
+
+
+      cBtnBg: connected ? 'transparent' : R.d900,
+      cSweepDisplay: busy ? 'block' : 'none',
+
+      spark,
+      history,
+      history14,
+      health,
+      configRows,
+      confirmRows,
+      locations,
+      prefGroups,
+
+      toggleA: this.toggle,
+      toggleB: this.toggle,
+      toggleC: this.toggle,
+
+      isOnboard: screen === 'onboard',
+      isScan: screen === 'scan',
+      isConfirm: screen === 'confirm',
+      isHome: screen === 'home',
+      isLocations: screen === 'locations',
+      isDetail: screen === 'detail',
+      isSettings: screen === 'settings',
+      showNav: screen === 'home' || screen === 'locations' || screen === 'settings',
+
+      obKicker: ob.kicker,
+      obTitle: ob.title,
+      obBody: ob.body,
+      obCta: ob.cta,
+      ob1: obStep >= 0 ? accent : RAIL,
+      ob2: obStep >= 1 ? accent : RAIL,
+      ob3: obStep >= 2 ? accent : RAIL,
+      obNext: () => {
+        if (obStep === 1) this.setState({ screen: 'scan' });
+        else if (obStep === 2) this.setState({ screen: 'home' });
+        else this.setState({ obStep: obStep + 1 });
+      },
+      obSkip: () => this.setState({ screen: 'home' }),
+
+      scanFound: () => this.setState({ screen: 'confirm', obStep: 2 }),
+      saveConfig: () => { this.setState({ screen: 'home', phase: 'connecting', seconds: 0 }); clearTimeout(this.phaseTimer); this.phaseTimer = setTimeout(() => this.setState({ phase: 'connected', seconds: 0 }), 1900); },
+
+      goHome: () => this.setState({ screen: 'home' }),
+      goLocations: () => this.setState({ screen: 'locations' }),
+      goSettings: () => this.setState({ screen: 'settings' }),
+      goScan: () => this.setState({ screen: 'scan' }),
+
+      configOpen,
+      configHint: configOpen ? 'Hide' : 'Show',
+      toggleConfig: () => this.setState({ configOpen: !configOpen }),
+
+      navHomeIcon: screen === 'home' ? ACCENT_LIGHT : DIM,
+      navLocIcon: screen === 'locations' ? ACCENT_LIGHT : DIM,
+      navSetIcon: screen === 'settings' ? ACCENT_LIGHT : DIM,
+      navHomeMark: screen === 'home' ? accent : 'transparent',
+      navLocMark: screen === 'locations' ? accent : 'transparent',
+      navSetMark: screen === 'settings' ? accent : 'transparent',
+    };
+  }
+}
+
+</script>
+</body>
+</html>

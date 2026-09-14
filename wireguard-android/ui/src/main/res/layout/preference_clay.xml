@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Replacement for androidx-preference's stock row. The ids that remain are NOT free choices —
+  ~ Preference.onBindViewHolder looks each one up by name and silently does nothing if it is
+  ~ missing: @android:id/title, @android:id/summary and @android:id/widget_frame.
+  ~
+  ~ There is no icon column, per Nocturne: it carried no information on any row in this app.
+  ~ Hiding it in XML was not enough and was in fact the bug — onBindViewHolder overwrites the
+  ~ frame's visibility on every bind, and with the default iconSpaceReserved=true it sets
+  ~ INVISIBLE, which keeps the 42dp. Every icon lookup in that method is null-guarded, so
+  ~ deleting the views is the supported way to drop the column for good.
+  ~
+  ~ duplicateParentState on the text is what gives disabled preferences (zip export while it
+  ~ runs, tools installer without root) a visibly disabled look instead of appearing enabled.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/row_top_rule"
+    android:baselineAligned="false"
+    android:clipToPadding="false"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="22dp"
+    android:paddingVertical="15dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@android:id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:ellipsize="marquee"
+            android:letterSpacing="@dimen/tracking_body"
+            android:lineSpacingMultiplier="1.35"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="14.5sp" />
+
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:duplicateParentState="true"
+            android:lineSpacingMultiplier="1.5"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="@color/clay_text_muted"
+            android:textSize="12.5sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@android:id/widget_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:gravity="end|center_vertical"
+        android:orientation="vertical" />
+</LinearLayout>

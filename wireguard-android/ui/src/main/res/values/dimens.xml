@@ -9,4 +9,8 @@
     <dimen name="bottom_sheet_top_padding">8dp</dimen>
     <dimen name="bottom_sheet_icon_padding">16dp</dimen>
     <dimen name="tunnel_list_placeholder_margin">16dp</dimen>
+    <!-- Material 3 BottomNavigationView with labels. Used to inset content above the bar:
+         layout_dodgeInsetEdges translates the whole container UP by this amount instead,
+         which pushed the first list row behind the action bar. -->
+    <dimen name="bottom_nav_height">72dp</dimen>
 </resources>

@@ -78,7 +78,6 @@
     <string name="bad_config_reason_unknown_attribute">Attributo sconosciuto</string>
     <string name="bad_config_reason_unknown_section">Sezione sconosciuta</string>
     <string name="bad_config_reason_value_out_of_range">Valore fuori scala</string>
-    <string name="bad_extension_error">Il file deve essere .conf o .zip</string>
     <string name="error_no_qr_found">Codice QR non trovato nell\'immagine</string>
     <string name="error_qr_checksum">Verifica checksum del codice QR fallita</string>
     <string name="cancel">Annulla</string>
@@ -89,7 +88,7 @@
     <string name="config_rename_error">Impossibile rinominare il file di configurazione “%s”</string>
     <string name="config_save_error">Impossibile salvare la configurazione per “%1$s”: %2$s</string>
     <string name="config_save_success">Configurazione per “%s” salvata correttamente</string>
-    <string name="create_activity_title">Crea un tunnel WireGuard</string>
+    <string name="create_activity_title">Crea un tunnel</string>
     <string name="create_bin_dir_error">Impossibile creare cartella locale binari</string>
     <string name="create_downloads_file_error">Impossibile creare il file nella cartella di download</string>
     <string name="create_empty">Crea da zero</string>
@@ -143,7 +142,7 @@
     <string name="latest_handshake_ago">%s fa</string>
     <string name="listen_port">Porta in ascolto</string>
     <string name="log_export_error">Impossibile esportare il log: %s</string>
-    <string name="log_export_subject">File di log WireGuard Android</string>
+    <string name="log_export_subject">File di log Portway Android</string>
     <string name="log_export_success">Salvato in “%s”</string>
     <string name="log_export_title">Esporta file di log</string>
     <string name="log_saver_activity_label">Salva log</string>
@@ -176,8 +175,8 @@
     <string name="parse_error_integer">numero</string>
     <string name="parse_error_reason">Impossibile analizzare %1$s “%2$s”</string>
     <string name="peer">Peer</string>
-    <string name="permission_description">controllare i tunnel WireGuard, abilitando e disabilitando i tunnel a piacimento, potenzialmente dirottando il traffico Internet</string>
-    <string name="permission_label">controlla tunnel WireGuard</string>
+    <string name="permission_description">controllare i tunnel Portway, abilitando e disabilitando i tunnel a piacimento, potenzialmente dirottando il traffico Internet</string>
+    <string name="permission_label">controlla tunnel Portway</string>
     <string name="persistent_keepalive">Tieni sempre attivo</string>
     <string name="pre_shared_key">Chiave condivisa (PSK)</string>
     <string name="pre_shared_key_enabled">abilitata</string>
@@ -199,7 +198,7 @@
     <string name="shell_start_error">Avvio della shell non riuscito: %d</string>
     <string name="success_application_will_restart">Successo. L\'applicazione si riavvierà…</string>
     <string name="toggle_all">Inverti tutto</string>
-    <string name="toggle_error">Errore di commutazione tunnel WireGuard: %s</string>
+    <string name="toggle_error">Errore di commutazione tunnel Portway: %s</string>
     <string name="tools_installer_already">wg e wg-quick sono già installati</string>
     <string name="tools_installer_failure">Impossibile installare strumenti di riga di comando (non root?)</string>
     <string name="tools_installer_initial">Installa strumenti facoltativi per script</string>
@@ -232,20 +231,10 @@
     <string name="type_name_go_userspace">Spazio utente Go</string>
     <string name="type_name_kernel_module">Modulo kernel</string>
     <string name="unknown_error">Errore sconosciuto</string>
-    <string name="updater_avalable">È disponibile un aggiornamento dell\'app. Si prega di aggiornare ora.</string>
-    <string name="updater_action">Scarica e aggiorna</string>
-    <string name="updater_rechecking">Recupero metadati aggiornamento…</string>
-    <string name="updater_download_progress">Scaricamento aggiornamento: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">Scaricamento aggiornamento: %s</string>
-    <string name="updater_installing">Installazione aggiornamento…</string>
-    <string name="updater_failure">Aggiornamento fallito: %s. Riprovo momentaneamente…</string>
-    <string name="updater_corrupt_title">Applicazione danneggiata</string>
-    <string name="updater_corrupt_message">Questa applicazione è danneggiata. Riscarica l\'APK dal sito collegato qui sotto. Dopo, disinstalla questa applicazione e reinstallala dall\'APK scaricato.</string>
-    <string name="updater_corrupt_navigate">Apri sito web</string>
     <string name="version_summary">Backend %1$s %2$s</string>
     <string name="version_summary_checking">Controllo versione backend %s</string>
     <string name="version_summary_unknown">Versione %s sconosciuta</string>
-    <string name="version_title">WireGuard per Android v%s</string>
+    <string name="version_title">Portway per Android v%s</string>
     <string name="vpn_not_authorized_error">Servizio VPN non autorizzato dall\'utente</string>
     <string name="vpn_start_error">Impossibile avviare il servizio VPN di Android</string>
     <string name="zip_export_error">Impossibile esportare i tunnel: %s</string>

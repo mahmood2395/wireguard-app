@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Nocturne: the active icon and label are both accent-300. Inactive splits — the icon may sit
+  ~ at 3:1 (#75798c), the label may not, so the two selectors differ deliberately.
+  -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/accent_300" android:state_checked="true" />
+    <item android:color="@color/icon_muted" />
+</selector>

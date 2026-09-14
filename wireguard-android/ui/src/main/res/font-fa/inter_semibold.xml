@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Vazirmatn UI SemiBold, SIL OFL 1.1. See font-fa/inter.xml for why a Persian-qualified
+  ~ resource carries an Inter name.
+  ~
+  ~ This one exists because the action-bar title style reaches past the @font/inter family and
+  ~ names the weight file directly — `fontFamily` on a framework ActionBar title does not resolve
+  ~ a family's weights — so the screen titles (تنظیمات, کانفیگ‌ها) were the one place in the app
+  ~ still drawn in Inter, falling back glyph by glyph to whatever the system had. Any other style
+  ~ that names a weight file directly is covered by this too.
+  ~
+  ~ tools:ignore="MissingDefaultResource": the base declaration does exist — font/inter_semibold.ttf —
+  ~ but lint only counts an XML font-family as a declaration, so it cannot see a bare .ttf and
+  ~ reports a crash risk that is not there. Any locale but Persian resolves to the TTF.
+  -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource">
+    <font android:font="@font/vazirmatn_semibold" android:fontWeight="600" android:fontStyle="normal"
+        app:font="@font/vazirmatn_semibold" app:fontWeight="600" app:fontStyle="normal" />
+</font-family>

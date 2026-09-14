@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ A 16dp knob inside a 4dp inset. On the accent fill the knob is the ground colour — a hole in
+  ~ the switch rather than a white dot on it, which is what the design asks for.
+  ~
+  ~ The stroke is why this reads at all. A hole the same colour as the page behind it is not a
+  ~ hole, it is a gap: SwitchCompat draws the thumb over the track, and at the travelled end the
+  ~ knob covered the track's cap AND its 1dp edge, so an ON switch lost half its silhouette and
+  ~ came out as a "D" floating in the row. Outlining the knob puts the edge back on the one part
+  ~ of the control that has no other way to be seen. accent_300 because it is the ramp's light
+  ~ end at night and its dark end by day — contrast against the page in both themes, which the
+  ~ ground colour by definition never has.
+  -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <inset
+            android:insetBottom="4dp"
+            android:insetLeft="4dp"
+            android:insetRight="4dp"
+            android:insetTop="4dp">
+            <shape android:shape="oval">
+                <size android:width="16dp" android:height="16dp" />
+                <solid android:color="@color/clay_canvas_top" />
+                <stroke android:width="1.5dp" android:color="@color/accent_300" />
+            </shape>
+        </inset>
+    </item>
+    <item>
+        <inset
+            android:insetBottom="4dp"
+            android:insetLeft="4dp"
+            android:insetRight="4dp"
+            android:insetTop="4dp">
+            <shape android:shape="oval">
+                <size android:width="16dp" android:height="16dp" />
+                <solid android:color="@color/clay_text_muted" />
+            </shape>
+        </inset>
+    </item>
+</selector>

@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Nocturne. The structural move on this screen is that upstream's label/value config listing —
+  ~ which used to be the entire screen — collapses behind one "Configuration" row. A consumer
+  ~ never needs it; a technical user needs it once. What replaces it above the fold is the part
+  ~ you actually watch: status, session, throughput, the handshake rhythm, fourteen days of
+  ~ usage, and the health rows.
+  ~
+  ~ Every value inside the disclosure keeps `ClipboardUtils::copyTextView`, and every
+  ~ `@{config...}` expression is upstream's verbatim.
+  ~
+  ~ There is no ToggleSwitch any more: the prototype's connect control is a full-width button in
+  ~ the actions row at the foot, beside Edit, over "Remove this config". The per-peer block is
+  ~ gone with it — the design states Allowed IPs and the keepalive as two of the six disclosed
+  ~ rows, and the throughput tiles already carry the figures that block used to show.
   -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,6 +25,8 @@
         <import type="com.wireguard.android.backend.Tunnel.State" />
 
         <import type="com.wireguard.android.util.ClipboardUtils" />
+
+        <import type="android.view.View" />
 
         <variable
             name="fragment"
@@ -28,297 +44,546 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
+        android:background="@drawable/aurora_canvas"
         android:clickable="true"
-        android:focusable="true">
+        android:clipToPadding="false"
+        android:focusable="true"
+        android:scrollbars="none">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="22dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="32dp">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/tunnel_detail_card"
+            <TextView
+                android:id="@+id/stats_status"
+                android:textAlignment="viewStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:accessibilityLiveRegion="polite"
+                android:letterSpacing="@dimen/tracking_kicker"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="@color/accent"
+                android:textSize="11sp"
+                tools:text="CONNECTED" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/detail_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:accessibilityLiveRegion="polite"
+                android:fontFeatureSettings="tnum"
+                android:letterSpacing="@dimen/tracking_hero"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="34sp"
+                tools:text="12:04:31" />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/interface_title"
+            <TextView
+                android:id="@+id/detail_sentence"
+                android:textAlignment="viewStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:lineSpacingMultiplier="1.6"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/clay_text_muted"
+                android:textSize="13.5sp"
+                tools:text="Your traffic surfaces in Frankfurt, resolved from the peer's IP." />
+
+            <!-- Throughput. The per-session total sits under its rate rather than in a row of
+                 its own, so the rate and the number it accumulates into read as one thing. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/surface_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="12dp">
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/interface_title"
+                        android:letterSpacing="@dimen/tracking_label"
+                        android:text="@string/connect_download"
+                        android:textAllCaps="true"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/stats_rx_rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFeatureSettings="tnum"
+                        android:letterSpacing="@dimen/tracking_heading"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textColor="@color/clay_rx"
+                        android:textSize="18sp"
+                        tools:text="1.2 MB/s" />
 
-                    <com.wireguard.android.widget.ToggleSwitch
-                        android:id="@+id/tunnel_switch"
+                    <TextView
+                        android:id="@+id/stats_rx_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:nextFocusDown="@id/interface_name_text"
-                        android:nextFocusForward="@id/interface_name_text"
-                        app:checked="@{tunnel.state == State.UP}"
-                        app:layout_constraintBaseline_toBottomOf="@+id/interface_title"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:onBeforeCheckedChanged="@{fragment::setTunnelState}" />
+                        android:layout_marginTop="4dp"
+                        android:fontFeatureSettings="tnum"
+                        android:lineSpacingMultiplier="1.3"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="11.5sp"
+                        tools:text="4.1 GB this session" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/surface_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="12dp">
 
                     <TextView
-                        android:id="@+id/interface_name_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/interface_name_text"
-                        android:text="@string/name"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/interface_title" />
+                        android:letterSpacing="@dimen/tracking_label"
+                        android:text="@string/connect_upload"
+                        android:textAllCaps="true"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="10.5sp" />
 
                     <TextView
-                        android:id="@+id/interface_name_text"
+                        android:id="@+id/stats_tx_rate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/name"
-                        android:nextFocusUp="@id/tunnel_switch"
-                        android:nextFocusDown="@id/public_key_text"
-                        android:nextFocusForward="@id/public_key_text"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:text="@{tunnel.name}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/interface_name_label"
-                        tools:text="wg0" />
+                        android:layout_marginTop="6dp"
+                        android:fontFeatureSettings="tnum"
+                        android:letterSpacing="@dimen/tracking_heading"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="@color/clay_tx"
+                        android:textSize="18sp"
+                        tools:text="240 KB/s" />
 
                     <TextView
-                        android:id="@+id/public_key_label"
+                        android:id="@+id/stats_tx_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/public_key_text"
-                        android:text="@string/public_key"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/interface_name_text" />
+                        android:layout_marginTop="4dp"
+                        android:fontFeatureSettings="tnum"
+                        android:lineSpacingMultiplier="1.3"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="11.5sp"
+                        tools:text="820 MB this session" />
+                </LinearLayout>
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/public_key_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/public_key"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:nextFocusUp="@id/interface_name_text"
-                        android:nextFocusDown="@id/addresses_text"
-                        android:nextFocusForward="@id/addresses_text"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:singleLine="true"
-                        android:text="@{config.interface.keyPair.publicKey.toBase64}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/public_key_label"
-                        tools:text="wOs2eguFEohqIZxlSJ1CAT9584tc6ejj9hfGFsoBVkA=" />
+            <!-- Fourteen days of usage, measured on this device by UsageSampler. Scaled against
+                 the busiest day in the window, not against a quota — the shape is the point. -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:letterSpacing="@dimen/tracking_label"
+                android:text="@string/detail_usage_label"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="@color/clay_text_muted"
+                android:textSize="10.5sp" />
 
-                    <TextView
-                        android:id="@+id/addresses_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/addresses_text"
-                        android:text="@string/addresses"
-                        android:visibility="@{config.interface.addresses.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/public_key_text" />
+            <com.wireguard.android.widget.UsageBandView
+                android:id="@+id/usage_band"
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginTop="13dp" />
 
-                    <TextView
-                        android:id="@+id/addresses_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/addresses"
-                        android:nextFocusUp="@id/public_key_text"
-                        android:nextFocusDown="@id/dns_servers_text"
-                        android:nextFocusForward="@id/dns_servers_text"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:text="@{config.interface.addresses}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:visibility="@{config.interface.addresses.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/addresses_label"
-                        tools:text="fc00:bbbb:bbbb:bb11::3:368b/128" />
-
-                    <TextView
-                        android:id="@+id/dns_servers_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/dns_servers_text"
-                        android:text="@string/dns_servers"
-                        android:visibility="@{config.interface.dnsServers.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/addresses_text" />
-
-                    <TextView
-                        android:id="@+id/dns_servers_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/dns_servers"
-                        android:nextFocusUp="@id/addresses_text"
-                        android:nextFocusDown="@id/dns_search_domains_text"
-                        android:nextFocusForward="@id/dns_search_domains_text"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:text="@{config.interface.dnsServers}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:visibility="@{config.interface.dnsServers.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/dns_servers_label"
-                        tools:text="8.8.8.8, 8.8.4.4" />
-
-                    <TextView
-                        android:id="@+id/dns_search_domains_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/dns_search_domain_text"
-                        android:text="@string/dns_search_domains"
-                        android:visibility="@{config.interface.dnsSearchDomains.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/dns_servers_text" />
-
-                    <TextView
-                        android:id="@+id/dns_search_domains_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/dns_search_domains"
-                        android:nextFocusUp="@id/dns_servers_text"
-                        android:nextFocusDown="@id/listen_port_text"
-                        android:nextFocusForward="@id/listen_port_text"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:text="@{config.interface.dnsSearchDomains}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:visibility="@{config.interface.dnsSearchDomains.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/dns_search_domains_label"
-                        tools:text="zx2c4.com" />
-
-                    <TextView
-                        android:id="@+id/listen_port_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/listen_port_text"
-                        android:text="@string/listen_port"
-                        android:visibility="@{!config.interface.listenPort.isPresent() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintEnd_toStartOf="@id/mtu_label"
-                        app:layout_constraintHorizontal_weight="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/dns_search_domains_text" />
-
-                    <TextView
-                        android:id="@+id/listen_port_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/listen_port"
-                        android:nextFocusRight="@id/mtu_text"
-                        android:nextFocusUp="@id/dns_search_domains_text"
-                        android:nextFocusDown="@id/applications_text"
-                        android:nextFocusForward="@id/mtu_text"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:text="@{config.interface.listenPort}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:visibility="@{!config.interface.listenPort.isPresent() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintEnd_toStartOf="@id/mtu_label"
-                        app:layout_constraintHorizontal_weight="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/listen_port_label"
-                        tools:text="51820" />
-
-                    <TextView
-                        android:id="@+id/mtu_label"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/mtu_text"
-                        android:text="@string/mtu"
-                        android:visibility="@{!config.interface.mtu.isPresent() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_weight="0.5"
-                        app:layout_constraintLeft_toRightOf="@id/listen_port_label"
-                        app:layout_constraintStart_toEndOf="@id/listen_port_label"
-                        app:layout_constraintTop_toBottomOf="@id/dns_search_domains_text" />
-
-                    <TextView
-                        android:id="@+id/mtu_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/mtu"
-                        android:nextFocusLeft="@id/listen_port_text"
-                        android:nextFocusUp="@id/dns_servers_text"
-                        android:nextFocusForward="@id/applications_text"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:text="@{config.interface.mtu}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:visibility="@{!config.interface.mtu.isPresent() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_weight="0.5"
-                        app:layout_constraintStart_toEndOf="@id/listen_port_label"
-                        app:layout_constraintStart_toStartOf="@+id/mtu_label"
-                        app:layout_constraintTop_toBottomOf="@+id/mtu_label"
-                        tools:text="1500" />
-
-                    <androidx.constraintlayout.widget.Barrier
-                        android:id="@+id/listen_port_mtu_barrier"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:barrierDirection="bottom"
-                        app:constraint_referenced_ids="listen_port_text,mtu_text" />
-
-                    <TextView
-                        android:id="@+id/applications_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:labelFor="@+id/applications_text"
-                        android:text="@string/applications"
-                        android:visibility="@{config.interface.includedApplications.isEmpty() &amp;&amp; config.interface.excludedApplications.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/listen_port_mtu_barrier" />
-
-                    <TextView
-                        android:id="@+id/applications_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/applications"
-                        android:nextFocusUp="@id/mtu_text"
-                        android:nextFocusDown="@id/peers_layout"
-                        android:nextFocusForward="@id/peers_layout"
-                        android:onClick="@{ClipboardUtils::copyTextView}"
-                        android:text="@{config.interface.includedApplications.isEmpty() ? @plurals/n_excluded_applications(config.interface.excludedApplications.size(), config.interface.excludedApplications.size()) : @plurals/n_included_applications(config.interface.includedApplications.size(), config.interface.includedApplications.size())}"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:visibility="@{config.interface.includedApplications.isEmpty() &amp;&amp; config.interface.excludedApplications.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/applications_label"
-                        tools:text="8 excluded" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/rule" />
 
             <LinearLayout
-                android:id="@+id/peers_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:divider="@null"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/usage_axis_start"
+                    android:textAlignment="viewStart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="11.5sp"
+                    tools:text="23 Aug" />
+
+                <TextView
+                    android:id="@+id/usage_axis_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="11.5sp"
+                    tools:text="5 Sep" />
+            </LinearLayout>
+
+            <!-- The handshake decay bar, the same widget the Connect screen carries, fed from
+                 the same statistics poll so the two screens cannot disagree. It replaced the
+                 heartbeat lane, and with it the "Latest handshake: 12 seconds ago" row. -->
+            <com.wireguard.android.widget.HandshakeDecayView
+                android:id="@+id/detail_handshake_decay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:letterSpacing="@dimen/tracking_label"
+                android:text="@string/detail_health_label"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="@color/clay_text_muted"
+                android:textSize="10.5sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/row_top_rule"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="12dp">
+
+                <View
+                    android:id="@+id/detail_ping_dot"
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/handshake_dot" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/connect_ping_label"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="13.5sp" />
+
+                <TextView
+                    android:id="@+id/detail_ping_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFeatureSettings="tnum"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="13.5sp"
+                    tools:text="42 ms" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/row_top_rule"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="12dp">
+
+                <!-- Every health row carries a dot in the prototype, lit only where the value is
+                     live. The endpoint's is always quiet: it is a fact, not a measurement. -->
+                <View
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/handshake_dot"
+                    android:backgroundTint="@color/clay_stroke" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/endpoint"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="13.5sp" />
+
+                <TextView
+                    android:id="@+id/detail_endpoint_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/endpoint"
+                    android:ellipsize="middle"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="13.5sp"
+                    tools:text="5.9.44.12:51820" />
+            </LinearLayout>
+
+            <!-- Resolved location. A finding about the peer, not a setting: it is filled in from
+                 a lookup made through the tunnel while this config was up, and stays "—" until
+                 one has actually answered. Its dot is quiet for the same reason the endpoint's
+                 is — nothing here is being measured live. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/row_top_rule"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="12dp">
+
+                <View
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/handshake_dot"
+                    android:backgroundTint="@color/clay_stroke" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/detail_resolved_location"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="13.5sp" />
+
+                <TextView
+                    android:id="@+id/detail_location_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/detail_resolved_location"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="13.5sp"
+                    tools:text="Frankfurt, DE" />
+            </LinearLayout>
+
+            <!-- The disclosure. Collapsed by default; the hint is the only affordance, so it
+                 says what the tap will do rather than what the state is. -->
+            <LinearLayout
+                android:id="@+id/config_disclosure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/row_rule_both"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/detail_configuration"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="13.5sp" />
+
+                <TextView
+                    android:id="@+id/config_disclosure_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/detail_show"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="12.5sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/config_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:items="@{config.peers}"
-                app:layout="@{@layout/tunnel_detail_peer}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tunnel_detail_card"
-                tools:ignore="UselessLeaf" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:visibility="gone">
+
+                <!-- Exactly the six rows the prototype discloses, in its order. Upstream also
+                     listed the name, the DNS search domains, the listen port and the excluded
+                     applications; the design drops them, and the name is already the screen's
+                     title. Every value keeps tap-to-copy. -->
+                <TextView
+                    android:id="@+id/public_key_label"
+                    style="@style/Portway.Detail.Label"
+                    android:labelFor="@+id/public_key_text"
+                    android:text="@string/public_key" />
+
+                <TextView
+                    android:id="@+id/public_key_text"
+                    style="@style/Portway.Detail.Value"
+                    android:contentDescription="@string/public_key"
+                    android:nextFocusDown="@id/addresses_text"
+                    android:nextFocusForward="@id/addresses_text"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    android:text="@{config.interface.keyPair.publicKey.toBase64}"
+                    tools:text="wOs2eguFEohqIZxlSJ1CAT9584tc6ejj9hfGFsoBVkA=" />
+
+                <TextView
+                    android:id="@+id/addresses_label"
+                    style="@style/Portway.Detail.Label"
+                    android:labelFor="@+id/addresses_text"
+                    android:text="@string/addresses"
+                    android:visibility="@{config.interface.addresses.isEmpty() ? View.GONE : View.VISIBLE}" />
+
+                <TextView
+                    android:id="@+id/addresses_text"
+                    style="@style/Portway.Detail.Value"
+                    android:contentDescription="@string/addresses"
+                    android:nextFocusUp="@id/public_key_text"
+                    android:nextFocusDown="@id/dns_servers_text"
+                    android:nextFocusForward="@id/dns_servers_text"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    android:text="@{config.interface.addresses}"
+                    android:visibility="@{config.interface.addresses.isEmpty() ? View.GONE : View.VISIBLE}"
+                    tools:text="fc00:bbbb:bbbb:bb11::3:368b/128" />
+
+                <TextView
+                    android:id="@+id/dns_servers_label"
+                    style="@style/Portway.Detail.Label"
+                    android:labelFor="@+id/dns_servers_text"
+                    android:text="@string/dns_servers"
+                    android:visibility="@{config.interface.dnsServers.isEmpty() ? View.GONE : View.VISIBLE}" />
+
+                <TextView
+                    android:id="@+id/dns_servers_text"
+                    style="@style/Portway.Detail.Value"
+                    android:contentDescription="@string/dns_servers"
+                    android:nextFocusUp="@id/addresses_text"
+                    android:nextFocusDown="@id/allowed_ips_text"
+                    android:nextFocusForward="@id/allowed_ips_text"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    android:text="@{config.interface.dnsServers}"
+                    android:visibility="@{config.interface.dnsServers.isEmpty() ? View.GONE : View.VISIBLE}"
+                    tools:text="1.1.1.1, 1.0.0.1" />
+
+                <!-- The last three come off the peer, which is a list, so they are filled in
+                     TunnelDetailFragment rather than bound: an empty peer list would make a
+                     binding expression on peers[0] throw at inflate time. -->
+                <TextView
+                    android:id="@+id/allowed_ips_label"
+                    style="@style/Portway.Detail.Label"
+                    android:labelFor="@+id/allowed_ips_text"
+                    android:text="@string/allowed_ips" />
+
+                <TextView
+                    android:id="@+id/allowed_ips_text"
+                    style="@style/Portway.Detail.Value"
+                    android:contentDescription="@string/allowed_ips"
+                    android:nextFocusUp="@id/dns_servers_text"
+                    android:nextFocusDown="@id/keepalive_text"
+                    android:nextFocusForward="@id/keepalive_text"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    tools:text="0.0.0.0/0, ::/0" />
+
+                <TextView
+                    android:id="@+id/keepalive_label"
+                    style="@style/Portway.Detail.Label"
+                    android:labelFor="@+id/keepalive_text"
+                    android:text="@string/persistent_keepalive" />
+
+                <TextView
+                    android:id="@+id/keepalive_text"
+                    style="@style/Portway.Detail.Value"
+                    android:contentDescription="@string/persistent_keepalive"
+                    android:nextFocusUp="@id/allowed_ips_text"
+                    android:nextFocusDown="@id/mtu_text"
+                    android:nextFocusForward="@id/mtu_text"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    tools:text="every 25 seconds" />
+
+                <TextView
+                    android:id="@+id/mtu_label"
+                    style="@style/Portway.Detail.Label"
+                    android:labelFor="@+id/mtu_text"
+                    android:text="@string/mtu"
+                    android:visibility="@{!config.interface.mtu.isPresent() ? View.GONE : View.VISIBLE}" />
+
+                <TextView
+                    android:id="@+id/mtu_text"
+                    style="@style/Portway.Detail.Value"
+                    android:contentDescription="@string/mtu"
+                    android:nextFocusUp="@id/keepalive_text"
+                    android:onClick="@{ClipboardUtils::copyTextView}"
+                    android:text="@{config.interface.mtu}"
+                    android:visibility="@{!config.interface.mtu.isPresent() ? View.GONE : View.VISIBLE}"
+                    tools:text="1420" />
+            </LinearLayout>
+
+            <!-- Actions, per the prototype: the connect control fills the row, Edit sits beside
+                 it, and removal is a plain centred line — destructive, so it is never the thing
+                 your thumb lands on. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/detail_toggle"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1"
+                    android:textSize="14sp"
+                    app:cornerRadius="8dp"
+                    tools:text="Disconnect" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/detail_edit"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
+                    android:layout_marginStart="10dp"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/edit"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="14sp"
+                    app:cornerRadius="8dp"
+                    app:strokeColor="@color/clay_stroke" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/detail_remove"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingVertical="6dp"
+                android:text="@string/detail_remove"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/clay_text_muted"
+                android:textSize="13sp" />
+        </LinearLayout>
     </ScrollView>
 </layout>

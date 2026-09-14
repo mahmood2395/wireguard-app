@@ -65,7 +65,6 @@
     <string name="bad_config_reason_unknown_attribute">알 수 없는 속성</string>
     <string name="bad_config_reason_unknown_section">알수 없는 섹션</string>
     <string name="bad_config_reason_value_out_of_range">범위를 벗어난 값</string>
-    <string name="bad_extension_error">.conf 또는 .zip 파일이어야 함</string>
     <string name="error_no_qr_found">이미지에서 QR 코드를 찾을 수 없습니다</string>
     <string name="error_qr_checksum">QR 코드 체크섬 검증 실패</string>
     <string name="cancel">취소</string>
@@ -76,7 +75,7 @@
     <string name="config_rename_error">설정파일 \"%s\"의 이름을 변경할 수 없음</string>
     <string name="config_save_error">\"%1$s\"에 대한 설정을 저장할 수 없음: %2$s</string>
     <string name="config_save_success">\"%s\"에 대한 설정을 성공적으로 저장했습니다</string>
-    <string name="create_activity_title">WireGuard 터널 만들기</string>
+    <string name="create_activity_title">터널 만들기</string>
     <string name="create_bin_dir_error">로컬 바이너리 디렉터리를 만들 수 없음</string>
     <string name="create_downloads_file_error">다운로드 디렉토리에 파일을 만들 수 없음</string>
     <string name="create_empty">직접 만들기</string>
@@ -130,7 +129,7 @@
     <string name="latest_handshake_ago">%s 전에</string>
     <string name="listen_port">수신 대기 포트</string>
     <string name="log_export_error">로그를 내보낼 수 없음: %s</string>
-    <string name="log_export_subject">WireGuard 안드로이드 로그 파일</string>
+    <string name="log_export_subject">Portway 안드로이드 로그 파일</string>
     <string name="log_export_success">“%s”에 저장됨</string>
     <string name="log_export_title">로그 파일 내보내기</string>
     <string name="log_saver_activity_label">로그를 저장하기</string>
@@ -163,8 +162,8 @@
     <string name="parse_error_integer">횟수</string>
     <string name="parse_error_reason">%1$s을 파싱할 수 없음: “%2$s”</string>
     <string name="peer">피어</string>
-    <string name="permission_description">마음대로 터널을 활성화 및 비활성화하는 등 WireGuard 터널을 제어하면, 인터넷 트래픽을 잘못 전달할 위험이 있음</string>
-    <string name="permission_label">WireGuard 터널 제어</string>
+    <string name="permission_description">마음대로 터널을 활성화 및 비활성화하는 등 터널을 제어하면, 인터넷 트래픽을 잘못 전달할 위험이 있음</string>
+    <string name="permission_label">터널 제어</string>
     <string name="persistent_keepalive">Persistent keepalive</string>
     <string name="pre_shared_key">사전 공유 키</string>
     <string name="pre_shared_key_enabled">활성화됨</string>
@@ -186,7 +185,7 @@
     <string name="shell_start_error">쉘이 실행 실패함: %d</string>
     <string name="success_application_will_restart">성공. 앱이 곧 재시작됨…</string>
     <string name="toggle_all">모두 반전</string>
-    <string name="toggle_error">WireGuard 터널 토글링 오류: %s</string>
+    <string name="toggle_error">터널 토글링 오류: %s</string>
     <string name="tools_installer_already">wg와 wg-quick 모두 이미 설치되었음</string>
     <string name="tools_installer_failure">커맨드라인 도구 설치 불가 (루트 권한 필요)</string>
     <string name="tools_installer_initial">스크립팅에 필요한 선택적 도구 설치하기</string>
@@ -219,20 +218,10 @@
     <string name="type_name_go_userspace">Go userspace</string>
     <string name="type_name_kernel_module">커널 모듈</string>
     <string name="unknown_error">알 수 없는 오류</string>
-    <string name="updater_avalable">애플리케이션 업데이트를 사용할 수 있습니다. 지금 업데이트하세요.</string>
-    <string name="updater_action">다운로드 &amp; 업데이트</string>
-    <string name="updater_rechecking">업데이트 메타데이터를 가져오는 중…</string>
-    <string name="updater_download_progress">업데이트 다운로드 중: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">업데이트 다운로드 중: %s</string>
-    <string name="updater_installing">업데이트 설치 중…</string>
-    <string name="updater_failure">업데이트 실패: %s. 잠시 후 다시 시도합니다…</string>
-    <string name="updater_corrupt_title">애플리케이션 손상</string>
-    <string name="updater_corrupt_message">이 응용 프로그램이 손상되었습니다. 아래 링크된 웹사이트에서 APK를 다시 다운로드하세요. 그런 다음 이 애플리케이션을 제거하고 다운로드한 APK에서 다시 설치하세요.</string>
-    <string name="updater_corrupt_navigate">웹사이트 열기</string>
     <string name="version_summary">%1$s 백엔드 %2$s</string>
     <string name="version_summary_checking">%s 백엔드 버전 확인 중</string>
     <string name="version_summary_unknown">알 수 없는 버전: %s</string>
-    <string name="version_title">WireGuard for 안드로이드 v%s</string>
+    <string name="version_title">Portway for 안드로이드 v%s</string>
     <string name="vpn_not_authorized_error">VPN 서비스는 사용자에 의해 승인되지 않았음</string>
     <string name="vpn_start_error">안드로이드 VPN 서비스를 시작할 수 없음</string>
     <string name="zip_export_error">터널을 내보낼 수 없음: %s</string>

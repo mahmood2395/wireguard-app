@@ -20,7 +20,6 @@
     <string name="bad_config_reason_unknown_attribute">Ismeretlen tulajdonság</string>
     <string name="bad_config_reason_unknown_section">Ismeretlen szekció</string>
     <string name="bad_config_reason_value_out_of_range">Az érték a megengedett tartományon kívül van</string>
-    <string name="bad_extension_error">A fájl .conf vagy .zip legyen</string>
     <string name="error_no_qr_found">QR kód nem található a képen</string>
     <string name="error_qr_checksum">QR kód ellenőrzösszeg ellenőrzési hiba</string>
     <string name="cancel">Mégse</string>
@@ -30,7 +29,7 @@
     <string name="config_not_found_error">Konfigurációs állomány \"%s\" nem található meg</string>
     <string name="config_rename_error">A %s konfigurációs állomány nem nevezhető át</string>
     <string name="config_save_success">Sikerült elmenteni a “%s” nevű konfigurációt</string>
-    <string name="create_activity_title">WireGuard alagút létrehozása</string>
+    <string name="create_activity_title">alagút létrehozása</string>
     <string name="create_bin_dir_error">Nem lehet létrehozni helyi bináris könyvtárat</string>
     <string name="create_downloads_file_error">Nem lehet létrehozni a fájlt a letöltések könyvtárban</string>
     <string name="create_empty">Létrehozás az alapoktól</string>
@@ -102,5 +101,4 @@
     <string name="tunnel_name">Csatorna neve</string>
     <string name="type_name_kernel_module">Kernel modul</string>
     <string name="unknown_error">Ismeretlen hiba</string>
-    <string name="updater_corrupt_navigate">Weboldal megnyitása</string>
 </resources>

@@ -30,6 +30,27 @@ public final class InetEndpoint {
     private static final Pattern BARE_IPV6 = Pattern.compile("^[^\\[\\]]*:[^\\[\\]]*");
     private static final Pattern FORBIDDEN_CHARACTERS = Pattern.compile("[/?#]");
 
+    /**
+     * Portway: how a hostname becomes an address.
+     *
+     * Upstream calls InetAddress.getAllByName directly, which consults the device resolver
+     * cache and then the network's resolver. Both routinely hold a stale answer well past the
+     * record's TTL — a carrier resolver that ignores a 60s TTL leaves a moved server
+     * unreachable until the phone is rebooted, which is precisely the reported symptom. The
+     * application module installs a resolver that can go around those caches.
+     *
+     * The hostname in the config is never replaced: this only changes how it is looked up.
+     */
+    public interface Resolver {
+        InetAddress[] resolve(String host) throws UnknownHostException;
+    }
+
+    private static volatile Resolver resolver = InetAddress::getAllByName;
+
+    public static void setResolver(final Resolver newResolver) {
+        resolver = newResolver;
+    }
+
     private final String host;
     private final boolean isResolved;
     private final Object lock = new Object();
@@ -87,6 +108,21 @@ public final class InetEndpoint {
      *
      * @return the resolved endpoint, or {@link Optional#empty()}
      */
+    /**
+     * Portway: drop any cached resolution so the next {@link #getResolved()} really asks.
+     *
+     * The one-minute window below means a tunnel restarted shortly after connecting reuses the
+     * address it already had, without consulting DNS at all — so the stalled-tunnel watchdog's
+     * first restart could never pick up a moved server. Invalidating before a restart is what
+     * makes that restart able to find the new address.
+     */
+    public void invalidateResolution() {
+        synchronized (lock) {
+            resolved = null;
+            lastResolution = Instant.EPOCH;
+        }
+    }
+
     public Optional<InetEndpoint> getResolved() {
         if (isResolved)
             return Optional.of(this);
@@ -95,7 +131,7 @@ public final class InetEndpoint {
             if (Duration.between(lastResolution, Instant.now()).toMinutes() > 1) {
                 try {
                     // Prefer v4 endpoints over v6 to work around DNS64 and IPv6 NAT issues.
-                    final InetAddress[] candidates = InetAddress.getAllByName(host);
+                    final InetAddress[] candidates = resolver.resolve(host);
                     InetAddress address = candidates[0];
                     for (final InetAddress candidate : candidates) {
                         if (candidate instanceof Inet4Address) {

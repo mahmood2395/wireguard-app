@@ -1,0 +1,22 @@
+# --- Secrets: never commit -------------------------------------------------------------
+# The release signing key. Losing it means no installed copy can ever update; publishing it
+# means anyone can ship an "update". Back it up off-machine instead (see KEYSTORE.md).
+/keystore/
+*.jks
+*.keystore
+keystore.properties
+
+# --- Build outputs --------------------------------------------------------------------
+# Staged release APKs. They also carry the panel URL compiled into BuildConfig, which is kept
+# out of the repository on purpose (see BUILD.md).
+/dist/
+*.apk
+*.aab
+# Kotlin compiler daemon state and error logs (local paths, stack traces).
+.kotlin/
+
+# --- Local tooling and OS noise -------------------------------------------------------
+/.claude/
+/.agents/
+/skills-lock.json
+.DS_Store

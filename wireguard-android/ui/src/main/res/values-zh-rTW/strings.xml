@@ -65,7 +65,6 @@
     <string name="bad_config_reason_unknown_attribute">未知屬性</string>
     <string name="bad_config_reason_unknown_section">未知章節</string>
     <string name="bad_config_reason_value_out_of_range">內容值超出範圍</string>
-    <string name="bad_extension_error">必須是 .conf 或 .zip 的檔案</string>
     <string name="error_no_qr_found">圖片中找不到二維碼</string>
     <string name="error_qr_checksum">二維碼校驗和驗證失敗</string>
     <string name="cancel">取消</string>
@@ -76,7 +75,7 @@
     <string name="config_rename_error">無法重新命名設定檔「%s」</string>
     <string name="config_save_error">無法儲存設定「%1$s」: %2$s</string>
     <string name="config_save_success">成功儲存設定「%s」</string>
-    <string name="create_activity_title">新建 WireGuard 通道</string>
+    <string name="create_activity_title">新建 通道</string>
     <string name="create_bin_dir_error">無法建立本地二進位目錄</string>
     <string name="create_downloads_file_error">無法在下載目錄建立檔案</string>
     <string name="create_empty">從空白開始建立</string>
@@ -130,7 +129,7 @@
     <string name="latest_handshake_ago">%s 之前</string>
     <string name="listen_port">監聽連接埠</string>
     <string name="log_export_error">無法匯出日誌: %s</string>
-    <string name="log_export_subject">WireGuard Android 日誌檔</string>
+    <string name="log_export_subject">Portway Android 日誌檔</string>
     <string name="log_export_success">儲存到「%s」</string>
     <string name="log_export_title">匯出日誌檔</string>
     <string name="log_saver_activity_label">儲存日誌</string>
@@ -163,8 +162,8 @@
     <string name="parse_error_integer">號碼</string>
     <string name="parse_error_reason">無法解析 %1$s “%2$s”</string>
     <string name="peer">用戶</string>
-    <string name="permission_description">允許控制 WireGuard 隧道，這將隨意啟用和禁用隧道，可能會誤導 Internet 流量</string>
-    <string name="permission_label">控制 WireGuard 通道</string>
+    <string name="permission_description">允許控制 隧道，這將隨意啟用和禁用隧道，可能會誤導 Internet 流量</string>
+    <string name="permission_label">控制 通道</string>
     <string name="persistent_keepalive">保持連線</string>
     <string name="pre_shared_key">預分享金鑰</string>
     <string name="pre_shared_key_enabled">已啟用</string>
@@ -186,7 +185,7 @@
     <string name="shell_start_error">Shell 啟動失敗: %d</string>
     <string name="success_application_will_restart">成功。 應用程式即將重新啟動…</string>
     <string name="toggle_all">切換全部</string>
-    <string name="toggle_error">切換 WireGuard 通道時發生錯誤：%s</string>
+    <string name="toggle_error">切換 通道時發生錯誤：%s</string>
     <string name="tools_installer_already">wg 及 wg-quick 已安裝</string>
     <string name="tools_installer_failure">無法安裝命令行工具 (沒有 root 存取權？)</string>
     <string name="tools_installer_initial">安裝額外的腳本工具</string>
@@ -219,20 +218,10 @@
     <string name="type_name_go_userspace">Go 使用者空間</string>
     <string name="type_name_kernel_module">核心模組</string>
     <string name="unknown_error">未知的錯誤</string>
-    <string name="updater_avalable">已有新的更新，請立刻更新。</string>
-    <string name="updater_action">下載 &amp; 更新</string>
-    <string name="updater_rechecking">正在下載更新描述檔...</string>
-    <string name="updater_download_progress">正在下載更新：%1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">正在下載更新：%s</string>
-    <string name="updater_installing">安裝更新中</string>
-    <string name="updater_failure">更新失敗：%s。稍後將自動重試...</string>
-    <string name="updater_corrupt_title">應用程式已損毀</string>
-    <string name="updater_corrupt_message">此應用程式已損毀。請從下方的網站連結重新下載 APK 安裝檔。在解除安裝此應用程式後，再使用下載的 APK 安裝檔重新安裝。</string>
-    <string name="updater_corrupt_navigate">開啟網站</string>
     <string name="version_summary">%1$s 後端 %2$s</string>
     <string name="version_summary_checking">檢查 %s 後端版本</string>
     <string name="version_summary_unknown">未知的版本 %s</string>
-    <string name="version_title">WireGuard 於 Android 版本 %s</string>
+    <string name="version_title">Portway 於 Android 版本 %s</string>
     <string name="vpn_not_authorized_error">使用者未授權 VPN 服務</string>
     <string name="vpn_start_error">無法開啟 Android VPN 服務</string>
     <string name="zip_export_error">無法匯入通道: %s</string>

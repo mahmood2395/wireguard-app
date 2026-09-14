@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The days-left pill from the prototype's Home header. An action view rather than an ordinary
+  ~ menu item because it is a pill with a hairline, not a label — and it lives in the action bar
+  ~ because that bar IS the 56dp header the design draws.
+  -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_days_chip"
+        android:title="@string/settings"
+        app:actionLayout="@layout/days_chip"
+        app:showAsAction="always" />
+</menu>

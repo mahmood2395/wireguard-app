@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Nocturne is the designed-for theme. Hand-maintained on purpose: colors.xml is generated
+  ~ from the seed and would lose these. Namespaced so they can never be mistaken for
+  ~ md_theme_* tokens.
+  ~
+  ~ The clay_* names are archaeology — a superseded direction whose surviving tokens Nocturne
+  ~ still paints with. Renaming them would touch every layout for no pixels.
+  -->
+<resources>
+    <color name="status_connecting">#9397ab</color>
+    <color name="row_surface">#232842</color>
+    <color name="clay_canvas_top">#161826</color>
+    <color name="clay_canvas_bottom">#161826</color>
+    <color name="clay_surface_hi">#232532</color>
+    <color name="clay_surface_lo">#232532</color>
+    <color name="clay_stroke">#3f424d</color>
+    <color name="clay_text_muted">#9397ab</color>
+    <color name="clay_accent">#6fd9b8</color>
+    <color name="clay_rx">#e9e9ed</color>
+    <color name="clay_tx">#e9e9ed</color>
+    <color name="clay_shadow">#05030F</color>
+    <color name="row_selected">#22423c</color>
+    <color name="ping_ok">#94e1cc</color>
+    <color name="ping_fail">#8a5560</color>
+    <!-- The accent as ONE role, a 100-900 ramp on a shared lightness scale; see DESIGN.md
+         for the mix ratios. 600 and 700 have no surface in this build (the design assigns
+         them to a second graph series and a throughput sparkline, neither of which exists
+         yet) but they stay: a ramp with holes in it is worse than an unused token, and the
+         values are not guessable — they must come from the same mixing function as the rest. -->
+    <color name="accent">#6fd9b8</color>
+    <color name="accent_300">#b6e8de</color>
+    <color name="accent_400">#94e1cc</color>
+    <color name="accent_600">#5baf98</color>
+    <color name="accent_700">#4a887b</color>
+    <color name="accent_800">#38615d</color>
+    <color name="accent_900">#2a4246</color>
+    <color name="rule">#292b31</color>
+    <color name="switch_off_edge">#595d6c</color>
+    <color name="icon_muted">#75798c</color>
+    <!-- The handshake decay bar. #c8a24a is the design's one non-ramp colour and is
+         deliberate: an overdue rekey is a warning and the mono accent cannot carry that
+         meaning. Teal makes the pair conventional — a green "fresh" against an amber
+         "overdue". It appears nowhere else. -->
+    <color name="handshake_late">#c8a24a</color>
+    <color name="decay_track">#2f313c</color>
+    <color name="decay_mark">#6b7183</color>
+</resources>

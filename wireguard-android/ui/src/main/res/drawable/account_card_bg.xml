@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The one accent-tinted fill in Settings, and it is small. Everything else on that screen is
+  ~ hairline-separated rows on the canvas, so this card reads as "your account" without needing
+  ~ a heading to say so.
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/accent_900" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/accent_800" />
+    <corners android:radius="8dp" />
+</shape>

@@ -42,7 +42,6 @@
     <string name="bad_config_reason_unknown_attribute">अज्ञात एट्रिब्यूट</string>
     <string name="bad_config_reason_unknown_section">अज्ञात एट्रिब्यूट </string>
     <string name="bad_config_reason_value_out_of_range">मूल्य सीमा से बाहर</string>
-    <string name="bad_extension_error">फ़ाइल .conf या .zip होनी चाहिए</string>
     <string name="cancel">रद्द</string>
     <string name="config_delete_error">कॉन्फ़िगरेशन फ़ाइल %s को नहीं हटा सकता</string>
     <string name="config_exists_error">“%s” के लिए कॉन्फ़िगरेशन पहले से मौजूद है</string>
@@ -163,7 +162,7 @@
     <string name="version_summary">%1$s बैकएंड %2$s</string>
     <string name="version_summary_checking">%s बैकएंड संस्करण की जाँच कर रहा है</string>
     <string name="version_summary_unknown">अज्ञात %s संस्करण</string>
-    <string name="version_title">WireGuard for Android v%s</string>
+    <string name="version_title">Portway for Android v%s</string>
     <string name="vpn_not_authorized_error">वीपीएन सेवा उपयोगकर्ता द्वारा अधिकृत नहीं है</string>
     <string name="vpn_start_error">एंड्रॉयड वीपीएन सेवा प्रारंभ करने में असमर्थ</string>
     <string name="zip_export_error">टनल का निर्यात करने में असमर्थ: %s</string>

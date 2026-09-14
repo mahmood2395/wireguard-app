@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Home, built to the Nocturne prototype's `isHome` screen (Portway Redesign.dc.html, 1d).
+  ~ Order, sizes and colours below are that markup's, converted 1px -> 1dp:
+  ~
+  ~   The 56dp header — "portway" and the days-left pill — is the action bar: it is already
+  ~   19sp Inter at the same inset, and giving Home a second header of its own left the bar's
+  ~   space reserved and empty above it. The pill is a menu action view (menu/connect.xml).
+  ~
+  ~   236dp ring, kicker 11sp/.2em over a 40sp/-.035em tabular figure over a 12.5sp caption
+  ~   -> the status sentence, centred, 13.5sp/1.6
+  ~   -> a fading rule
+  ~   -> LAST HANDSHAKE label + age, the 12dp decay track, the axis row, the sentence
+  ~   -> the location card (32dp pin tile, name, "City, CC · from IP", chevron) -> Configs
+  ~   -> DOWN / UP tiles, 8dp radius on a 1dp hairline
+  ~   -> THIS MONTH: "x of y", a 78dp 30-bar band, the axis, the 4dp plan rail, the renewal line
+  ~
+  ~ Everything is 22dp from the edge and the scroll clears the nav bar, so the page reads as one
+  ~ column rather than a stack of floating cards — the whole point of retiring the clay material.
+  -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="fragment"
+            type="com.wireguard.android.fragment.ConnectFragment" />
+
+        <!-- Named `tunnel` deliberately: BaseFragment.setTunnelState resolves the tunnel
+             from the binding by this exact property name. -->
+        <variable
+            name="tunnel"
+            type="com.wireguard.android.model.ObservableTunnel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/aurora_canvas"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingHorizontal="22dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/connect_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="6dp"
+                android:paddingBottom="24dp">
+
+                <!-- Nocturne's hero: state is carried by the ring's dash, not by a filled
+                     shape. The whole 236dp square is the touch target, and it stays a plain
+                     View with an onClick — a nested MotionLayout swallows touches over its
+                     bounds, which once made this control keyboard-only with no crash to
+                     explain it. -->
+                <FrameLayout
+                    android:id="@+id/ring_frame"
+                    android:layout_width="236dp"
+                    android:layout_height="236dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <com.wireguard.android.widget.ConnectRingView
+                        android:id="@+id/connect_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:onClick="@{fragment::onConnectClicked}" />
+
+                    <LinearLayout
+                        android:id="@+id/ring_centre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:duplicateParentState="false"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="28dp">
+
+                        <TextView
+                            android:id="@+id/status_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:accessibilityLiveRegion="polite"
+                            android:letterSpacing="@dimen/tracking_kicker"
+                            android:textAllCaps="true"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
+                            android:textColor="@color/accent"
+                            android:textSize="11sp"
+                            tools:text="PROTECTED" />
+
+                        <TextView
+                            android:id="@+id/session_timer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="13dp"
+                            android:accessibilityLiveRegion="polite"
+                            android:fontFeatureSettings="tnum"
+                            android:letterSpacing="@dimen/tracking_hero"
+                            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="40sp"
+                            tools:text="12:04:31" />
+
+                        <TextView
+                            android:id="@+id/ring_caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_horizontal"
+                            android:lineSpacingMultiplier="1.5"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="12.5sp"
+                            tools:text="Frankfurt, DE · 42 ms" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/hero_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_horizontal"
+                    android:lineSpacingMultiplier="1.6"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/clay_text_muted"
+                    android:textSize="13.5sp"
+                    tools:text="Your traffic surfaces in Frankfurt, resolved from the peer's IP." />
+
+                <!-- Shown instead of the hero when there are no configs at all. -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/empty_action"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:onClick="@{fragment::onAddTunnelClicked}"
+                    android:paddingHorizontal="22dp"
+                    android:text="@string/connect_add_tunnel"
+                    android:textColor="@color/accent_300"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    app:cornerRadius="8dp"
+                    app:strokeColor="@color/accent" />
+
+                <View
+                    android:id="@+id/hero_rule"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="22dp"
+                    android:background="@drawable/rule_fading" />
+
+                <!-- The handshake decay bar. It replaced the heartbeat lane, which needed a
+                     ring buffer of past handshakes to draw anything; this needs only the age of
+                     the latest one, which the polling loop already reads. The whole track is
+                     WireGuard's 180s cutoff and the hairline is the 118s rekey, so the age has
+                     a limit to tick against instead of being a figure that never sits still. -->
+                <com.wireguard.android.widget.HandshakeDecayView
+                    android:id="@+id/handshake_decay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp" />
+
+                <!-- The location card. Tapping it goes to Configs — the design's one route from
+                     "where am I surfacing" to "which config am I on". -->
+                <LinearLayout
+                    android:id="@+id/location_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:background="@drawable/surface_card"
+                    android:baselineAligned="false"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="13dp"
+                        android:background="@drawable/account_card_bg"
+                        android:contentDescription="@null"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_map_pin" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <!-- textAlignment="viewStart" on every field below that can hold a
+                             Latin value. Android's default aligns text by the direction of the
+                             TEXT, so in an RTL layout a config named "frankfurt" jumps to the
+                             left edge while the Persian line under it stays right — one card,
+                             two margins. viewStart aligns by the LAYOUT instead, and is a no-op
+                             wherever the two already agree. -->
+                        <TextView
+                            android:id="@+id/tunnel_name"
+                            android:textAlignment="viewStart"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:letterSpacing="@dimen/tracking_body"
+                            android:maxLines="1"
+                            android:text="@{tunnel.name}"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="14.5sp"
+                            tools:text="beta-frankfurt" />
+
+                        <TextView
+                            android:id="@+id/location_line"
+                            android:textAlignment="viewStart"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="12sp"
+                            tools:text="Frankfurt, DE · from 5.9.44.12" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_caret_right" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/stats_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/surface_card"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="@dimen/tracking_label"
+                            android:text="@string/connect_download"
+                            android:textAllCaps="true"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="10.5sp" />
+
+                        <TextView
+                            android:id="@+id/rx_rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFeatureSettings="tnum"
+                            android:letterSpacing="@dimen/tracking_heading"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="@color/clay_rx"
+                            android:textSize="18sp"
+                            tools:text="2.1 MB/s" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/surface_card"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="@dimen/tracking_label"
+                            android:text="@string/connect_upload"
+                            android:textAllCaps="true"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="10.5sp" />
+
+                        <TextView
+                            android:id="@+id/tx_rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFeatureSettings="tnum"
+                            android:letterSpacing="@dimen/tracking_heading"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="@color/clay_tx"
+                            android:textSize="18sp"
+                            tools:text="840 KB/s" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- This month. The bars are what this device measured; the "of 30 GB" half and
+                     the rail appear only when the panel states a quota. -->
+                <LinearLayout
+                    android:id="@+id/month_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="26dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:letterSpacing="@dimen/tracking_label"
+                            android:text="@string/month_label"
+                            android:textAllCaps="true"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="10.5sp" />
+
+                        <TextView
+                            android:id="@+id/month_total"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="12.5sp"
+                            tools:text="12.4 of 30 GB" />
+                    </LinearLayout>
+
+                    <com.wireguard.android.widget.UsageBandView
+                        android:id="@+id/month_band"
+                        android:layout_width="match_parent"
+                        android:layout_height="78dp"
+                        android:layout_marginTop="13dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/rule" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/month_axis_start"
+                            android:textAlignment="viewStart"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="11sp"
+                            tools:text="1 Aug" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/month_axis_today"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/quota_rail"
+                        android:mirrorForRtl="true"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_marginTop="16dp"
+                        android:max="1000"
+                        android:progressDrawable="@drawable/quota_rail"
+                        android:visibility="gone"
+                        tools:progress="410"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/quota_line"
+                        android:textAlignment="viewStart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="9dp"
+                        android:lineSpacingMultiplier="1.5"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="12.5sp"
+                        android:visibility="gone"
+                        tools:text="Renews 29 September · 17.6 GB remaining"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <!-- Portway: self-update prompt. Not in the design — Portway ships outside a
+                     store, so the app has to offer its own update somewhere, and the foot of
+                     Home is the one screen everybody opens. -->
+                <LinearLayout
+                    android:id="@+id/update_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="26dp"
+                    android:background="@drawable/surface_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/update_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="@dimen/tracking_body"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14.5sp"
+                        tools:text="Version 1.0.1 is available" />
+
+                    <TextView
+                        android:id="@+id/update_detail"
+                        android:textAlignment="viewStart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:lineSpacingMultiplier="1.5"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="12.5sp"
+                        tools:text="Your tunnel will disconnect while the update installs." />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/update_action"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="46dp"
+                            android:layout_weight="1"
+                            android:text="@string/update_action"
+                            android:textColor="@color/accent_300"
+                            android:textSize="14sp"
+                            app:cornerRadius="8dp"
+                            app:strokeColor="@color/accent" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/update_later"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="46dp"
+                            android:layout_marginStart="10dp"
+                            android:paddingHorizontal="16dp"
+                            android:text="@string/update_later"
+                            android:textColor="@color/clay_text_muted"
+                            android:textSize="14sp"
+                            app:cornerRadius="8dp"
+                            app:strokeColor="@color/clay_stroke" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Portway: shown only when an update landed mid-session AND the tunnel is up
+                     but not handshaking — the two together are the signature of the Android 16
+                     stack bug. Either alone is not, so neither alone shows this. -->
+                <LinearLayout
+                    android:id="@+id/post_update_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/surface_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/post_update_title"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14.5sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:lineSpacingMultiplier="1.5"
+                        android:text="@string/post_update_detail"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/post_update_dismiss"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="@string/post_update_dismiss"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Portway: shown only when the VPN engine failed to start. Without this a
+                     backend failure was completely invisible: the screen simply never left its
+                     idle state. -->
+                <LinearLayout
+                    android:id="@+id/backend_error_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/surface_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/backend_error_title"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textColor="@color/status_error"
+                        android:textSize="14.5sp" />
+
+                    <TextView
+                        android:id="@+id/backend_error_detail"
+                        android:textAlignment="viewStart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:lineSpacingMultiplier="1.5"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="12.5sp"
+                        tools:text="Could not load the WireGuard engine." />
+
+                    <TextView
+                        android:id="@+id/backend_error_retry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="@string/backend_error_retry"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/accent_300"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>

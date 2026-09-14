@@ -22,6 +22,13 @@ class ObservableKeyedRecyclerViewAdapter<K, E : Keyed<out K>> internal construct
         list: ObservableKeyedArrayList<K, E>?
 ) : RecyclerView.Adapter<ObservableKeyedRecyclerViewAdapter.ViewHolder>() {
     private val callback = OnListChangedCallback(this)
+
+    init {
+        // Stable ids let the default item animator match rows across a change, so inserts,
+        // removals and moves animate instead of the whole list blinking. getItemId already
+        // derives from the key.
+        setHasStableIds(true)
+    }
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
     private var list: ObservableKeyedArrayList<K, E>? = null
     private var rowConfigurationHandler: RowConfigurationHandler<ViewDataBinding, Any>? = null
@@ -76,24 +83,39 @@ class ObservableKeyedRecyclerViewAdapter<K, E : Keyed<out K>> internal construct
                 sender.removeOnListChangedCallback(this)
         }
 
+        /*
+         * Portway: upstream funnelled every one of these into notifyDataSetChanged(), which
+         * throws away the range information the observable list already provides and kills
+         * all item animations. The backing ObservableSortedKeyedArrayList reports precisely
+         * what changed, so honour it.
+         */
+
         override fun onItemRangeChanged(sender: ObservableList<E>, positionStart: Int,
                                         itemCount: Int) {
-            onChanged(sender)
+            withAdapter(sender) { notifyItemRangeChanged(positionStart, itemCount) }
         }
 
         override fun onItemRangeInserted(sender: ObservableList<E>, positionStart: Int,
                                          itemCount: Int) {
-            onChanged(sender)
+            withAdapter(sender) { notifyItemRangeInserted(positionStart, itemCount) }
         }
 
         override fun onItemRangeMoved(sender: ObservableList<E>, fromPosition: Int,
                                       toPosition: Int, itemCount: Int) {
-            onChanged(sender)
+            withAdapter(sender) {
+                // RecyclerView has no range-move; a moved run is emitted one row at a time.
+                repeat(itemCount) { offset -> notifyItemMoved(fromPosition + offset, toPosition + offset) }
+            }
         }
 
         override fun onItemRangeRemoved(sender: ObservableList<E>, positionStart: Int,
                                         itemCount: Int) {
-            onChanged(sender)
+            withAdapter(sender) { notifyItemRangeRemoved(positionStart, itemCount) }
+        }
+
+        private inline fun withAdapter(sender: ObservableList<E>, block: ObservableKeyedRecyclerViewAdapter<*, E>.() -> Unit) {
+            val adapter = weakAdapter.get()
+            if (adapter != null) adapter.block() else sender.removeOnListChangedCallback(this)
         }
 
     }

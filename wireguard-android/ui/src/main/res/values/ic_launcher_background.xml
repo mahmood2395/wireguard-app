@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
+  ~ Copyright © 2026 Portway. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
+  ~ Modified from the WireGuard Android project: rebranded launcher background.
+  ~ #003729 is Nocturne's one sanctioned saturated field — 9.9:1 against the #b6e8de glyph.
+  ~ Deliberately not the accent itself: an icon needs presence at small scale, not the hue.
   -->
 <resources>
-    <color name="ic_launcher_background">#871719</color>
+    <color name="ic_launcher_background">#003729</color>
 </resources>

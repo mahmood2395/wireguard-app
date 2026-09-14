@@ -1,48 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Modified by Portway: regrouped for Nocturne into Protection / Advanced / App — what the
+  ~ setting protects you from, what it lets you do, and what the app itself is.
+  ~
+  ~ Three things here are load-bearing and must not be "tidied":
+  ~   * Every android:key is unchanged. PreferencesPreferenceDataStore and UserKnobs address
+  ~     preferences by key, so renaming one silently orphans a stored value.
+  ~   * There is deliberately no initialExpandedChildrenCount. Its arithmetic counts top-level
+  ~     children, so adding or moving categories hides preferences behind "Advanced" with no
+  ~     error — upstream set it to 5 and then decremented it as preferences were removed.
+  ~   * SettingsFragment removes several of these at runtime (root-only ones, the quick tile
+  ~     below API 33). Moving them between categories is fine; the removals find them by key.
   -->
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="settings">
-    <com.wireguard.android.preference.VersionPreference
-        android:icon="@mipmap/ic_launcher"
-        android:key="version" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="restore_on_boot"
-        android:singleLineTitle="false"
-        android:summaryOff="@string/restore_on_boot_summary_off"
-        android:summaryOn="@string/restore_on_boot_summary_on"
-        android:title="@string/restore_on_boot_title" />
-    <com.wireguard.android.preference.ZipExporterPreference android:key="zip_exporter" />
-    <com.wireguard.android.preference.QuickTilePreference android:key="quick_tile" />
-    <Preference
-        android:key="log_viewer"
-        android:singleLineTitle="false"
-        android:summary="@string/log_viewer_pref_summary"
-        android:title="@string/log_viewer_pref_title" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="dark_theme"
-        android:singleLineTitle="false"
-        android:summaryOff="@string/dark_theme_summary_off"
-        android:summaryOn="@string/dark_theme_summary_on"
-        android:title="@string/dark_theme_title" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="multiple_tunnels"
-        android:singleLineTitle="false"
-        android:summaryOff="@string/multiple_tunnels_summary_off"
-        android:summaryOn="@string/multiple_tunnels_summary_on"
-        android:title="@string/multiple_tunnels_title" />
-    <com.wireguard.android.preference.ToolsInstallerPreference android:key="tools_installer" />
-    <com.wireguard.android.preference.KernelModuleEnablerPreference android:key="kernel_module_enabler" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="allow_remote_control_intents"
-        android:singleLineTitle="false"
-        android:summaryOff="@string/allow_remote_control_intents_summary_off"
-        android:summaryOn="@string/allow_remote_control_intents_summary_on"
-        android:title="@string/allow_remote_control_intents_title" />
-    <com.wireguard.android.preference.DonatePreference android:singleLineTitle="false" />
+
+    <!-- Outside every category on purpose: it is not a setting, it is who you are. -->
+    <com.wireguard.android.preference.AccountPreference android:key="account" />
+
+    <PreferenceCategory android:title="@string/settings_category_protection">
+        <com.wireguard.android.preference.ProtectionStatusPreference
+            android:key="protection_status"
+            android:singleLineTitle="false" />
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preference_switch_clay"
+            android:defaultValue="true"
+            android:key="auto_reconnect"
+            android:singleLineTitle="false"
+            android:summary="@string/auto_reconnect_summary"
+            android:title="@string/auto_reconnect_title" />
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preference_switch_clay"
+            android:defaultValue="false"
+            android:key="restore_on_boot"
+            android:singleLineTitle="false"
+            android:summaryOff="@string/restore_on_boot_summary_off"
+            android:summaryOn="@string/restore_on_boot_summary_on"
+            android:title="@string/restore_on_boot_title" />
+        <com.wireguard.android.preference.BatteryOptimizationPreference
+            android:key="battery_optimization"
+            android:singleLineTitle="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_advanced">
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preference_switch_clay"
+            android:defaultValue="false"
+            android:key="multiple_tunnels"
+            android:singleLineTitle="false"
+            android:summaryOff="@string/multiple_tunnels_summary_off"
+            android:summaryOn="@string/multiple_tunnels_summary_on"
+            android:title="@string/multiple_tunnels_title" />
+        <EditTextPreference
+            android:key="panel_url"
+            android:singleLineTitle="false"
+            android:summary="@string/panel_url_summary"
+            android:title="@string/panel_url_title" />
+        <com.wireguard.android.preference.ZipExporterPreference android:key="zip_exporter" />
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preference_switch_clay"
+            android:defaultValue="false"
+            android:key="allow_remote_control_intents"
+            android:singleLineTitle="false"
+            android:summaryOff="@string/allow_remote_control_intents_summary_off"
+            android:summaryOn="@string/allow_remote_control_intents_summary_on"
+            android:title="@string/allow_remote_control_intents_title" />
+        <com.wireguard.android.preference.ToolsInstallerPreference android:key="tools_installer" />
+        <com.wireguard.android.preference.KernelModuleEnablerPreference android:key="kernel_module_enabler" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_category_app">
+        <com.wireguard.android.preference.QuickTilePreference android:key="quick_tile" />
+        <Preference
+            android:key="log_viewer"
+            android:singleLineTitle="false"
+            android:summary="@string/log_viewer_pref_summary"
+            android:title="@string/log_viewer_pref_title" />
+        <!-- Above the theme, because it is the one setting a user who cannot read this screen
+             needs to find on it. -->
+        <com.wireguard.android.preference.LocalePreference
+            android:key="app_locale"
+            android:singleLineTitle="false" />
+        <ListPreference
+            android:defaultValue="DARK"
+            android:entries="@array/theme_mode_entries"
+            android:entryValues="@array/theme_mode_values"
+            android:key="theme_mode"
+            android:singleLineTitle="false"
+            android:summary="%s"
+            android:title="@string/theme_mode_title" />
+        <com.wireguard.android.preference.VersionPreference android:key="version" />
+        <com.wireguard.android.preference.DonatePreference android:singleLineTitle="false" />
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

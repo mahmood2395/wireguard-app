@@ -1,81 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Modified by Portway for Nocturne: 22dp gutter, hairline-separated rows and the new type,
+  ~ matching Settings — this is a list of choices, not a row of buttons, and it should read the
+  ~ same way the rest of the app's lists do.
+  ~
+  ~ The rules are sibling Views rather than a background drawable on each row: MaterialButton
+  ~ owns its own background and discards android:background silently, so the hairlines simply
+  ~ never appeared.
+  ~
+  ~ The three ids are load-bearing. AddTunnelsSheet resolves them with dialog.findViewById as
+  ~ plain Views and hides create_from_qrcode on devices without a camera, so they can change
+  ~ class freely but never name.
   -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/bottom_sheet_top_padding">
+    android:orientation="vertical"
+    android:paddingBottom="20dp">
+
+    <View
+        android:id="@+id/drag_handle"
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bottom_sheet_handle" />
+
+    <TextView
+        android:id="@+id/sheet_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/add_tunnel_sheet_title"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="19sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/rule" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/create_from_file"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_item_height"
-        android:layout_marginStart="@dimen/normal_margin"
-        android:layout_marginLeft="@dimen/normal_margin"
-        android:layout_marginEnd="@dimen/normal_margin"
-        android:layout_marginRight="@dimen/normal_margin"
+        android:layout_height="58dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:nextFocusDown="@id/create_from_qrcode"
         android:nextFocusForward="@id/create_from_qrcode"
+        android:paddingHorizontal="22dp"
         android:text="@string/create_from_file"
         android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSurface"
+        android:textSize="14.5sp"
+        app:cornerRadius="0dp"
         app:icon="@drawable/ic_action_open"
-        app:iconPadding="@dimen/bottom_sheet_icon_padding"
-        app:iconTint="?attr/colorSecondary"
-        app:layout_constraintBottom_toTopOf="@+id/create_from_qrcode"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        app:rippleColor="?attr/colorSecondary" />
+        app:iconPadding="18dp"
+        app:iconSize="22dp"
+        app:iconTint="@color/accent"
+        app:rippleColor="@color/accent_800" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/rule" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/create_from_qrcode"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_item_height"
-        android:layout_marginStart="@dimen/normal_margin"
-        android:layout_marginLeft="@dimen/normal_margin"
-        android:layout_marginEnd="@dimen/normal_margin"
-        android:layout_marginRight="@dimen/normal_margin"
+        android:layout_height="58dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:nextFocusUp="@id/create_from_file"
         android:nextFocusDown="@id/create_empty"
         android:nextFocusForward="@id/create_empty"
+        android:paddingHorizontal="22dp"
         android:text="@string/create_from_qr_code"
         android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSurface"
+        android:textSize="14.5sp"
+        app:cornerRadius="0dp"
         app:icon="@drawable/ic_action_scan_qr_code"
-        app:iconPadding="@dimen/bottom_sheet_icon_padding"
-        app:iconTint="?attr/colorSecondary"
-        app:layout_constraintBottom_toBottomOf="@+id/create_empty"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create_from_file"
-        app:rippleColor="?attr/colorSecondary" />
+        app:iconPadding="18dp"
+        app:iconSize="22dp"
+        app:iconTint="@color/accent"
+        app:rippleColor="@color/accent_800" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/rule" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/create_empty"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_item_height"
-        android:layout_marginStart="@dimen/normal_margin"
-        android:layout_marginLeft="@dimen/normal_margin"
-        android:layout_marginEnd="@dimen/normal_margin"
-        android:layout_marginRight="@dimen/normal_margin"
+        android:layout_height="58dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:nextFocusUp="@id/create_from_qrcode"
+        android:paddingHorizontal="22dp"
         android:text="@string/create_empty"
         android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSurface"
+        android:textSize="14.5sp"
+        app:cornerRadius="0dp"
         app:icon="@drawable/ic_action_edit"
-        app:iconPadding="@dimen/bottom_sheet_icon_padding"
-        app:iconTint="?attr/colorSecondary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create_from_qrcode"
-        app:rippleColor="?attr/colorSecondary" />
+        app:iconPadding="18dp"
+        app:iconSize="22dp"
+        app:iconTint="@color/accent"
+        app:rippleColor="@color/accent_800" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/rule" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

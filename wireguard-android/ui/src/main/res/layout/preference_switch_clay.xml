@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The widget half of a SwitchPreferenceCompat row. Two things here are easy to get wrong and
+  ~ both fail silently, leaving Material's own switch sitting in a Nocturne row:
+  ~
+  ~   * The id MUST be @id/switchWidget — androidx-preference's own id, NOT
+  ~     @android:id/switch_widget. SwitchPreferenceCompat calls holder.findViewById(switchWidget)
+  ~     to sync the checked state; the framework id is what plain SwitchPreference uses. Get it
+  ~     wrong and the row still toggles the stored value while the switch never moves, which
+  ~     reads as "the setting does nothing".
+  ~   * SwitchCompat reads `app:track` and `app:switchMinWidth`, NOT the android: ones. It
+  ~     re-declares both under its own namespace, so `android:track` compiles, does nothing, and
+  ~     leaves the default track in place. Only `android:thumb` is read from the framework attr.
+  -->
+<androidx.appcompat.widget.SwitchCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/switchWidget"
+    style="@style/Portway.Switch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@null"
+    android:clickable="false"
+    android:focusable="false"
+    android:thumb="@drawable/switch_thumb"
+    app:switchMinWidth="42dp"
+    app:track="@drawable/switch_track" />

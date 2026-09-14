@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~ Monochrome mark for the settings row: the full-colour launcher mipmap looks wrong inside
+  ~ a small tinted icon frame. Same path as the launcher — one mark, drawn once.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@android:color/white"
+        android:fillType="evenOdd"
+        android:pathData="M36,80 L36,48 A18,18 0 0 1 72,48 L72,80 Z M44,72 L44,48 A10,10 0 0 1 64,48 L64,72 Z" />
+</vector>

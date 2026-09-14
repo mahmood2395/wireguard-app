@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.wireguard.android.Application.Companion.get
+import com.wireguard.android.Application.Companion.awaitBackendResult
 import com.wireguard.android.Application.Companion.getBackend
 import com.wireguard.android.Application.Companion.getTunnelManager
 import com.wireguard.android.BR
@@ -22,6 +23,7 @@ import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.configStore.ConfigStore
 import com.wireguard.android.databinding.ObservableSortedKeyedArrayList
 import com.wireguard.android.util.ErrorMessages
+import com.wireguard.android.util.SessionGuard
 import com.wireguard.android.util.UserKnobs
 import com.wireguard.android.util.applicationScope
 import com.wireguard.config.Config
@@ -31,6 +33,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -43,6 +47,30 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
     private val tunnelMap: ObservableSortedKeyedArrayList<String, ObservableTunnel> = ObservableSortedKeyedArrayList(TunnelComparator)
     private var haveLoaded = false
 
+    /**
+     * Serialises every path that drives the backend.
+     *
+     * Five entry points can toggle a tunnel — the connect screen, the quick-settings tile, the
+     * toggle shortcut, the TV activity and the remote-control broadcast — and the connect
+     * screen guards only against itself. GoBackend mutates currentTunnel / currentTunnelHandle
+     * with no lock of its own, so two toggles landing together could both observe DOWN, both
+     * call establish(), and leak a native handle while the tracked state pointed at a file
+     * descriptor that was no longer alive.
+     *
+     * Suspending rather than blocking, so holding it across a ~1s establish() parks the
+     * coroutine instead of the thread. NOT reentrant: nothing guarded here may call another
+     * guarded function.
+     */
+    private val backendMutex = Mutex()
+
+    /**
+     * Portway. Bumped on every requested tunnel state change, from any entry point. The
+     * handshake watchdog snapshots it around its own down/up restart so it can tell whether
+     * someone — the user, the quick tile, always-on — changed their mind mid-restart.
+     */
+    var stateChangeGeneration = 0L
+        private set
+
     private fun addToList(name: String, config: Config?, state: Tunnel.State): ObservableTunnel {
         val tunnel = ObservableTunnel(this, name, config, state)
         tunnelMap.add(tunnel)
@@ -51,12 +79,24 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
 
     suspend fun getTunnels(): ObservableSortedKeyedArrayList<String, ObservableTunnel> = tunnels.await()
 
+    /**
+     * Whether anything is up, WITHOUT awaiting [tunnels].
+     *
+     * Deliberately not `getTunnels().any { … }`: restoreState() runs inside onTunnelsLoaded
+     * *before* the deferred is completed, and it calls setTunnelState, which reschedules the
+     * watchdog alarm. Awaiting the deferred from there deadlocks the whole load — the tunnel
+     * list never resolves and the app shows "No tunnels yet" forever with a tunnel on disk.
+     * The backing map is already populated by then, so read it directly.
+     */
+    fun hasTunnelUp(): Boolean = tunnelMap.any { it.state == Tunnel.State.UP }
+
     suspend fun create(name: String, config: Config?): ObservableTunnel = withContext(Dispatchers.Main.immediate) {
         if (Tunnel.isNameInvalid(name))
             throw IllegalArgumentException(context.getString(R.string.tunnel_error_invalid_name))
         if (tunnelMap.containsKey(name))
             throw IllegalArgumentException(context.getString(R.string.tunnel_error_already_exists, name))
         addToList(name, withContext(Dispatchers.IO) { configStore.create(name, config!!) }, Tunnel.State.DOWN)
+            .also { SessionGuard.onImported(it) }
     }
 
     suspend fun delete(tunnel: ObservableTunnel) = withContext(Dispatchers.Main.immediate) {
@@ -68,7 +108,7 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         tunnelMap.remove(tunnel)
         try {
             if (originalState == Tunnel.State.UP)
-                withContext(Dispatchers.IO) { getBackend().setState(tunnel, Tunnel.State.DOWN, null) }
+                backendMutex.withLock { withContext(Dispatchers.IO) { getBackend().setState(tunnel, Tunnel.State.DOWN, null) } }
             try {
                 withContext(Dispatchers.IO) { configStore.delete(tunnel.name) }
             } catch (e: Throwable) {
@@ -100,11 +140,23 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
 
     fun onCreate() {
         applicationScope.launch {
-            try {
-                onTunnelsLoaded(withContext(Dispatchers.IO) { configStore.enumerate() }, withContext(Dispatchers.IO) { getBackend().runningTunnelNames })
+            // Portway: upstream awaited the config store and the backend in one expression and
+            // let any failure fall into a bare log. Because `tunnels` is only completed inside
+            // onTunnelsLoaded, a backend that never arrived meant every caller of getTunnels()
+            // — the connect screen, the list, the quick tile — parked forever on an empty view.
+            // The config store needs no backend, so enumeration still happens; a missing backend
+            // only costs us the knowledge of which tunnels were already up.
+            val present = try {
+                withContext(Dispatchers.IO) { configStore.enumerate() }
             } catch (e: Throwable) {
-                Log.e(TAG, Log.getStackTraceString(e))
+                Log.e(TAG, "Could not enumerate stored tunnels", e)
+                emptyList<String>()
             }
+            val running = awaitBackendResult().fold(
+                onSuccess = { backend -> runCatching { withContext(Dispatchers.IO) { backend.runningTunnelNames } }.getOrDefault(emptySet()) },
+                onFailure = { emptySet() }
+            )
+            onTunnelsLoaded(present, running)
         }
     }
 
@@ -140,7 +192,7 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         if (previouslyRunning.isEmpty()) return
         withContext(Dispatchers.IO) {
             try {
-                tunnelMap.filter { previouslyRunning.contains(it.name) }.map { async(Dispatchers.IO + SupervisorJob()) { setTunnelState(it, Tunnel.State.UP) } }
+                tunnelMap.filter { previouslyRunning.contains(it.name) }.map { async(Dispatchers.IO + SupervisorJob()) { setTunnelState(it, Tunnel.State.UP, SessionGuard.Gate.ADVISORY) } }
                     .awaitAll()
             } catch (e: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(e))
@@ -148,15 +200,36 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         }
     }
 
+    /**
+     * A state change that originated in the backend rather than in a request we made — the
+     * user revoking VPN permission, another VPN taking over, or the system killing the
+     * service.
+     *
+     * Upstream routed those straight to the tunnel object, bypassing the manager. Since
+     * saveState() is only reached from setTunnelState, the persisted running-tunnels set kept
+     * listing a tunnel the system had already torn down, and the next process start silently
+     * tried to reconnect it — a tunnel coming back for no visible reason, or failing to and
+     * saying nothing.
+     */
+    fun onBackendStateChange(tunnel: ObservableTunnel, newState: Tunnel.State) {
+        tunnel.onStateChanged(newState)
+        applicationScope.launch { saveState() }
+        WatchdogAlarm.reschedule()
+    }
+
     suspend fun saveState() {
         UserKnobs.setRunningTunnels(tunnelMap.filter { it.state == Tunnel.State.UP }.map { it.name }.toSet())
     }
 
     suspend fun setTunnelConfig(tunnel: ObservableTunnel, config: Config): Config = withContext(Dispatchers.Main.immediate) {
-        tunnel.onConfigChanged(withContext(Dispatchers.IO) {
-            getBackend().setState(tunnel, tunnel.state, config)
-            configStore.save(tunnel.name, config)
-        })!!
+        // Reconfiguring a live tunnel tears it down and brings it back inside the backend, so
+        // it contends with setTunnelState for exactly the same state.
+        backendMutex.withLock {
+            tunnel.onConfigChanged(withContext(Dispatchers.IO) {
+                getBackend().setState(tunnel, tunnel.state, config)
+                configStore.save(tunnel.name, config)
+            })!!
+        }
     }
 
     suspend fun setTunnelName(tunnel: ObservableTunnel, name: String): String = withContext(Dispatchers.Main.immediate) {
@@ -175,7 +248,7 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         var newName: String? = null
         try {
             if (originalState == Tunnel.State.UP)
-                withContext(Dispatchers.IO) { getBackend().setState(tunnel, Tunnel.State.DOWN, null) }
+                backendMutex.withLock { withContext(Dispatchers.IO) { getBackend().setState(tunnel, Tunnel.State.DOWN, null) } }
             withContext(Dispatchers.IO) { configStore.rename(tunnel.name, name) }
             newName = tunnel.onNameChanged(name)
             if (originalState == Tunnel.State.UP)
@@ -194,11 +267,32 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         newName!!
     }
 
-    suspend fun setTunnelState(tunnel: ObservableTunnel, state: Tunnel.State): Tunnel.State = withContext(Dispatchers.Main.immediate) {
+    /**
+     * @param gate who is asking, which decides whether the one-device-at-a-time check may refuse.
+     *             USER by default so a new entry point is checked unless it opts out; see
+     *             SessionGuard.Gate for what each value is for.
+     * @param takeover claim the session even if another device holds it ("Use here instead").
+     */
+    suspend fun setTunnelState(
+        tunnel: ObservableTunnel,
+        state: Tunnel.State,
+        gate: SessionGuard.Gate = SessionGuard.Gate.USER,
+        takeover: Boolean = false,
+    ): Tunnel.State = withContext(Dispatchers.Main.immediate) {
+        val wasUp = tunnel.state == Tunnel.State.UP
+        val goingUp = !wasUp && (state == Tunnel.State.UP || state == Tunnel.State.TOGGLE)
+        // Before the lock: it is a network round trip, and may throw AccountInUseException.
+        if (goingUp) SessionGuard.beforeUp(tunnel, gate, takeover)
+        backendMutex.withLock {
+        stateChangeGeneration++
         var newState = tunnel.state
         var throwable: Throwable? = null
         try {
-            newState = withContext(Dispatchers.IO) { getBackend().setState(tunnel, state, tunnel.getConfigAsync()) }
+            // Portway: fail loudly rather than park. getBackend() only resolves on success, so
+            // a device whose backend never initialised would hang here with the UI stuck mid
+            // "connecting" instead of telling the user the engine could not start.
+            val backend = awaitBackendResult().getOrThrow()
+            newState = withContext(Dispatchers.IO) { backend.setState(tunnel, state, tunnel.getConfigAsync()) }
             if (newState == Tunnel.State.UP)
                 lastUsedTunnel = tunnel
         } catch (e: Throwable) {
@@ -206,9 +300,14 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         }
         tunnel.onStateChanged(newState)
         saveState()
+        // Portway: the while-idle watchdog alarm only exists while something is up.
+        WatchdogAlarm.reschedule()
         if (throwable != null)
             throw throwable
+        if (wasUp && newState == Tunnel.State.DOWN)
+            SessionGuard.afterDown(tunnel, gate)
         newState
+        }
     }
 
     class IntentReceiver : BroadcastReceiver() {
@@ -233,6 +332,8 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
                 val tunnel = tunnels[tunnelName] ?: return@launch
                 try {
                     manager.setTunnelState(tunnel, state)
+                } catch (e: SessionGuard.AccountInUseException) {
+                    SessionGuard.notifyConflict(e.tunnelName, e.otherDevice)
                 } catch (e: Throwable) {
                     Toast.makeText(context, ErrorMessages[e], Toast.LENGTH_LONG).show()
                 }

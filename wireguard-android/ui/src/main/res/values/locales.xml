@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The languages the in-app picker offers: the two Portway is actually finished in.
+  ~
+  ~ The APK still carries the ~33 community translations inherited from upstream, and a phone
+  ~ set to one of them still gets it — that is what "Follow system" means and nothing about it
+  ~ changed. But those files predate this fork's screens and cover roughly half of its strings,
+  ~ so offering them here would be offering a language the app does not really speak. Anyone on
+  ~ one of them can still pin English or Persian from this list, which is strictly more than
+  ~ they had.
+  ~
+  ~ Add a language here once its values-* file is complete against values/strings.xml — there is
+  ~ a coverage check in the session notes; the count that matters is 0 missing, not "mostly".
+  -->
+<resources>
+    <string-array name="supported_locales" translatable="false">
+        <item>en</item>
+        <item>fa</item>
+    </string-array>
+</resources>

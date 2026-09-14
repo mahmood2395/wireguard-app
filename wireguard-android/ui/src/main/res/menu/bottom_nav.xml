@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dest_connect"
+        android:icon="@drawable/ic_nav_connect"
+        android:title="@string/nav_home" />
+    <item
+        android:id="@+id/dest_tunnels"
+        android:icon="@drawable/ic_nav_tunnels"
+        android:title="@string/nav_configs" />
+    <item
+        android:id="@+id/dest_settings"
+        android:icon="@drawable/ic_nav_settings"
+        android:title="@string/settings" />
+</menu>

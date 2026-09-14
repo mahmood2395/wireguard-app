@@ -78,7 +78,6 @@
     <string name="bad_config_reason_unknown_attribute">Bilinmeyen öznitelik</string>
     <string name="bad_config_reason_unknown_section">Bilinmeyen bölüm</string>
     <string name="bad_config_reason_value_out_of_range">Değer sınır dışında</string>
-    <string name="bad_extension_error">Dosya .conf veya .zip olmalıdır</string>
     <string name="error_no_qr_found">Görselde QR kodu bulunamadı</string>
     <string name="error_qr_checksum">QR kodunun sağlaması başarısız oldu</string>
     <string name="cancel">İptal</string>
@@ -89,7 +88,7 @@
     <string name="config_rename_error">“%s” yapılandırma dosyası yeniden adlandırılamadı</string>
     <string name="config_save_error">“%1$s” yapılandırması kaydedilemedi: %2$s</string>
     <string name="config_save_success">“%s“ yapılandırması başarıyla kaydedildi</string>
-    <string name="create_activity_title">WireGuard tüneli oluştur</string>
+    <string name="create_activity_title">tüneli oluştur</string>
     <string name="create_bin_dir_error">Yerel ikili dizin oluşturulamadı</string>
     <string name="create_downloads_file_error">İndirilenler klasöründe dosya oluşturulamadı</string>
     <string name="create_empty">Sıfırdan oluştur</string>
@@ -143,7 +142,7 @@
     <string name="latest_handshake_ago">%s önce</string>
     <string name="listen_port">Dinlenen port</string>
     <string name="log_export_error">Günlük dışa aktarılamadı: %s</string>
-    <string name="log_export_subject">WireGuard Android Günlük Dosyası</string>
+    <string name="log_export_subject">Portway Android Günlük Dosyası</string>
     <string name="log_export_success">“%s” dosyasına kaydedildi</string>
     <string name="log_export_title">Günlük dosyasını dışa aktar</string>
     <string name="log_saver_activity_label">Günlüğü kaydet</string>
@@ -176,8 +175,8 @@
     <string name="parse_error_integer">sayı</string>
     <string name="parse_error_reason">%1$s “%2$s” ayrıştırılamıyor</string>
     <string name="peer">Eş</string>
-    <string name="permission_description">WireGuard tünellerini yöneterek tünelleri istendiği anda açma ve kapatma. İnternet trafiğini potansiyel olarak yanlış yönlendirebilir</string>
-    <string name="permission_label">WireGuard tünellerini yönet</string>
+    <string name="permission_description">tünellerini yöneterek tünelleri istendiği anda açma ve kapatma. İnternet trafiğini potansiyel olarak yanlış yönlendirebilir</string>
+    <string name="permission_label">tünellerini yönet</string>
     <string name="persistent_keepalive">Sürekli keepalive</string>
     <string name="pre_shared_key">Önceden paylaşılan anahtar</string>
     <string name="pre_shared_key_enabled">etkin</string>
@@ -199,7 +198,7 @@
     <string name="shell_start_error">Kabuk başlatılamadı: %d</string>
     <string name="success_application_will_restart">İşlem başarılı. Uygulama şimdi yeniden başlayacak…</string>
     <string name="toggle_all">Tümünü aç/kapat</string>
-    <string name="toggle_error">WireGuard tüneli açılırken/kapatılırken hata oluştu: %s</string>
+    <string name="toggle_error">tüneli açılırken/kapatılırken hata oluştu: %s</string>
     <string name="tools_installer_already">wg ve wg-quick zaten yüklenmiş</string>
     <string name="tools_installer_failure">Komut satırı araçları yüklenemiyor (root erişiminiz olmayabilir)</string>
     <string name="tools_installer_initial">Scripting için isteğe bağlı araçları yükle</string>
@@ -232,20 +231,10 @@
     <string name="type_name_go_userspace">Go kullanıcı uzayı</string>
     <string name="type_name_kernel_module">Çekirdek modülü</string>
     <string name="unknown_error">Bilinmeyen hata</string>
-    <string name="updater_avalable">Uygulama güncellemesi mevcut. Lütfen şimdi güncelleyin.</string>
-    <string name="updater_action">İndir ve güncelle</string>
-    <string name="updater_rechecking">Güncellemenin meta verileri alınıyor…</string>
-    <string name="updater_download_progress">Güncelleme indiriliyor: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">Güncelleme indiriliyor: %s</string>
-    <string name="updater_installing">Güncelleme yükleniyor…</string>
-    <string name="updater_failure">Güncelleme hatası: %s. Birazdan yeniden denenecek…</string>
-    <string name="updater_corrupt_title">Uygulama hasar görmüş</string>
-    <string name="updater_corrupt_message">Bu uygulama hasarlı. Lütfen APK dosyasını aşağıdaki web sitesinden yeniden indirin. Daha sonra bu uygulamayı kaldırın ve indirdiğiniz APK\'den yeniden yükleyin.</string>
-    <string name="updater_corrupt_navigate">Web sitesini aç</string>
     <string name="version_summary">%1$s arka ucu %2$s</string>
     <string name="version_summary_checking">%s arka uç sürümü kontrol ediliyor</string>
     <string name="version_summary_unknown">Bilinmeyen %s sürümü</string>
-    <string name="version_title">Android için WireGuard v%s</string>
+    <string name="version_title">Android için Portway v%s</string>
     <string name="vpn_not_authorized_error">VPN hizmeti kullanıcı tarafından yetkilendirilmemiş</string>
     <string name="vpn_start_error">Android VPN hizmeti başlatılamadı</string>
     <string name="zip_export_error">Tüneller dışa aktarılamadı: %s</string>

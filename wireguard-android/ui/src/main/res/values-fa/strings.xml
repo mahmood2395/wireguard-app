@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Persian. Replaces the upstream values-fa-rIR file, for two reasons.
+  ~
+  ~ First, coverage: 167 of the app's 373 strings — effectively the whole Portway surface, from
+  ~ onboarding to the home screen to the update prompt — had no Persian at all and were falling
+  ~ back to English mid-sentence. A large share of this app's users read Persian.
+  ~
+  ~ Second, the qualifier: "fa-rIR" only matches Iran. Persian speakers in Afghanistan (fa-AF)
+  ~ and anyone whose device reports a bare "fa" fell through to English for the entire app. This
+  ~ file is qualified on the language alone, so it matches all of them.
+  ~
+  ~ Register: the audience is people handed a config by a provider, so the words they already use
+  ~ win over purist coinages — کانفیگ, پینگ, هندشیک, سرور. Field names that appear verbatim in a
+  ~ .conf file stay recognisable, because a user comparing the screen with the file they were sent
+  ~ has to be able to match them line for line. Numerals stay Latin throughout: these screens
+  ~ carry IP addresses, ports, MTUs and base64 keys.
+  -->
+<resources>
+
+    <!-- Plurals: Persian has one/other in CLDR, and "one" covers zero as well. -->
+    <plurals name="delete_error">
+        <item quantity="one">حذف %d کانفیگ ممکن نشد: &#x2068;%s&#x2069;</item>
+        <item quantity="other">حذف %d کانفیگ ممکن نشد: &#x2068;%s&#x2069;</item>
+    </plurals>
+    <plurals name="delete_success">
+        <item quantity="one">%d کانفیگ حذف شد</item>
+        <item quantity="other">%d کانفیگ حذف شد</item>
+    </plurals>
+    <plurals name="delete_title">
+        <item quantity="one">%d کانفیگ انتخاب شد</item>
+        <item quantity="other">%d کانفیگ انتخاب شد</item>
+    </plurals>
+    <plurals name="import_partial_success">
+        <item quantity="one">%1$d کانفیگ از %2$d کانفیگ وارد شد</item>
+        <item quantity="other">%1$d کانفیگ از %2$d کانفیگ وارد شد</item>
+    </plurals>
+    <plurals name="import_total_success">
+        <item quantity="one">%d کانفیگ وارد شد</item>
+        <item quantity="other">%d کانفیگ وارد شد</item>
+    </plurals>
+    <plurals name="set_excluded_applications">
+        <item quantity="one">%d برنامهٔ کنارگذاشته</item>
+        <item quantity="other">%d برنامهٔ کنارگذاشته</item>
+    </plurals>
+    <plurals name="set_included_applications">
+        <item quantity="one">%d برنامهٔ واردشده</item>
+        <item quantity="other">%d برنامهٔ واردشده</item>
+    </plurals>
+    <plurals name="n_excluded_applications">
+        <item quantity="one">%d برنامه کنار گذاشته شد</item>
+        <item quantity="other">%d برنامه کنار گذاشته شد</item>
+    </plurals>
+    <plurals name="n_included_applications">
+        <item quantity="one">%d برنامه واردشده</item>
+        <item quantity="other">%d برنامه واردشده</item>
+    </plurals>
+    <plurals name="include_n_applications">
+        <item quantity="one">فقط %d برنامه</item>
+        <item quantity="other">فقط %d برنامه</item>
+    </plurals>
+    <plurals name="exclude_n_applications">
+        <item quantity="one">کنار گذاشتن %d برنامه</item>
+        <item quantity="other">کنار گذاشتن %d برنامه</item>
+    </plurals>
+    <plurals name="persistent_keepalive_seconds_unit">
+        <item quantity="one">هر ثانیه</item>
+        <item quantity="other">هر %d ثانیه</item>
+    </plurals>
+    <plurals name="persistent_keepalive_seconds_suffix">
+        <item quantity="one">ثانیه</item>
+        <item quantity="other">ثانیه</item>
+    </plurals>
+    <plurals name="confirm_peers">
+        <item quantity="one">یک همتا</item>
+        <item quantity="other">%d همتا</item>
+    </plurals>
+    <plurals name="expiry_soon_title">
+        <item quantity="one">پلن شما فردا تمام می‌شود</item>
+        <item quantity="other">پلن شما تا %1$d روز دیگر تمام می‌شود</item>
+    </plurals>
+
+    <!-- Applications picker -->
+    <string name="all_applications">همهٔ برنامه‌ها</string>
+    <string name="exclude_from_tunnel">کنار گذاشتن</string>
+    <string name="include_in_tunnel">فقط همین‌ها</string>
+    <string name="use_all_applications">همهٔ برنامه‌ها از تونل عبور کنند</string>
+    <string name="applications">برنامه‌ها</string>
+    <string name="error_fetching_apps">خطا در خواندن فهرست برنامه‌ها: &#x2068;%s&#x2069;</string>
+
+    <!-- Config fields. Kept matchable against the .conf file the user was sent. -->
+    <string name="add_peer">افزودن همتا</string>
+    <string name="addresses">آدرس‌ها</string>
+    <string name="allowed_ips">آی‌پی‌های مجاز</string>
+    <string name="dns_servers">سرورهای DNS</string>
+    <string name="dns_search_domains">دامنه‌های جست‌وجو</string>
+    <string name="endpoint">اندپوینت</string>
+    <string name="interface_title">اینترفیس</string>
+    <string name="listen_port">پورت شنود</string>
+    <string name="mtu">MTU</string>
+    <string name="name">نام</string>
+    <string name="peer">همتا</string>
+    <string name="persistent_keepalive">کیپ‌الایو دائمی</string>
+    <string name="pre_shared_key">کلید ازپیش‌مشترک</string>
+    <string name="pre_shared_key_enabled">فعال</string>
+    <string name="private_key">کلید خصوصی</string>
+    <string name="public_key">کلید عمومی</string>
+    <string name="generate_new_private_key">ساخت کلید خصوصی تازه</string>
+    <string name="exclude_private_ips">کنار گذاشتن آی‌پی‌های خصوصی</string>
+    <string name="tunnel_name">نام کانفیگ</string>
+    <string name="transfer">انتقال</string>
+    <string name="latest_handshake">آخرین هندشیک</string>
+    <string name="latest_handshake_ago">&#x2068;%s&#x2069; پیش</string>
+
+    <!-- Hints -->
+    <string name="hint_automatic">(خودکار)</string>
+    <string name="hint_generated">(ساخته‌شده)</string>
+    <string name="hint_optional">(اختیاری)</string>
+    <string name="hint_optional_discouraged">(اختیاری، توصیه نمی‌شود)</string>
+    <string name="hint_random">(تصادفی)</string>
+
+    <!-- Config parsing errors -->
+    <string name="bad_config_context">&#x2068;%2$s&#x2069; در &#x2068;%1$s&#x2069;</string>
+    <string name="bad_config_context_top_level">&#x2068;%s&#x2069;</string>
+    <string name="bad_config_error">&#x2068;%1$s&#x2069; در &#x2068;%2$s&#x2069;</string>
+    <string name="bad_config_explanation_pka">: باید مثبت و حداکثر 65535 باشد</string>
+    <string name="bad_config_explanation_positive_number">: باید مثبت باشد</string>
+    <string name="bad_config_explanation_udp_port">: باید یک شمارهٔ پورت UDP معتبر باشد</string>
+    <string name="bad_config_reason_invalid_key">کلید نامعتبر</string>
+    <string name="bad_config_reason_invalid_number">عدد نامعتبر</string>
+    <string name="bad_config_reason_invalid_value">مقدار نامعتبر</string>
+    <string name="bad_config_reason_missing_attribute">ویژگی جا افتاده</string>
+    <string name="bad_config_reason_missing_section">بخش جا افتاده</string>
+    <string name="bad_config_reason_syntax_error">خطای نگارشی</string>
+    <string name="bad_config_reason_unknown_attribute">ویژگی ناشناخته</string>
+    <string name="bad_config_reason_unknown_section">بخش ناشناخته</string>
+    <string name="bad_config_reason_value_out_of_range">مقدار خارج از محدوده</string>
+    <string name="key_contents_error">کاراکتر نامعتبر در کلید</string>
+    <string name="key_length_error">طول کلید نادرست است</string>
+    <string name="key_length_explanation_base64">: کلید base64 وایرگارد باید 44 کاراکتر (32 بایت) باشد</string>
+    <string name="key_length_explanation_binary">: کلید وایرگارد باید 32 بایت باشد</string>
+    <string name="key_length_explanation_hex">: کلید hex وایرگارد باید 64 کاراکتر (32 بایت) باشد</string>
+    <string name="parse_error_generic">رشته</string>
+    <string name="parse_error_inet_address">آدرس آی‌پی</string>
+    <string name="parse_error_inet_endpoint">اندپوینت</string>
+    <string name="parse_error_inet_network">شبکهٔ آی‌پی</string>
+    <string name="parse_error_integer">عدد</string>
+    <string name="parse_error_reason">خواندن &#x2068;%1$s&#x2069; «&#x2068;%2$s&#x2069;» ممکن نشد</string>
+
+    <!-- Settings: sections -->
+    <string name="settings">تنظیمات</string>
+    <string name="settings_category_protection">محافظت</string>
+    <string name="settings_category_advanced">پیشرفته</string>
+    <string name="settings_category_app">برنامه</string>
+
+    <!-- Settings: protection -->
+    <string name="protection_title">VPN همیشه‌روشن و قطع اینترنت</string>
+    <string name="protection_unknown">اندروید می‌تواند بعد از راه‌اندازی دوباره، VPN را وصل کند و هر وقت تونل قطع شد جلوی عبور ترافیک را بگیرد. هیچ‌کدام به‌صورت پیش‌فرض روشن نیست. برای تنظیم، ضربه بزنید.</string>
+    <string name="battery_opt_title">محدودیت‌های پس‌زمینه</string>
+    <string name="battery_opt_exempt">بدون محدودیت. تونل می‌تواند در پس‌زمینه روشن بماند.</string>
+    <string name="battery_opt_restricted">محدود — اندروید ممکن است تونل را در پس‌زمینه قطع کند. برای رفع محدودیت ضربه بزنید.</string>
+    <string name="auto_reconnect_title">راه‌اندازی دوبارهٔ تونل‌های ازکارافتاده</string>
+    <string name="auto_reconnect_summary">اگر تونل وصل باشد ولی هندشیک نکند، خودکار دوباره راه‌اندازی می‌شود</string>
+    <string name="restore_on_boot_title">اتصال هنگام روشن شدن دستگاه</string>
+    <string name="restore_on_boot_summary_on">کانفیگ‌های فعال هنگام بالا آمدن دستگاه وصل می‌شوند</string>
+    <string name="restore_on_boot_summary_off">کانفیگ‌ها هنگام بالا آمدن دستگاه وصل نمی‌شوند</string>
+
+    <!-- Settings: advanced -->
+    <string name="multiple_tunnels_title">اجازهٔ روشن بودن چند کانفیگ هم‌زمان</string>
+    <string name="multiple_tunnels_summary_on">چند کانفیگ می‌توانند هم‌زمان روشن باشند</string>
+    <string name="multiple_tunnels_summary_off">روشن کردن یکی، بقیه را خاموش می‌کند</string>
+    <string name="panel_url_title">آدرس پنل</string>
+    <string name="panel_url_summary">آدرس پنل مدیریتی شما؛ برای نمایش اطلاعات اشتراک کانفیگ‌هایی که بدون لینک وارد شده‌اند</string>
+    <string name="allow_remote_control_intents_title">اجازه به برنامه‌های کنترل از راه دور</string>
+    <string name="allow_remote_control_intents_summary_on">برنامه‌های دیگر می‌توانند کانفیگ‌ها را روشن و خاموش کنند (پیشرفته)</string>
+    <string name="allow_remote_control_intents_summary_off">برنامه‌های دیگر نمی‌توانند کانفیگ‌ها را روشن و خاموش کنند (توصیه‌شده)</string>
+    <string name="disable_config_export_title">غیرفعال کردن خروجی گرفتن از کانفیگ</string>
+    <string name="disable_config_export_description">با این کار دسترسی به کلیدهای خصوصی سخت‌تر می‌شود</string>
+
+    <!-- Settings: app -->
+    <string name="quick_settings_tile_add_title">افزودن دکمه به پنل تنظیمات سریع</string>
+    <string name="quick_settings_tile_add_summary">این دکمه آخرین کانفیگ استفاده‌شده را روشن و خاموش می‌کند</string>
+    <string name="quick_settings_tile_add_failure">افزودن دکمه ممکن نشد: خطای %d</string>
+    <string name="quick_settings_tile_action">روشن/خاموش کردن کانفیگ</string>
+    <string name="log_viewer_pref_title">گزارش برنامه</string>
+    <string name="log_viewer_pref_summary">اگر چیزی وصل نمی‌شود، گزارش کمک می‌کند</string>
+    <string name="log_viewer_title">گزارش</string>
+    <string name="log_saver_activity_label">ذخیرهٔ گزارش</string>
+    <string name="log_export_title">خروجی گرفتن از فایل گزارش</string>
+    <string name="log_export_subject">فایل گزارش Portway اندروید</string>
+    <string name="log_export_success">در «&#x2068;%s&#x2069;» ذخیره شد</string>
+    <string name="log_export_error">خروجی گرفتن از گزارش ممکن نشد: &#x2068;%s&#x2069;</string>
+    <string name="logcat_error">اجرای logcat ممکن نشد:</string>
+    <string name="zip_export_title">خروجی گرفتن از کانفیگ‌ها در یک فایل zip</string>
+    <string name="zip_export_summary">فایل zip در پوشهٔ دانلودها ذخیره می‌شود</string>
+    <string name="zip_export_success">در «&#x2068;%s&#x2069;» ذخیره شد</string>
+    <string name="zip_export_error">خروجی گرفتن از کانفیگ‌ها ممکن نشد: &#x2068;%s&#x2069;</string>
+    <string name="language_title">زبان</string>
+    <string name="language_follow_system">مطابق سیستم</string>
+    <string name="theme_mode_title">پوسته</string>
+    <string name="theme_mode_dark">تیره</string>
+    <string name="theme_mode_light">روشن</string>
+    <string name="theme_mode_system">مطابق سیستم</string>
+    <string name="dark_theme_title">استفاده از پوستهٔ تیره</string>
+    <string name="dark_theme_summary_on">هم‌اکنون پوستهٔ تیره فعال است</string>
+    <string name="dark_theme_summary_off">هم‌اکنون پوستهٔ روشن فعال است</string>
+    <string name="version_title">Portway برای اندروید نسخهٔ &#x2068;%s&#x2069;</string>
+    <string name="version_summary">بک‌اند &#x2068;%1$s&#x2069; نسخهٔ &#x2068;%2$s&#x2069;</string>
+    <string name="version_summary_checking">در حال بررسی نسخهٔ بک‌اند &#x2068;%s&#x2069;</string>
+    <string name="version_summary_unknown">نسخهٔ &#x2068;%s&#x2069; نامشخص است</string>
+
+    <!-- Home: the ring, its caption and the sentence under it -->
+    <string name="hero_protected">محافظت‌شده</string>
+    <string name="hero_not_protected">محافظت نشده</string>
+    <string name="hero_connecting">در حال اتصال</string>
+    <string name="hero_disconnecting">در حال قطع</string>
+    <string name="hero_off_figure">خاموش</string>
+    <string name="hero_connected_figure">روشن</string>
+    <string name="ring_caption_idle">برای اتصال ضربه بزنید</string>
+    <string name="ring_caption_connecting">در حال باز کردن تونل…</string>
+    <string name="hero_sub_connected">ترافیک شما از همتای این کانفیگ بیرون می‌رود.</string>
+    <string name="hero_sub_connected_geo">ترافیک شما در &#x2068;%1$s&#x2069; بیرون می‌آید؛ این محل از روی آی‌پی همتا به دست آمده.</string>
+    <string name="hero_sub_idle">هیچ‌چیز رمزگذاری نمی‌شود. برای اتصال ضربه بزنید.</string>
+    <string name="hero_sub_connecting">منتظر اولین هندشیک.</string>
+    <string name="hero_sub_disconnecting">در حال برچیدن اینترفیس.</string>
+    <string name="hero_sub_no_tunnels">برای شروع، کانفیگی را که ارائه‌دهنده به شما داده وارد کنید.</string>
+    <string name="days_left_chip">%1$d روز مانده</string>
+
+    <!-- Home: location card, throughput tiles and the month band -->
+    <string name="location_from">از &#x2068;%1$s&#x2069;</string>
+    <string name="location_geo_from">&#x2068;%1$s&#x2069; · از &#x2068;%2$s&#x2069;</string>
+    <string name="peer_no_route">مسیری به همتا نیست</string>
+    <string name="connect_download">دریافت</string>
+    <string name="connect_upload">ارسال</string>
+    <string name="month_label">این ماه</string>
+    <string name="month_axis_today">امروز</string>
+    <string name="month_of">&#x2068;%1$s&#x2069; از &#x2068;%2$s&#x2069;</string>
+    <string name="month_used">&#x2068;%1$s&#x2069; مصرف‌شده</string>
+    <string name="quota_renews">تمدید در &#x2068;%1$s&#x2069; · &#x2068;%2$s&#x2069; باقی مانده</string>
+
+    <!-- Home: notices -->
+    <string name="post_update_title">به‌روزرسانی هنگام اتصال</string>
+    <string name="post_update_detail">وقتی یک برنامهٔ VPN در حال اجرا به‌روزرسانی می‌شود، اندروید ممکن است عبور ترافیک را متوقف کند. اگر صفحه‌ها همچنان باز نمی‌شوند، گوشی را دوباره روشن کنید؛ این مشکل را برطرف می‌کند.</string>
+    <string name="post_update_dismiss">متوجه شدم</string>
+    <string name="backend_error_title">موتور VPN در دسترس نیست</string>
+    <string name="backend_error_retry">تلاش دوباره</string>
+
+    <!-- Navigation and top-level actions -->
+    <string name="nav_home">خانه</string>
+    <string name="nav_configs">کانفیگ‌ها</string>
+    <string name="add">افزودن</string>
+    <string name="edit">ویرایش</string>
+    <string name="save">ذخیره</string>
+    <string name="cancel">انصراف</string>
+    <string name="delete">حذف</string>
+    <string name="select_all">انتخاب همه</string>
+    <string name="toggle_all">روشن/خاموش کردن همه</string>
+
+    <!-- Configs list -->
+    <string name="tunnel_status_active">وصل</string>
+    <string name="tunnel_status_inactive">وصل نیست</string>
+    <string name="tunnel_list_empty_title">هنوز کانفیگی ندارید</string>
+    <string name="tunnel_list_placeholder">از دکمهٔ «افزودن» در بالا استفاده کنید تا یک کد QR اسکن شود یا فایل ‎.conf‎ی که ارائه‌دهنده برایتان فرستاده باز شود.</string>
+    <string name="configs_footnote">این‌ها کانفیگ‌هایی هستند که به شما داده شده — Portway فهرست سرور مخصوص خودش را ندارد. شهری که زیر هر نام می‌بینید از روی آی‌پی همتا به دست آمده، نه انتخاب از یک فهرست. با ضربه زدن روی هرکدام به همان سوئیچ می‌شود؛ مگر آنکه در تنظیمات اجازهٔ چند کانفیگ هم‌زمان را بدهید، هر بار فقط یکی روشن است.</string>
+
+    <!-- Detail -->
+    <string name="detail_usage_label">۱۴ روز گذشته</string>
+    <string name="detail_health_label">وضعیت</string>
+    <string name="detail_configuration">پیکربندی</string>
+    <string name="detail_show">نمایش</string>
+    <string name="detail_hide">پنهان کردن</string>
+    <string name="detail_connect">اتصال</string>
+    <string name="detail_disconnect">قطع اتصال</string>
+    <string name="detail_remove">حذف این کانفیگ</string>
+    <string name="detail_remove_confirm">&#x2068;%1$s&#x2069; حذف شود؟</string>
+    <string name="detail_remove_detail">کانفیگ و کلید خصوصی‌اش از این دستگاه پاک می‌شوند. به ارائه‌دهندهٔ شما چیزی اطلاع داده نمی‌شود.</string>
+    <string name="detail_keepalive_seconds">هر %1$d ثانیه</string>
+    <string name="detail_keepalive_off">خاموش</string>
+    <string name="detail_session_total">&#x2068;%s&#x2069; در این نشست</string>
+    <string name="detail_sentence_connected">همهٔ ترافیک این دستگاه از &#x2068;%s&#x2069; عبور می‌کند.</string>
+    <string name="detail_sentence_connected_geo">همهٔ ترافیک این دستگاه از &#x2068;%1$s&#x2069; عبور می‌کند، که در &#x2068;%2$s&#x2069; بیرون می‌آید.</string>
+    <string name="detail_sentence_down">این کانفیگ در حال حاضر ترافیکی نمی‌برد.</string>
+    <string name="detail_resolved_location">محل به‌دست‌آمده</string>
+    <string name="connect_ping_label">پینگ</string>
+    <string name="ping_timeout">بی‌پاسخ</string>
+    <string name="handshake_label">آخرین هندشیک</string>
+    <string name="handshake_age_seconds">%1$d ثانیه پیش</string>
+    <string name="handshake_age_minutes">%1$d دقیقه و %2$02d ثانیه پیش</string>
+    <string name="handshake_age_none">بیش از ۳ دقیقه</string>
+    <string name="handshake_axis_start">۰ ثانیه</string>
+    <string name="handshake_axis_rekey">تعویض کلید</string>
+    <string name="handshake_axis_end">۳ دقیقه</string>
+    <string name="handshake_state_fresh">هندشیک در دو دقیقهٔ گذشته انجام شده</string>
+    <string name="handshake_state_late">تعویض کلید عقب افتاده — هنوز داخل بازهٔ ۳ دقیقه‌ای</string>
+    <string name="handshake_state_silent">آخرین هندشیک بیش از سه دقیقه پیش بوده</string>
+    <string name="handshake_spoken_seconds">%1$d ثانیه</string>
+    <string name="handshake_spoken_minutes">%1$d دقیقه و %2$d ثانیه</string>
+    <string name="handshake_a11y_fresh">آخرین هندشیک &#x2068;%1$s&#x2069; پیش، داخل بازهٔ تعویض کلید</string>
+    <string name="handshake_a11y_late">آخرین هندشیک &#x2068;%1$s&#x2069; پیش، تعویض کلید عقب افتاده</string>
+    <string name="handshake_a11y_silent">بیش از سه دقیقه هیچ هندشیکی نبوده</string>
+    <string name="transfer_rate">&#x2068;%1$s&#x2069; بر ثانیه</string>
+    <string name="transfer_rx_tx">دریافت: &#x2068;%1$s&#x2069;، ارسال: &#x2068;%2$s&#x2069;</string>
+
+    <!-- Connect states shared with the tile and notifications -->
+    <string name="connect_connected">وصل</string>
+    <string name="connect_disconnected">وصل نیست</string>
+    <string name="connect_reconnecting">در حال اتصال دوباره…</string>
+    <string name="connect_no_tunnels">هنوز کانفیگی ندارید</string>
+    <string name="connect_no_tunnels_hint">برای شروع یک کانفیگ وارد کنید</string>
+    <string name="connect_add_tunnel">افزودن کانفیگ</string>
+
+    <!-- Onboarding -->
+    <string name="onboard_skip">رد کردن — من از قبل فایل کانفیگ دارم</string>
+    <string name="onboard_kicker_1">خوش آمدید</string>
+    <string name="onboard_title_1">Portway یک در است، نه یک سرویس.</string>
+    <string name="onboard_body_1">ترافیک شما را به سروری می‌برد که خودتان یا ارائه‌دهنده‌تان آن را در اختیار دارید. اینجا حسابی وجود ندارد و چیزی برای خرید اشتراک نیست — فقط همان کانفیگی که به شما داده‌اند.</string>
+    <string name="onboard_cta_1">ادامه</string>
+    <string name="onboard_kicker_2">گام ۱ از ۲</string>
+    <string name="onboard_title_2">کدی را که ارائه‌دهنده فرستاده اضافه کنید.</string>
+    <string name="onboard_body_2">یک کد QR یا یک فایل ‎.conf‎. ‏Portway یک بار آن را می‌خواند، کلید خصوصی را روی همین دستگاه نگه می‌دارد و هرگز جایی نمی‌فرستد.</string>
+    <string name="onboard_cta_2">اسکن کد QR</string>
+    <string name="onboard_kicker_3">گام ۲ از ۲</string>
+    <string name="onboard_title_3">اندروید اجازه می‌خواهد.</string>
+    <string name="onboard_body_3">یک VPN برای عبور دادن ترافیک به اجازهٔ سیستم نیاز دارد. اندروید پنجرهٔ خودش را نشان می‌دهد — Portway نمی‌تواند از آن رد شود یا جعلش کند.</string>
+    <string name="onboard_cta_3">متوجه شدم</string>
+
+    <!-- Import: the sheet, the QR scan and the confirmation -->
+    <string name="add_tunnel_sheet_title">افزودن کانفیگ</string>
+    <string name="create_tunnel">ساخت کانفیگ</string>
+    <string name="create_activity_title">ساخت کانفیگ</string>
+    <string name="create_empty">ساختن از ابتدا</string>
+    <string name="create_from_file">وارد کردن از فایل یا آرشیو</string>
+    <string name="create_from_qr_code">اسکن از کد QR</string>
+    <string name="import_from_qr_code">وارد کردن کانفیگ از کد QR</string>
+    <string name="import_from_link">وارد کردن کانفیگ از لینک</string>
+    <string name="deep_link_import_error">آن لینک کانفیگ معتبری نداشت</string>
+    <string name="not_a_config_error">این فایل کانفیگ وایرگارد ندارد</string>
+    <string name="import_too_large_error">فایل بزرگ‌تر از آن است که یک کانفیگ باشد</string>
+    <string name="import_error">وارد کردن کانفیگ ممکن نشد: &#x2068;%s&#x2069;</string>
+    <string name="import_success">«&#x2068;%s&#x2069;» وارد شد</string>
+    <string name="error_no_qr_found">کد QR در تصویر پیدا نشد</string>
+    <string name="error_qr_checksum">بررسی صحت کد QR ناموفق بود</string>
+    <string name="qr_code_hint">نکته: با دستور ‎`qrencode -t ansiutf8 &lt; tunnel.conf`‎ بسازید.</string>
+    <string name="confirm_ready">&#x2068;%s&#x2069; آماده است</string>
+    <string name="confirm_subtitle_all">&#x2068;%1$s&#x2069;، همهٔ ترافیک را عبور می‌دهد. نامی برایش بگذارید که در فهرست بشناسیدش.</string>
+    <string name="confirm_subtitle_split">&#x2068;%1$s&#x2069;، بخشی از ترافیک شما را عبور می‌دهد. نامی برایش بگذارید که در فهرست بشناسیدش.</string>
+    <string name="confirm_subtitle_all_geo">&#x2068;%1$s&#x2069;، همهٔ ترافیک را عبور می‌دهد. آی‌پی‌اش آن را در &#x2068;%2$s&#x2069; نشان می‌دهد — نامی برایش بگذارید که در فهرست بشناسیدش.</string>
+    <string name="confirm_subtitle_split_geo">&#x2068;%1$s&#x2069;، بخشی از ترافیک شما را عبور می‌دهد. آی‌پی‌اش آن را در &#x2068;%2$s&#x2069; نشان می‌دهد — نامی برایش بگذارید که در فهرست بشناسیدش.</string>
+    <string name="confirm_routes">مسیرها</string>
+    <string name="confirm_routes_all">همهٔ ترافیک</string>
+    <string name="confirm_routes_some">%1$d شبکه</string>
+    <string name="confirm_save">ذخیرهٔ کانفیگ</string>
+    <string name="confirm_not_now">فعلاً نه</string>
+
+    <!-- Account and plan -->
+    <string name="account_suspended">معلق</string>
+    <string name="account_expired">منقضی</string>
+    <string name="account_days_value">%1$d روز</string>
+    <string name="account_usage_value">&#x2068;%s&#x2069; مصرف‌شده</string>
+    <string name="account_plan_size">پلن &#x2068;%s&#x2069;</string>
+    <string name="expiry_channel_name">انقضای پلن</string>
+    <string name="expiry_channel_description">پیش از تمام شدن پلن به شما هشدار می‌دهد</string>
+    <string name="expiry_soon_text">&#x2068;%1$s&#x2069; با تمام شدن پلن دیگر وصل نمی‌شود. برای ادامهٔ اتصال تمدید کنید.</string>
+    <string name="expiry_today_title">پلن شما امروز تمام می‌شود</string>
+    <string name="expiry_today_text">&#x2068;%1$s&#x2069; پس از پایان پلن دیگر وصل نمی‌شود. برای ادامهٔ اتصال تمدید کنید.</string>
+    <string name="expiry_suspended_title">حساب شما معلق شده است</string>
+    <string name="expiry_suspended_text">&#x2068;%1$s&#x2069; تا وقتی حساب دوباره فعال نشود وصل نمی‌شود.</string>
+
+    <!-- Updater -->
+    <string name="update_available">نسخهٔ &#x2068;%1$s&#x2069; در دسترس است</string>
+    <string name="update_action">به‌روزرسانی</string>
+    <string name="update_downloading">در حال دانلود…</string>
+    <string name="update_required">این نسخه دیگر پشتیبانی نمی‌شود. برای ادامهٔ اتصال به‌روزرسانی کنید.</string>
+    <string name="update_disconnect_note">هنگام نصب به‌روزرسانی، تونل شما قطع می‌شود.</string>
+    <string name="update_permission_needed">به Portway اجازهٔ نصب برنامه بدهید</string>
+    <string name="update_failed">به‌روزرسانی ناموفق بود: &#x2068;%1$s&#x2069;</string>
+    <string name="update_later">بعداً</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_open_details">باز کردن جزئیات</string>
+    <string name="a11y_connect">اتصال &#x2068;%1$s&#x2069;</string>
+    <string name="a11y_disconnect">قطع &#x2068;%1$s&#x2069;</string>
+    <string name="a11y_connecting">در حال اتصال</string>
+    <string name="a11y_disconnecting">در حال قطع</string>
+    <string name="a11y_share_log">هم‌رسانی گزارش</string>
+
+    <!-- Android TV -->
+    <string name="tv_delete">کانفیگی را برای حذف انتخاب کنید</string>
+    <string name="tv_select_a_storage_drive">یک حافظه انتخاب کنید</string>
+    <string name="tv_no_file_picker">برای مرور فایل‌ها یک برنامهٔ مدیریت فایل نصب کنید</string>
+    <string name="tv_add_tunnel_get_started">برای شروع یک کانفیگ اضافه کنید</string>
+
+    <!-- Biometrics -->
+    <string name="biometric_prompt_zip_exporter_title">برای خروجی گرفتن از کانفیگ‌ها احراز هویت کنید</string>
+    <string name="biometric_prompt_private_key_title">برای دیدن کلید خصوصی احراز هویت کنید</string>
+    <string name="biometric_auth_error">احراز هویت ناموفق بود</string>
+    <string name="biometric_auth_error_reason">احراز هویت ناموفق بود: &#x2068;%s&#x2069;</string>
+
+    <!-- Errors and system messages -->
+    <string name="config_delete_error">حذف فایل کانفیگ &#x2068;%s&#x2069; ممکن نیست</string>
+    <string name="config_exists_error">کانفیگی با نام «&#x2068;%s&#x2069;» از قبل وجود دارد</string>
+    <string name="config_file_exists_error">فایل کانفیگ «&#x2068;%s&#x2069;» از قبل وجود دارد</string>
+    <string name="config_not_found_error">فایل کانفیگ «&#x2068;%s&#x2069;» پیدا نشد</string>
+    <string name="config_rename_error">تغییر نام فایل کانفیگ «&#x2068;%s&#x2069;» ممکن نیست</string>
+    <string name="config_save_error">ذخیرهٔ کانفیگ «&#x2068;%1$s&#x2069;» ممکن نشد: &#x2068;%2$s&#x2069;</string>
+    <string name="config_save_success">کانفیگ «&#x2068;%s&#x2069;» ذخیره شد</string>
+    <string name="copied_to_clipboard">&#x2068;%s&#x2069; در بریده‌دان کپی شد</string>
+    <string name="create_bin_dir_error">ساخت پوشهٔ باینری محلی ممکن نیست</string>
+    <string name="create_downloads_file_error">ساخت فایل در پوشهٔ دانلودها ممکن نیست</string>
+    <string name="create_output_dir_error">ساخت پوشهٔ خروجی ممکن نیست</string>
+    <string name="create_temp_dir_error">ساخت پوشهٔ موقت محلی ممکن نیست</string>
+    <string name="error_down">خطا در قطع کردن تونل: &#x2068;%s&#x2069;</string>
+    <string name="error_root">لطفاً دسترسی روت بگیرید و دوباره تلاش کنید</string>
+    <string name="error_prepare">خطا در آماده‌سازی تونل: &#x2068;%s&#x2069;</string>
+    <string name="error_up">خطا در بالا آوردن تونل: &#x2068;%s&#x2069;</string>
+    <string name="generic_error">خطای ناشناختهٔ «&#x2068;%s&#x2069;»</string>
+    <string name="illegal_filename_error">نام فایل نامعتبر «&#x2068;%s&#x2069;»</string>
+    <string name="no_config_error">تلاش برای بالا آوردن تونلی که کانفیگ ندارد</string>
+    <string name="no_configs_error">هیچ کانفیگی پیدا نشد</string>
+    <string name="no_tunnels_error">هیچ کانفیگی وجود ندارد</string>
+    <string name="toggle_error">خطا در روشن/خاموش کردن کانفیگ: &#x2068;%s&#x2069;</string>
+    <string name="tun_create_error">ساخت دستگاه tun ممکن نشد</string>
+    <string name="tunnel_config_error">پیکربندی تونل ممکن نشد (wg-quick کد %d برگرداند)</string>
+    <string name="tunnel_create_error">ساخت کانفیگ ممکن نشد: &#x2068;%s&#x2069;</string>
+    <string name="tunnel_create_success">کانفیگ «&#x2068;%s&#x2069;» ساخته شد</string>
+    <string name="tunnel_error_already_exists">کانفیگ «&#x2068;%s&#x2069;» از قبل وجود دارد</string>
+    <string name="tunnel_error_invalid_name">نام نامعتبر</string>
+    <string name="tunnel_on_error">روشن کردن تونل ممکن نشد (wgTurnOn کد %d برگرداند)</string>
+    <string name="tunnel_dns_failure">آدرس DNS «&#x2068;%s&#x2069;» پیدا نشد</string>
+    <string name="tunnel_rename_error">تغییر نام کانفیگ ممکن نشد: &#x2068;%s&#x2069;</string>
+    <string name="tunnel_rename_success">نام کانفیگ به «&#x2068;%s&#x2069;» تغییر کرد</string>
+    <string name="unknown_error">خطای ناشناخته</string>
+    <string name="vpn_not_authorized_error">کاربر به سرویس VPN اجازه نداده است</string>
+    <string name="vpn_start_error">راه‌اندازی سرویس VPN اندروید ممکن نشد</string>
+    <string name="shell_exit_status_read_error">پوسته نمی‌تواند کد خروج را بخواند</string>
+    <string name="shell_marker_count_error">پوسته انتظار ۴ نشانه داشت، %d دریافت کرد</string>
+    <string name="shell_start_error">پوسته اجرا نشد: %d</string>
+    <string name="success_application_will_restart">انجام شد. برنامه اکنون دوباره اجرا می‌شود…</string>
+    <string name="permission_label">کنترل کانفیگ‌ها</string>
+    <string name="permission_description">کنترل کانفیگ‌ها؛ روشن و خاموش کردن دلخواه آن‌ها، که می‌تواند ترافیک اینترنت را به مسیر نادرست بفرستد</string>
+
+    <!-- Kernel module and command-line tools (root-only paths) -->
+    <string name="module_enabler_disabled_title">فعال کردن بک‌اند ماژول کرنل</string>
+    <string name="module_enabler_disabled_summary">ماژول آزمایشی کرنل می‌تواند کارایی را بهتر کند</string>
+    <string name="module_enabler_enabled_title">غیرفعال کردن بک‌اند ماژول کرنل</string>
+    <string name="module_enabler_enabled_summary">بک‌اند کندتر فضای کاربر ممکن است پایداری را بهتر کند</string>
+    <string name="module_installer_title">دانلود و نصب ماژول کرنل</string>
+    <string name="module_installer_initial">ماژول آزمایشی کرنل می‌تواند کارایی را بهتر کند</string>
+    <string name="module_installer_working">در حال دانلود و نصب…</string>
+    <string name="module_installer_error">مشکلی پیش آمد. دوباره تلاش کنید</string>
+    <string name="module_installer_not_found">ماژولی برای دستگاه شما موجود نیست</string>
+    <string name="module_version_error">تعیین نسخهٔ ماژول کرنل ممکن نشد</string>
+    <string name="tools_installer_title">نصب ابزارهای خط فرمان</string>
+    <string name="tools_installer_initial">نصب ابزارهای اختیاری برای اسکریپت‌نویسی</string>
+    <string name="tools_installer_initial_magisk">نصب ابزارهای اختیاری اسکریپت‌نویسی به‌صورت ماژول Magisk</string>
+    <string name="tools_installer_initial_system">نصب ابزارهای اختیاری اسکریپت‌نویسی در پارتیشن سیستم</string>
+    <string name="tools_installer_working">در حال نصب wg و wg-quick</string>
+    <string name="tools_installer_already">wg و wg-quick از قبل نصب‌اند</string>
+    <string name="tools_installer_failure">نصب ابزارهای خط فرمان ممکن نشد (روت ندارید؟)</string>
+    <string name="tools_installer_success_magisk">wg و wg-quick به‌صورت ماژول Magisk نصب شدند (نیاز به راه‌اندازی دوباره)</string>
+    <string name="tools_installer_success_system">wg و wg-quick در پارتیشن سیستم نصب شدند</string>
+    <string name="tools_unavailable_error">ابزارهای لازم در دسترس نیستند</string>
+    <string name="type_name_go_userspace">فضای کاربر Go</string>
+    <string name="type_name_kernel_module">ماژول کرنل</string>
+
+    <!-- Upstream WireGuard project donation entry -->
+    <string name="donate_title">♥ حمایت مالی از پروژهٔ WireGuard</string>
+    <string name="donate_summary">هر کمکی مؤثر است</string>
+    <string name="donate_google_play_disappointment">از حمایت شما از پروژهٔ WireGuard سپاسگزاریم!\n\nمتأسفانه به دلیل سیاست‌های گوگل، اجازه نداریم به بخشی از وب‌سایت پروژه که امکان کمک مالی دارد پیوند بدهیم. امیدواریم خودتان پیدایش کنید!\n\nبار دیگر از کمک شما سپاسگزاریم.</string>
+    <!-- Portway: هر کانفیگ فقط روی یک دستگاه (SessionGuard). -->
+    <string name="session_dialog_title">روی دستگاه دیگری وصل است</string>
+    <string name="session_dialog_message">&#x2068;%1$s&#x2069; همین حالا روی &#x2068;%2$s&#x2069; وصل است. هر کانفیگ فقط روی یک دستگاه هم‌زمان وصل می‌شود — استفاده روی دو دستگاه اتصال هر دو را خراب می‌کند.</string>
+    <string name="session_use_here">استفاده روی این دستگاه</string>
+    <string name="session_other_device_unknown">دستگاهی دیگر</string>
+    <string name="session_conflict_title">کانفیگ روی دستگاه دیگری در حال استفاده است</string>
+    <string name="session_conflict_text">&#x2068;%1$s&#x2069; روی &#x2068;%2$s&#x2069; وصل است. استفادهٔ هم‌زمان از یک کانفیگ روی دو دستگاه اتصال هر دو را خراب می‌کند.</string>
+    <string name="session_superseded_title">قطع شد: روی دستگاه دیگری استفاده می‌شود</string>
+    <string name="session_superseded_text">&#x2068;%1$s&#x2069; به &#x2068;%2$s&#x2069; منتقل شد. هر کانفیگ فقط روی یک دستگاه هم‌زمان وصل می‌شود.</string>
+    <string name="session_channel_name">کانفیگ در جای دیگر</string>
+    <string name="session_channel_description">وقتی کانفیگ روی دستگاه دیگری وصل است یا به آن منتقل شده</string>
+</resources>

@@ -26,6 +26,7 @@ import com.wireguard.android.model.ObservableTunnel
 import com.wireguard.android.util.applicationScope
 import com.wireguard.android.widget.SlashDrawable
 import kotlinx.coroutines.launch
+import com.wireguard.android.util.SessionGuard
 
 /**
  * Service that maintains the application's custom Quick Settings tile. This service is bound by the
@@ -74,6 +75,9 @@ class QuickTileService : TileService() {
                         applicationScope.launch {
                             try {
                                 tunnel.setStateAsync(Tunnel.State.TOGGLE)
+                                updateTile()
+                            } catch (e: SessionGuard.AccountInUseException) {
+                                SessionGuard.notifyConflict(e.tunnelName, e.otherDevice)
                                 updateTile()
                             } catch (e: Throwable) {
                                 Log.d(TAG, "Failed to set state, so falling back", e)

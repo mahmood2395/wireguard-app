@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The handshake decay bar, merged into HandshakeDecayView (a ConstraintLayout).
+  ~
+  ~ Order: header row (label / age) -> 12dp track band -> axis row -> sentence. The whole
+  ~ scale is WireGuard's 180s cutoff and the hairline is the nominal 118s rekey, so "how much
+  ~ room is left" is one glance rather than a ticking figure nobody reads.
+  ~
+  ~ "rekey due" is centred on a percent guideline, NOT on a three-item weighted row: weights
+  ~ would land it at 50% of the width, pointing at nothing.
+  -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/decay_rekey_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.656" />
+
+    <TextView
+        android:id="@+id/decay_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="@dimen/tracking_label"
+        android:text="@string/handshake_label"
+        android:textAllCaps="true"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
+        android:textColor="@color/clay_text_muted"
+        android:textSize="10.5sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/decay_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="@dimen/tracking_micro"
+        android:textAppearance="?attr/textAppearanceLabelMedium"
+        android:textColor="@color/accent_300"
+        android:textSize="11.5sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/decay_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="1m 58s ago" />
+
+    <com.wireguard.android.widget.HandshakeDecayTrack
+        android:id="@+id/decay_track"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:layout_marginTop="14dp"
+        android:importantForAccessibility="no"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/decay_label" />
+
+    <TextView
+        android:id="@+id/decay_axis_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:importantForAccessibility="no"
+        android:text="@string/handshake_axis_start"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@color/clay_text_muted"
+        android:textSize="11sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/decay_track" />
+
+    <TextView
+        android:id="@+id/decay_axis_rekey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:singleLine="true"
+        android:text="@string/handshake_axis_rekey"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@color/clay_text_muted"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="@id/decay_rekey_guide"
+        app:layout_constraintStart_toStartOf="@id/decay_rekey_guide"
+        app:layout_constraintTop_toTopOf="@id/decay_axis_start" />
+
+    <TextView
+        android:id="@+id/decay_axis_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:text="@string/handshake_axis_end"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@color/clay_text_muted"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/decay_axis_start" />
+
+    <TextView
+        android:id="@+id/decay_sentence"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:importantForAccessibility="no"
+        android:lineSpacingMultiplier="1.5"
+        android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@color/clay_text_muted"
+        android:textSize="12.5sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/decay_axis_start"
+        tools:text="Handshake inside the last two minutes" />
+</merge>

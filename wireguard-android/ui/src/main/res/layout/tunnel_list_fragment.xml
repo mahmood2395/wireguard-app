@@ -27,23 +27,55 @@
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
+        android:background="@drawable/aurora_canvas"
         android:clipChildren="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <!-- Nocturne: with three destinations and one add action, a floating button over a
+             list of four rows is more chrome than the list. The action moved into the action
+             bar (menu/tunnel_list.xml), which is the design's 56dp header row — a row of its
+             own underneath the title read as a second header. -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tunnel_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
+
             android:nextFocusDown="@id/create_fab"
             android:nextFocusForward="@id/create_fab"
-            android:paddingBottom="@{@dimen/design_fab_size_normal * 1.1f}"
+            android:paddingBottom="0dp"
             android:visibility="@{tunnels.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
             app:configurationHandler="@{rowConfigurationHandler}"
             app:items="@{tunnels}"
             app:layout="@{@layout/tunnel_list_item}"
             tools:itemCount="12"
             tools:listitem="@layout/tunnel_list_item" />
+
+        <!-- The prototype closes the run of rows with one more hairline, then states what this
+             list actually is — the configs someone handed you, not a server menu. -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/rule"
+            android:visibility="@{tunnels.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}" />
+
+        <TextView
+            android:id="@+id/list_footnote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="22dp"
+            android:layout_marginTop="22dp"
+            android:lineSpacingMultiplier="1.6"
+            android:text="@string/configs_footnote"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="@color/clay_text_muted"
+            android:textSize="13sp"
+            android:visibility="@{tunnels.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,12 +87,14 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/logo_placeholder"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:alpha="0.3333333"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/empty_state_circle"
+                android:padding="24dp"
+                android:src="@drawable/ic_launcher_foreground"
+                app:tint="?attr/colorOnPrimaryContainer" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -68,18 +102,24 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/tunnel_list_placeholder_margin"
                 android:layout_marginEnd="@dimen/tunnel_list_placeholder_margin"
+                android:layout_marginBottom="8dp"
+                android:text="@string/tunnel_list_empty_title"
+                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:textColor="?attr/colorOnSurface" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
                 android:text="@string/tunnel_list_placeholder"
-                android:textSize="20sp" />
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/create_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:nextFocusUp="@id/tunnel_list"
-            app:srcCompat="@drawable/ic_action_add_white" />
 
+        </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

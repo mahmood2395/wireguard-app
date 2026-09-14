@@ -25,7 +25,6 @@
     <string name="bad_config_reason_unknown_attribute">Neznámy atribút</string>
     <string name="bad_config_reason_unknown_section">Neznáma sekcia</string>
     <string name="bad_config_reason_value_out_of_range">Hodnota mimo povoleného rozsahu</string>
-    <string name="bad_extension_error">Súbor musí byť .conf alebo .zip</string>
     <string name="cancel">Zrušiť</string>
     <string name="config_delete_error">Nemožete vymazať konfiguračný súbor %s</string>
     <string name="config_exists_error">Konfigurácia pre “%s” už existuje</string>
@@ -34,7 +33,7 @@
     <string name="config_rename_error">Nepodarilo sa premenovať konfiguračný súbor “%s”</string>
     <string name="config_save_error">Nepodarilo sa uložiť konfiguráciu pre “%1$s”: %2$s</string>
     <string name="config_save_success">Úspešne sa podarilo uložiť konfiguráciu pre “%s”</string>
-    <string name="create_activity_title">Vytvoriť WireGuard tunel</string>
+    <string name="create_activity_title">Vytvoriť tunel</string>
     <string name="create_bin_dir_error">Nepodarilo sa vytvoriť lokálny priečinok pre binárne súbory</string>
     <string name="create_downloads_file_error">Nepodarilo sa vytvoriť súbor v priečinku stiahnuté</string>
     <string name="create_empty">Vytvoriť od počiatku</string>
@@ -82,7 +81,7 @@
     <string name="key_length_explanation_hex">: WireGuard hex kľúče musia mať 64 znakov (32 bytes)</string>
     <string name="listen_port">Otvorený port</string>
     <string name="log_export_error">Nepodarilo sa exportovať log: %s</string>
-    <string name="log_export_subject">WireGuard Android Denník udalostí</string>
+    <string name="log_export_subject">Portway Android Denník udalostí</string>
     <string name="log_export_success">Uložené do “%s”</string>
     <string name="log_export_title">Exportovať denník udalostí</string>
     <string name="log_saver_activity_label">Uložiť denník udalostí</string>
@@ -144,7 +143,7 @@
     <string name="type_name_kernel_module">Kernelový modul</string>
     <string name="unknown_error">Neznáma chyba</string>
     <string name="version_summary_unknown">Neznáma %s verzia</string>
-    <string name="version_title">WireGuard pre Android v%s</string>
+    <string name="version_title">Portway pre Android v%s</string>
     <string name="vpn_not_authorized_error">VPN služba neautorizovaná používateľom</string>
     <string name="vpn_start_error">Nepodarilo sa spustiť Android VPN službu</string>
     <string name="zip_export_error">Nepodarilo sa exportovať tunely: %s</string>

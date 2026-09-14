@@ -21,6 +21,7 @@ import com.wireguard.android.backend.GoBackend
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.util.ErrorMessages
 import kotlinx.coroutines.launch
+import com.wireguard.android.util.SessionGuard
 
 class TunnelToggleActivity : AppCompatActivity() {
     private val permissionActivityResultLauncher =
@@ -31,6 +32,11 @@ class TunnelToggleActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 tunnel.setStateAsync(Tunnel.State.TOGGLE)
+            } catch (e: SessionGuard.AccountInUseException) {
+                SessionGuard.notifyConflict(e.tunnelName, e.otherDevice)
+                TileService.requestListeningState(this@TunnelToggleActivity, ComponentName(this@TunnelToggleActivity, QuickTileService::class.java))
+                finishAffinity()
+                return@launch
             } catch (e: Throwable) {
                 TileService.requestListeningState(this@TunnelToggleActivity, ComponentName(this@TunnelToggleActivity, QuickTileService::class.java))
                 val error = ErrorMessages[e]

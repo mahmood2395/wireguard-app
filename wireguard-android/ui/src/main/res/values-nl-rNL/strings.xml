@@ -78,7 +78,6 @@
     <string name="bad_config_reason_unknown_attribute">Onbekend attribuut</string>
     <string name="bad_config_reason_unknown_section">Onbekende sectie</string>
     <string name="bad_config_reason_value_out_of_range">Waarde buiten bereik</string>
-    <string name="bad_extension_error">Bestand moet .conf of .zip zijn</string>
     <string name="error_no_qr_found">QR-code niet gevonden in afbeelding</string>
     <string name="error_qr_checksum">QR-code checksum verificatie mislukt</string>
     <string name="cancel">Annuleren</string>
@@ -89,7 +88,7 @@
     <string name="config_rename_error">Kan configuratiebestand \"%s\" \" niet hernoemen</string>
     <string name="config_save_error">Kan de configuratie voor \"%1$s\" niet opslaan: %2$s</string>
     <string name="config_save_success">Configuratie succesvol opgeslagen voor \"%s\"</string>
-    <string name="create_activity_title">WireGuard tunnel aanmaken</string>
+    <string name="create_activity_title">tunnel aanmaken</string>
     <string name="create_bin_dir_error">Kan geen lokale \'bin\' map aanmaken</string>
     <string name="create_downloads_file_error">Kan bestand niet maken in downloadmap</string>
     <string name="create_empty">Begin met lege configuratie</string>
@@ -143,7 +142,7 @@
     <string name="latest_handshake_ago">%s geleden</string>
     <string name="listen_port">Luister op poort</string>
     <string name="log_export_error">Kan logboek niet exporteren: %s</string>
-    <string name="log_export_subject">WireGuard Android logbestand</string>
+    <string name="log_export_subject">Portway Android logbestand</string>
     <string name="log_export_success">Opgeslagen in \"%s\"</string>
     <string name="log_export_title">Exporteer logboek naar bestand</string>
     <string name="log_saver_activity_label">Logboek opslaan</string>
@@ -176,8 +175,8 @@
     <string name="parse_error_integer">nummer</string>
     <string name="parse_error_reason">Kan %1$s%2$s niet parsen</string>
     <string name="peer">Peer</string>
-    <string name="permission_description">beheer WireGuard tunnels, zet tunnels naar keuze aan en uit, en misleid mogelijk het Internetverkeer</string>
-    <string name="permission_label">WireGuard tunnels beheren</string>
+    <string name="permission_description">beheer tunnels, zet tunnels naar keuze aan en uit, en misleid mogelijk het Internetverkeer</string>
+    <string name="permission_label">tunnels beheren</string>
     <string name="persistent_keepalive">Voortdurende verbindingstest</string>
     <string name="pre_shared_key">Gedeelde sleutel</string>
     <string name="pre_shared_key_enabled">ingeschakeld</string>
@@ -229,18 +228,8 @@
     <string name="type_name_go_userspace">Go userspace</string>
     <string name="type_name_kernel_module">Kernel module</string>
     <string name="unknown_error">Onbekende fout</string>
-    <string name="updater_avalable">Er is een nieuwe versie beschikbaar. Update a.u.b.</string>
-    <string name="updater_action">Download &amp; installeer updates</string>
-    <string name="updater_rechecking">Update metadata downloaden…</string>
-    <string name="updater_download_progress">Ophalen nieuwe versie: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">Updates downloaden: %s</string>
-    <string name="updater_installing">Update wordt geïnstalleerd…</string>
-    <string name="updater_failure">Bijwerken mislukt: %s. Zal het zo opnieuw proberen…</string>
-    <string name="updater_corrupt_title">Toepassing beschadigd</string>
-    <string name="updater_corrupt_message">De toepassing is beschadigd. Download de APK opnieuw van de onderstaande website. De-installeer daarna het programma, en herinstalleer het met de gedownloade APK.</string>
-    <string name="updater_corrupt_navigate">Open website</string>
     <string name="version_summary_unknown">Onbekende versie: %s</string>
-    <string name="version_title">WireGuard voor Android v%s</string>
+    <string name="version_title">Portway voor Android v%s</string>
     <string name="vpn_not_authorized_error">VPN-service niet geautoriseerd door gebruiker</string>
     <string name="zip_export_summary">Zip-bestand wordt opgeslagen in de downloadmap</string>
     <string name="zip_export_title">Exporteer tunnels naar zip-bestand</string>

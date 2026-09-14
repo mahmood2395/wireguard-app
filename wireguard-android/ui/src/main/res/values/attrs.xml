@@ -10,4 +10,17 @@
         <attr name="state_isUp" format="boolean" />
         <attr name="state_isDeleting" format="boolean" />
     </declare-styleable>
+
+    <!-- Portway Aurora: resolved in AppThemeBase so a single layout serves both themes.
+         Note gradients in <shape> drawables must use @color/aurora_* directly instead —
+         ?attr/ only resolves there when the drawable is inflated with a theme. -->
+    <attr name="statusConnectingColor" format="color" />
+    <attr name="rowSurfaceColor" format="color" />
+
+    <declare-styleable name="ClayCardView">
+        <attr name="clayCornerRadius" format="dimension" />
+        <attr name="clayShadowBlur" format="dimension" />
+        <attr name="clayShadowOffset" format="dimension" />
+        <attr name="claySunken" format="boolean" />
+    </declare-styleable>
 </resources>

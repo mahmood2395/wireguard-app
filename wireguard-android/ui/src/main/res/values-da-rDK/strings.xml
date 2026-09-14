@@ -78,7 +78,6 @@
     <string name="bad_config_reason_unknown_attribute">Ukendt egenskab</string>
     <string name="bad_config_reason_unknown_section">Ukendt sektion</string>
     <string name="bad_config_reason_value_out_of_range">Værdi udenfor området</string>
-    <string name="bad_extension_error">Filen skal være .conf eller .zip</string>
     <string name="error_no_qr_found">QR-kode ikke fundet i billede</string>
     <string name="error_qr_checksum">QR kode checksum verifikation fejlede</string>
     <string name="cancel">Annullér</string>
@@ -89,7 +88,7 @@
     <string name="config_rename_error">Kan ikke omdøbe konfigurationsfilen \"%s\"</string>
     <string name="config_save_error">Kan ikke gemme konfigurationen for \"%1$s\": %2$s</string>
     <string name="config_save_success">Konfiguration for \"%s\" blev gemt</string>
-    <string name="create_activity_title">Opret WireGuard tunnel</string>
+    <string name="create_activity_title">Opret tunnel</string>
     <string name="create_bin_dir_error">Kan ikke oprette lokal binær mappe</string>
     <string name="create_downloads_file_error">Kan ikke oprette fil i download-mappen</string>
     <string name="create_empty">Opret fra ny</string>
@@ -143,7 +142,7 @@
     <string name="latest_handshake_ago">%s siden</string>
     <string name="listen_port">Lytteport</string>
     <string name="log_export_error">Kunne ikke eksportere log: %s</string>
-    <string name="log_export_subject">WireGuard Android Log-fil</string>
+    <string name="log_export_subject">Portway Android Log-fil</string>
     <string name="log_export_success">Gemt til \"%s\"</string>
     <string name="log_export_title">Eksportér log-fil</string>
     <string name="log_saver_activity_label">Gem log</string>
@@ -176,8 +175,8 @@
     <string name="parse_error_integer">nummer</string>
     <string name="parse_error_reason">Kan ikke parse %1$s “%2$s”</string>
     <string name="peer">Modpart</string>
-    <string name="permission_description">kontrollere WireGuard-tunnellerne, ved at aktivere og deaktivere tunneller, kan det potentielt vildlede internettrafikken</string>
-    <string name="permission_label">håndtér WireGuard-tunneler</string>
+    <string name="permission_description">kontrollere Portway-tunnellerne, ved at aktivere og deaktivere tunneller, kan det potentielt vildlede internettrafikken</string>
+    <string name="permission_label">håndtér Portway-tunneler</string>
     <string name="persistent_keepalive">Vedvarende keepalive</string>
     <string name="pre_shared_key">Forhåndsdelt nøgle</string>
     <string name="pre_shared_key_enabled">aktiveret</string>
@@ -199,7 +198,7 @@
     <string name="shell_start_error">Shell kunne ikke startes: %d</string>
     <string name="success_application_will_restart">Succes. Applikationen vil nu genstarte…</string>
     <string name="toggle_all">Vælg/Fravælg Alle</string>
-    <string name="toggle_error">Fejl under aktivering af WireGuard-tunnel: %s</string>
+    <string name="toggle_error">Fejl under aktivering af Portway-tunnel: %s</string>
     <string name="tools_installer_already">wg og wg-quick er allerede installeret</string>
     <string name="tools_installer_failure">Kan ikke installere kommandolinjeværktøjer (ingen root?)</string>
     <string name="tools_installer_initial">Installér valgfrie værktøjer til scripting</string>
@@ -232,20 +231,10 @@
     <string name="type_name_go_userspace">Go userspace</string>
     <string name="type_name_kernel_module">Kerne modul</string>
     <string name="unknown_error">Ukendt fejl</string>
-    <string name="updater_avalable">En applikationsopdatering er tilgængelig. Opdatér venligst nu.</string>
-    <string name="updater_action">Hent &amp; Opdatér</string>
-    <string name="updater_rechecking">Henter opdateringsmetadata…</string>
-    <string name="updater_download_progress">Henter opdatering: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">Henter opdatering: %s</string>
-    <string name="updater_installing">Installerer opdatering…</string>
-    <string name="updater_failure">Opdateringsfejl: %s. Vil prøve igen om lidt…</string>
-    <string name="updater_corrupt_title">Applikation Korrupt</string>
-    <string name="updater_corrupt_message">Denne applikation er korrupt. Download venligst APK fra websted linket nedenfor. Afinstaller denne applikation, og geninstaller den fra den downloadede APK.</string>
-    <string name="updater_corrupt_navigate">Åbn webside</string>
     <string name="version_summary">%1$s backend %2$s</string>
     <string name="version_summary_checking">Kontrollerer %s backend version</string>
     <string name="version_summary_unknown">Ukendt %s version</string>
-    <string name="version_title">WireGuard for Android v%s</string>
+    <string name="version_title">Portway for Android v%s</string>
     <string name="vpn_not_authorized_error">VPN-tjeneste ikke godkendt af bruger</string>
     <string name="vpn_start_error">Kan ikke starte Android VPN-tjeneste</string>
     <string name="zip_export_error">Ikke i stand til at eksportere tunneler: %s</string>

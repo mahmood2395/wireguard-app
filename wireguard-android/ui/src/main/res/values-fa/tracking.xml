@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Persian sets flat. See values/tracking.xml for why: letter-spacing breaks the joins in a
+  ~ cursive script, so the Latin type system's tracking is switched off wholesale rather than
+  ~ tuned. Nothing is lost — the hierarchy those labels carry comes from size, weight and
+  ~ colour, all of which survive the script change.
+  -->
+<resources>
+    <item name="tracking_kicker" type="dimen" format="float">0</item>
+    <item name="tracking_label" type="dimen" format="float">0</item>
+    <item name="tracking_micro" type="dimen" format="float">0</item>
+    <item name="tracking_tiny" type="dimen" format="float">0</item>
+    <item name="tracking_body" type="dimen" format="float">0</item>
+    <item name="tracking_subhead" type="dimen" format="float">0</item>
+    <item name="tracking_heading" type="dimen" format="float">0</item>
+    <item name="tracking_display" type="dimen" format="float">0</item>
+    <item name="tracking_hero" type="dimen" format="float">0</item>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Debug builds only. Exported so `adb shell am broadcast -n …` can reach it; it only runs a
+  ~ self-test and logs, and none of this is merged into a release build.
+  -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <receiver
+            android:name="com.wireguard.android.util.GeoGuardSelfTest"
+            android:exported="true" />
+    </application>
+</manifest>

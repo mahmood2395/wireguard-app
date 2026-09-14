@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Vazirmatn UI Regular, SIL OFL 1.1. The companion to font-fa/inter_semibold.xml, so that a
+  ~ style naming the regular weight file directly swaps for Persian as well.
+  ~
+  ~ tools:ignore="MissingDefaultResource": the base declaration does exist — font/inter_regular.ttf —
+  ~ but lint only counts an XML font-family as a declaration, so it cannot see a bare .ttf and
+  ~ reports a crash risk that is not there. Any locale but Persian resolves to the TTF.
+  -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource">
+    <font android:font="@font/vazirmatn_regular" android:fontWeight="400" android:fontStyle="normal"
+        app:font="@font/vazirmatn_regular" app:fontWeight="400" app:fontStyle="normal" />
+</font-family>

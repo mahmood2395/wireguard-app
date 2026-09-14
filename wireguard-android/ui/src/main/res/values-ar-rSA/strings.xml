@@ -130,7 +130,6 @@
     <string name="bad_config_reason_unknown_attribute">سمة مجهولة</string>
     <string name="bad_config_reason_unknown_section">قسم مجهول</string>
     <string name="bad_config_reason_value_out_of_range">قيمة خارج النطاق</string>
-    <string name="bad_extension_error">يجب أن يكون تنسيق الملف .conf أو .zip</string>
     <string name="error_no_qr_found">لم يتم العثور على رمز الاستجابة السريعة (QR) في الصورة</string>
     <string name="error_qr_checksum">فشل التحقق من مجموعة رمز الاستجابة السريعة (QR)</string>
     <string name="cancel">إلغاء</string>
@@ -228,7 +227,7 @@
     <string name="parse_error_integer">رقم</string>
     <string name="parse_error_reason">لا يمكن تحليل %1$s \"%2$s\"</string>
     <string name="peer">ند</string>
-    <string name="permission_description">التحكم في أنفاق WireGuard، وتمكين الأنفاق وتعطيلها حسب الرغبة، مما قد يؤدي إلى تضليل حركة مرور الإنترنت</string>
+    <string name="permission_description">التحكم في أنفاق Portway، وتمكين الأنفاق وتعطيلها حسب الرغبة، مما قد يؤدي إلى تضليل حركة مرور الإنترنت</string>
     <string name="permission_label">التحكم في أنفاق وايرجارد</string>
     <string name="persistent_keepalive">الحفاظ المستمر</string>
     <string name="pre_shared_key">مفتاح مسبق التشارك (Pre-shared key)</string>
@@ -284,16 +283,6 @@
     <string name="type_name_go_userspace">انتقل مساحة المستخدمين</string>
     <string name="type_name_kernel_module">وحدة النواة</string>
     <string name="unknown_error">خطأ غير معروف</string>
-    <string name="updater_avalable">يتوفر تحديث للتطبيق. الرجاء التحديث الآن.</string>
-    <string name="updater_action">تنزيل &amp; تحديث</string>
-    <string name="updater_rechecking">جارِ جلب تحديث البيانات الوصفية…</string>
-    <string name="updater_download_progress">جارِ تنزيل التحديث: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">جارِ تنزيل التحديث: %s</string>
-    <string name="updater_installing">جارِ تثبيت التحديث…</string>
-    <string name="updater_failure">فشل التحديث: %s. ستتم إعادة المحاولة للحظات…</string>
-    <string name="updater_corrupt_title">التطبيق تالف</string>
-    <string name="updater_corrupt_message">هذا التطبيق تالف. يرجى إعادة تنزيل APK من موقع الويب المرتبط أدناه. بعد ذلك، قم بإلغاء تثبيت هذا التطبيق، وأعِد تثبيته من ملف APK الذي تم تنزيله.</string>
-    <string name="updater_corrupt_navigate">فتح الموقع</string>
     <string name="version_summary">%1$s خلفية %2$s</string>
     <string name="version_summary_checking">التحقق من إصدار خلفية %s</string>
     <string name="version_summary_unknown">إصدار %s غير معروف</string>

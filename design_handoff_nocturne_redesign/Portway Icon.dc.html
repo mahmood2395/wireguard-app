@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/nocturne-3ac99476-319d-49e9-8948-874d666c2091/styles.css">
+<script src="_ds/nocturne-3ac99476-319d-49e9-8948-874d666c2091/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0f1018;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#b5abfc;text-decoration:none}a:hover{color:#d2cefd}
+</style>
+</helmet>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <symbol id="pw-2a" viewBox="0 0 108 108"><g transform="translate(9.72,9.72) scale(0.82)"><path fill="currentColor" fill-rule="evenodd" d="M54,25 L81,35 L81,55 C81,70.5 69.5,80.5 54,85 C38.5,80.5 27,70.5 27,55 L27,35 Z M54,43 C50.1,43 47,46.1 47,50 C47,52.6 48.4,54.9 50.5,56.1 L48.6,68 L59.4,68 L57.5,56.1 C59.6,54.9 61,52.6 61,50 C61,46.1 57.9,43 54,43 Z"></path></g></symbol>
+  <symbol id="pw-2b" viewBox="0 0 108 108"><path fill="currentColor" fill-rule="evenodd" d="M36,80 L36,48 A18,18 0 0 1 72,48 L72,80 Z M44,72 L44,48 A10,10 0 0 1 64,48 L64,72 Z"></path></symbol>
+  <symbol id="pw-2c" viewBox="0 0 108 108"><path fill="currentColor" d="M30,34 L78,34 L78,48 L30,48 Z M30,53 L64,53 L64,63 L30,63 Z M30,68 L52,68 L52,76 L30,76 Z"></path></symbol>
+  <symbol id="pw-2d" viewBox="0 0 108 108"><g transform="translate(4.32,4.32) scale(0.92)"><path fill="currentColor" fill-rule="evenodd" d="M34,26 L44,26 L44,82 L34,82 Z M60,26 a16,16 0 1 0 0,32 a16,16 0 1 0 0,-32 Z M60,35 a7,7 0 1 0 0,14 a7,7 0 1 0 0,-14 Z"></path></g></symbol>
+</svg>
+
+<section style="padding:56px 64px 72px;color:#e9e9ed">
+  <div style="max-width:76ch;margin:0 0 40px">
+    <div style="font:500 11px/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#9184d9;margin-bottom:16px">Turn 2 · Launcher icon</div>
+    <h1 style="font:500 42px/1.05 Inter,sans-serif;letter-spacing:-.03em;margin:0 0 20px">Four marks, one fill each</h1>
+    <p style="font:400 15px/1.7 Inter,sans-serif;color:#b2b6ca;margin:0 0 14px;text-wrap:pretty">Your existing icon comment already states the hard constraint, and it is the right one: <strong style="font-weight:500;color:#e9e9ed">one path, one fill</strong>, so the Android 13 monochrome variant survives tinting instead of collapsing into a blob. Every mark below obeys it — negative space is done with <span style="font-family:ui-monospace,monospace;font-size:13px;color:#d2cefd">fillType="evenOdd"</span>, never with a second colour, and each glyph is drawn on <span style="font-family:ui-monospace,monospace;font-size:13px;color:#d2cefd">currentColor</span>. All four sit inside the dashed 66dp safe circle of the 108dp adaptive canvas, so nothing clips when a launcher masks to a circle, a squircle or a teardrop.</p></p>
+    <p style="font:400 15px/1.7 Inter,sans-serif;color:#b2b6ca;margin:0;text-wrap:pretty">Ground is <span style="font-family:ui-monospace,monospace;font-size:13px;color:#d2cefd">#262a60</span> — Nocturne's one sanctioned saturated field, the same value the deck uses for section dividers. An icon is exactly that case: presence at small scale. The glyph is <span style="font-family:ui-monospace,monospace;font-size:13px;color:#d2cefd">#d2cefd</span> (accent-300), which is a 9:1 pair. The 24px column is the one that matters — that is the notification and Quick Settings tile size, and it is where three of these four survive and one does not.</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:34px">
+
+    <div id="2a" style="scroll-margin-top:16px;display:flex;gap:36px;align-items:flex-start;padding:28px 30px;border:1px solid #3f424d;border-radius:8px;background:#1b1d29">
+      <div style="width:290px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:9px"><a href="#2a" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:#d2cefd">2a</a><span style="font:500 15px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">Keyhole shield, corrected</span></div>
+        <p style="margin:13px 0 0;font:400 13px/1.65 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Your current mark, scaled to 0.82 so it actually clears the safe circle — today it pokes 4dp past it and a circular launcher shaves the shield's shoulders. Nothing else changes. The safest option: no brand relearning, and it still reads as security rather than as a network utility.</p>
+        <p style="margin:11px 0 0;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Against it: a shield with a keyhole is the single most crowded idea in this category, and the keyhole's 2dp stem is the first thing to disappear at 24px — look at the small column.</p>
+      </div>
+      <div style="display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="position:relative;width:176px;height:176px;border-radius:10px;background:#262a60;color:#d2cefd;overflow:hidden">
+            <svg viewBox="0 0 108 108" width="176" height="176" style="display:block"><use href="#pw-2a"></use></svg>
+            <div style="position:absolute;left:50%;top:50%;width:107.6px;height:107.6px;margin:-53.8px 0 0 -53.8px;border-radius:50%;border:1px dashed rgba(233,233,237,.34)"></div>
+            <div style="position:absolute;left:50%;top:50%;width:117.3px;height:117.3px;margin:-58.65px 0 0 -58.65px;border-radius:50%;border:1px solid rgba(233,233,237,.16)"></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">108 canvas · 72 visible (solid) · 66 safe (dashed)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2a"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">squircle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:50%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2a"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">circle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="display:flex;gap:12px;align-items:flex-end">
+            <div style="width:48px;height:48px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="48" height="48" style="display:block"><use href="#pw-2a"></use></svg></div>
+            <div style="width:32px;height:32px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="32" height="32" style="display:block"><use href="#pw-2a"></use></svg></div>
+            <div style="width:24px;height:24px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="24" height="24" style="display:block"><use href="#pw-2a"></use></svg></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">48 · 32 · 24</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:64px;height:64px;border-radius:25%;background:#e4e7f5;color:#3f424d;overflow:hidden"><svg viewBox="0 0 108 108" width="64" height="64" style="display:block"><use href="#pw-2a"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">monochrome</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="2b" style="scroll-margin-top:16px;display:flex;gap:36px;align-items:flex-start;padding:28px 30px;border:1px solid #3f424d;border-radius:8px;background:#1b1d29">
+      <div style="width:290px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:9px"><a href="#2b" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:#d2cefd">2b</a><span style="font:500 15px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">The portway</span></div>
+        <p style="margin:13px 0 0;font:400 13px/1.65 Inter,sans-serif;color:#9397ab;text-wrap:pretty">An archway with a threshold bar across it — the name drawn literally. It is the only one of the four that says what the app <em style="font-style:normal;color:#e9e9ed">does</em> rather than how it feels about it, and it matches the onboarding line: Portway is a door, not a service.</p>
+        <p style="margin:11px 0 0;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Frame is 8dp thick and the arch apex 10dp, so nothing in it is thinner than the stroke carrying the shape — it holds at 24px. Note the sill is flush with the frame's feet rather than floating: an earlier version had it crossing the opening mid-height, which made the whole mark read as a capital A. My pick.</p>
+      </div>
+      <div style="display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="position:relative;width:176px;height:176px;border-radius:10px;background:#262a60;color:#d2cefd;overflow:hidden">
+            <svg viewBox="0 0 108 108" width="176" height="176" style="display:block"><use href="#pw-2b"></use></svg>
+            <div style="position:absolute;left:50%;top:50%;width:107.6px;height:107.6px;margin:-53.8px 0 0 -53.8px;border-radius:50%;border:1px dashed rgba(233,233,237,.34)"></div>
+            <div style="position:absolute;left:50%;top:50%;width:117.3px;height:117.3px;margin:-58.65px 0 0 -58.65px;border-radius:50%;border:1px solid rgba(233,233,237,.16)"></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">108 canvas · 72 visible (solid) · 66 safe (dashed)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2b"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">squircle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:50%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2b"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">circle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="display:flex;gap:12px;align-items:flex-end">
+            <div style="width:48px;height:48px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="48" height="48" style="display:block"><use href="#pw-2b"></use></svg></div>
+            <div style="width:32px;height:32px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="32" height="32" style="display:block"><use href="#pw-2b"></use></svg></div>
+            <div style="width:24px;height:24px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="24" height="24" style="display:block"><use href="#pw-2b"></use></svg></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">48 · 32 · 24</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:64px;height:64px;border-radius:25%;background:#e4e7f5;color:#3f424d;overflow:hidden"><svg viewBox="0 0 108 108" width="64" height="64" style="display:block"><use href="#pw-2b"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">monochrome</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="2c" style="scroll-margin-top:16px;display:flex;gap:36px;align-items:flex-start;padding:28px 30px;border:1px solid #3f424d;border-radius:8px;background:#1b1d29">
+      <div style="width:290px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:9px"><a href="#2c" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:#d2cefd">2c</a><span style="font:500 15px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">Beats</span></div>
+        <p style="margin:13px 0 0;font:400 13px/1.65 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Three flush-left bars, decaying — the heartbeat lane compressed into a mark, and a direct descendant of the current Tunnels tab glyph. Nocturne's asymmetry read at icon scale: weight on the left, air on the right.</p>
+        <p style="margin:11px 0 0;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Strongest at 24px of the four, and it ties the icon to the one genuinely novel thing in the app. Against it: bars are a crowded shape too — at a glance it can read as a list or a hamburger, which is a real risk on a launcher.</p>
+      </div>
+      <div style="display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="position:relative;width:176px;height:176px;border-radius:10px;background:#262a60;color:#d2cefd;overflow:hidden">
+            <svg viewBox="0 0 108 108" width="176" height="176" style="display:block"><use href="#pw-2c"></use></svg>
+            <div style="position:absolute;left:50%;top:50%;width:107.6px;height:107.6px;margin:-53.8px 0 0 -53.8px;border-radius:50%;border:1px dashed rgba(233,233,237,.34)"></div>
+            <div style="position:absolute;left:50%;top:50%;width:117.3px;height:117.3px;margin:-58.65px 0 0 -58.65px;border-radius:50%;border:1px solid rgba(233,233,237,.16)"></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">108 canvas · 72 visible (solid) · 66 safe (dashed)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2c"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">squircle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:50%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2c"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">circle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="display:flex;gap:12px;align-items:flex-end">
+            <div style="width:48px;height:48px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="48" height="48" style="display:block"><use href="#pw-2c"></use></svg></div>
+            <div style="width:32px;height:32px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="32" height="32" style="display:block"><use href="#pw-2c"></use></svg></div>
+            <div style="width:24px;height:24px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="24" height="24" style="display:block"><use href="#pw-2c"></use></svg></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">48 · 32 · 24</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:64px;height:64px;border-radius:25%;background:#e4e7f5;color:#3f424d;overflow:hidden"><svg viewBox="0 0 108 108" width="64" height="64" style="display:block"><use href="#pw-2c"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">monochrome</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="2d" style="scroll-margin-top:16px;display:flex;gap:36px;align-items:flex-start;padding:28px 30px;border:1px solid #3f424d;border-radius:8px;background:#1b1d29">
+      <div style="width:290px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:9px"><a href="#2d" style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.06em;padding:4px 8px;background:#232532;border:1px solid #3f424d;border-radius:5px;color:#d2cefd">2d</a><span style="font:500 15px/1.3 Inter,sans-serif;letter-spacing:-.01em;color:#e9e9ed">P, bored through</span></div>
+        <p style="margin:13px 0 0;font:400 13px/1.65 Inter,sans-serif;color:#9397ab;text-wrap:pretty">A monogram whose bowl is an aperture. The most ownable of the four — a letterform is the one shape no competitor can also arrive at — and it carries the keyhole idea from <a href="#2a">2a</a> without drawing a shield.</p>
+        <p style="margin:11px 0 0;font:400 12.5px/1.6 Inter,sans-serif;color:#9397ab;text-wrap:pretty">Against it: the stem and bowl are separate subpaths that only touch, so any future scaling has to keep them kissing exactly or a seam opens; and the aperture closes up at 24px, where it becomes a solid P.</p>
+      </div>
+      <div style="display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="position:relative;width:176px;height:176px;border-radius:10px;background:#262a60;color:#d2cefd;overflow:hidden">
+            <svg viewBox="0 0 108 108" width="176" height="176" style="display:block"><use href="#pw-2d"></use></svg>
+            <div style="position:absolute;left:50%;top:50%;width:107.6px;height:107.6px;margin:-53.8px 0 0 -53.8px;border-radius:50%;border:1px dashed rgba(233,233,237,.34)"></div>
+            <div style="position:absolute;left:50%;top:50%;width:117.3px;height:117.3px;margin:-58.65px 0 0 -58.65px;border-radius:50%;border:1px solid rgba(233,233,237,.16)"></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">108 canvas · 72 visible (solid) · 66 safe (dashed)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2d"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">squircle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:50%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2d"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">circle</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="display:flex;gap:12px;align-items:flex-end">
+            <div style="width:48px;height:48px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="48" height="48" style="display:block"><use href="#pw-2d"></use></svg></div>
+            <div style="width:32px;height:32px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="32" height="32" style="display:block"><use href="#pw-2d"></use></svg></div>
+            <div style="width:24px;height:24px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="24" height="24" style="display:block"><use href="#pw-2d"></use></svg></div>
+          </div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">48 · 32 · 24</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:64px;height:64px;border-radius:25%;background:#e4e7f5;color:#3f424d;overflow:hidden"><svg viewBox="0 0 108 108" width="64" height="64" style="display:block"><use href="#pw-2d"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">monochrome</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:28px 30px;border:1px solid #3f424d;border-radius:8px;background:#1b1d29">
+      <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9184d9">Grounds, on <a href="#2b">2b</a></div>
+      <p style="margin:12px 0 22px;font:400 13px/1.65 Inter,sans-serif;color:#9397ab;max-width:74ch;text-wrap:pretty">Nocturne forbids flooding the accent, and an icon is a flood by definition — so the ground is the section field, not the accent. The middle option inverts to the app's own ground, which is quieter on a dark wallpaper but nearly vanishes on a dark one too. The third is the accent at full chroma, shown so you can see why the system rules it out.</p>
+      <div style="display:flex;gap:30px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#262a60;color:#d2cefd;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2b"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">#262a60 · recommended</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#161826;color:#9184d9;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2b"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">#161826 ground</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#9184d9;color:#161826;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2b"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">accent flood · off-system</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;align-items:center">
+          <div style="width:104px;height:104px;border-radius:25%;background:#123A5F;color:#FFFFFF;overflow:hidden"><svg viewBox="0 0 108 108" width="104" height="104" style="display:block"><use href="#pw-2a"></use></svg></div>
+          <span style="font:400 11px/1 Inter,sans-serif;color:#9397ab">what ships today</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:28px 30px;border:1px solid #3f424d;border-radius:8px;background:#1b1d29">
+      <div style="font:500 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9184d9">Shipping it</div>
+      <p style="margin:12px 0 16px;font:400 13.5px/1.7 Inter,sans-serif;color:#b2b6ca;max-width:78ch;text-wrap:pretty">Three files change, and one gets added. Paste the chosen <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">pathData</span> below into <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">ic_launcher_foreground.xml</span>, set <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">ic_launcher_background</span> to the ground, and delete the <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">mipmap-*</span> PNGs — an adaptive icon needs no raster buckets. Add a <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">&lt;monochrome&gt;</span> entry to <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">mipmap-anydpi-v26/ic_launcher.xml</span> pointing at the same foreground drawable, which is what the one-fill rule buys you. Reuse the same path for <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">ic_portway_mark.xml</span> (settings row) and <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">ic_tile.xml</span> (Quick Settings), and redraw <span style="font-family:ui-monospace,monospace;font-size:12.5px;color:#d2cefd">tv_logo_banner.xml</span> from it.</p>
+      <div style="border:1px solid #292b31;border-radius:8px;background:#161826;padding:18px 20px;font:400 12.5px/1.85 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b2b6ca;overflow:auto">
+        <div style="color:#9397ab">&lt;!-- 2a keyhole shield · needs the group, the raw path overruns the safe circle --&gt;</div>
+        <div>&lt;group android:scaleX="0.82" android:scaleY="0.82" android:translateX="9.72" android:translateY="9.72"&gt;</div>
+        <div style="color:#d2cefd">&nbsp;&nbsp;M54,25 L81,35 L81,55 C81,70.5 69.5,80.5 54,85 C38.5,80.5 27,70.5 27,55 L27,35 Z M54,43 C50.1,43 47,46.1 47,50 C47,52.6 48.4,54.9 50.5,56.1 L48.6,68 L59.4,68 L57.5,56.1 C59.6,54.9 61,52.6 61,50 C61,46.1 57.9,43 54,43 Z</div>
+        <div>&lt;/group&gt;</div>
+        <div style="height:14px"></div>
+        <div style="color:#9397ab">&lt;!-- 2b portway · no group needed --&gt;</div>
+        <div style="color:#d2cefd">M36,80 L36,48 A18,18 0 0 1 72,48 L72,80 Z M44,72 L44,48 A10,10 0 0 1 64,48 L64,72 Z</div>
+        <div style="height:14px"></div>
+        <div style="color:#9397ab">&lt;!-- 2c beats --&gt;</div>
+        <div style="color:#d2cefd">M30,34 L78,34 L78,48 L30,48 Z M30,53 L64,53 L64,63 L30,63 Z M30,68 L52,68 L52,76 L30,76 Z</div>
+        <div style="height:14px"></div>
+        <div style="color:#9397ab">&lt;!-- 2d P · needs the group --&gt;</div>
+        <div>&lt;group android:scaleX="0.92" android:scaleY="0.92" android:translateX="4.32" android:translateY="4.32"&gt;</div>
+        <div style="color:#d2cefd">&nbsp;&nbsp;M34,26 L44,26 L44,82 L34,82 Z M60,26 a16,16 0 1 0 0,32 a16,16 0 1 0 0,-32 Z M60,35 a7,7 0 1 0 0,14 a7,7 0 1 0 0,-14 Z</div>
+        <div>&lt;/group&gt;</div>
+        <div style="height:14px"></div>
+        <div style="color:#9397ab">&lt;!-- all four: android:fillColor="#d2cefd" android:fillType="evenOdd"</div>
+        <div style="color:#9397ab">&nbsp;&nbsp;&nbsp;&nbsp; ic_launcher_background → #262a60 --&gt;</div>
+      </div>
+    </div>
+
+  </div>
+
+  <p style="margin:36px 0 0;font:400 13px/1.7 Inter,sans-serif;color:#9397ab;max-width:78ch;text-wrap:pretty">Try next: "go with <a href="#2b">2b</a> and add it to the handoff" · "try <a href="#2c">2c</a> with the bars right-aligned" · "combine <a href="#2b">2b</a>'s arch with <a href="#2d">2d</a>'s aperture" · "show all four on a real home screen".</p>
+</section>
+
+</x-dc>
+</body>
+</html>

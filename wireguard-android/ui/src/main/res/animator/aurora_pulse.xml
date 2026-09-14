@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The idle breathe while connecting. An infinite loop has no start/end state, so this is a
+  ~ plain animator rather than a MotionLayout transition — and it MUST be cancelled when the
+  ~ screen stops, or it is a battery drain running behind a backgrounded app.
+  ~ Targets scale only; the scene owns alpha.
+  -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together">
+    <objectAnimator
+        android:duration="1100"
+        android:propertyName="scaleX"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:valueFrom="0.9"
+        android:valueTo="1.12"
+        android:valueType="floatType" />
+    <objectAnimator
+        android:duration="1100"
+        android:propertyName="scaleY"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:valueFrom="0.9"
+        android:valueTo="1.12"
+        android:valueType="floatType" />
+</set>

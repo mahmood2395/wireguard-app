@@ -1,39 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ Nocturne's import confirmation, in place of the bare naming dialog.
+  ~
+  ~ Upstream drops a scanned or imported config straight into the list behind a single text
+  ~ field, which tells a consumer nothing about what they just added — not where it goes, not
+  ~ what it routes, not what resolves their DNS. Those three facts are the whole content of a
+  ~ WireGuard config that a non-technical person can act on, so they are stated here before the
+  ~ config is saved rather than buried behind a disclosure afterwards.
+  ~
+  ~ It stays a DialogFragment, and `tunnel_name_text` / `tunnel_name_text_layout` keep their ids:
+  ~ every import path in the app — deep link, QR, file, zip — funnels through
+  ~ TunnelImporter.importTunnel into this one fragment, and changing the entry point would mean
+  ~ changing all of them at once.
   -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <import type="com.wireguard.android.widget.NameInputFilter" />
     </data>
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tunnel_name_text_layout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="26dp"
+            android:paddingBottom="18dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tunnel_name_text"
+            <!-- The one accent-tinted tile on the screen, and it marks the thing that just
+                 succeeded. -->
+            <TextView
+                android:id="@+id/confirm_tile"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/account_card_bg"
+                android:gravity="center"
+                android:text="@string/confirm_check"
+                android:textColor="@color/accent_300"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/confirm_title"
+                android:textAlignment="viewStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/tunnel_name"
-                android:imeOptions="actionDone"
-                android:inputType="textNoSuggestions|textVisiblePassword"
-                app:filter="@{NameInputFilter.newInstance()}">
+                android:layout_marginTop="16dp"
+                android:letterSpacing="@dimen/tracking_hero"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="28sp"
+                tools:text="frankfurt is ready" />
 
-                <requestFocus />
-            </com.google.android.material.textfield.TextInputEditText>
+            <TextView
+                android:id="@+id/confirm_subtitle"
+                android:textAlignment="viewStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingMultiplier="1.5"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/clay_text_muted"
+                android:textSize="13.5sp"
+                tools:text="One peer, routing all traffic. Give it a name you will recognise in the list." />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tunnel_name_text_layout"
+                style="@style/Portway.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp">
 
-    </FrameLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tunnel_name_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/tunnel_name"
+                    android:imeOptions="actionDone"
+                    android:inputType="textNoSuggestions|textVisiblePassword"
+                    app:filter="@{NameInputFilter.newInstance()}" />
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- What this config actually does, in three rows. Filled imperatively from the
+                 parsed Config, so a field that is absent is hidden rather than shown empty. -->
+            <LinearLayout
+                android:id="@+id/confirm_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/confirm_endpoint_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/row_top_rule"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/endpoint"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/confirm_endpoint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="middle"
+                        android:gravity="end"
+                        android:maxLines="1"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        tools:text="5.9.44.12:51820" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/confirm_routes_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/row_top_rule"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/confirm_routes"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/confirm_routes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="end"
+                        android:maxLines="1"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        tools:text="All traffic" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/confirm_dns_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/row_rule_both"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/dns_servers"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="@color/clay_text_muted"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/confirm_dns"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="end"
+                        android:maxLines="1"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        tools:text="1.1.1.1, 8.8.8.8" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirm_save"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="22dp"
+                android:text="@string/confirm_save" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirm_cancel"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/confirm_not_now"
+                android:textColor="@color/clay_text_muted"
+                android:textSize="13.5sp" />
+        </LinearLayout>
+    </ScrollView>
 </layout>

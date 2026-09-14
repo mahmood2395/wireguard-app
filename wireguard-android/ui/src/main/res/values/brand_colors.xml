@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The brand layer: the things Material 3 has no role for — the canvas, the accent ramp,
+  ~ the row and ping inks, and the handshake decay bar. Hand-maintained on purpose;
+  ~ colors.xml is generated from the seed and would lose these.
+  ~
+  ~ The clay_* names are archaeology — a superseded direction whose surviving tokens Nocturne
+  ~ still paints with. Renaming them would touch every layout for no pixels.
+  -->
+<resources>
+    <color name="status_connecting">#5B5F72</color>
+    <color name="row_surface">#EDF0F9</color>
+    <color name="clay_canvas_top">#F4F5FA</color>
+    <color name="clay_canvas_bottom">#F4F5FA</color>
+    <color name="clay_surface_hi">#FFFFFF</color>
+    <color name="clay_surface_lo">#FFFFFF</color>
+    <color name="clay_stroke">#D8DAE4</color>
+    <color name="clay_text_muted">#5B5F72</color>
+    <color name="clay_accent">#006a52</color>
+    <color name="clay_rx">#1C1A27</color>
+    <color name="clay_tx">#1C1A27</color>
+    <color name="clay_shadow">#3D2F7A</color>
+    <color name="row_selected">#b4e2d0</color>
+    <color name="ping_ok">#005542</color>
+    <color name="ping_fail">#B04250</color>
+    <!-- The accent as ONE role, a 100-900 ramp on a shared lightness scale; see DESIGN.md
+         for the mix ratios. 600 and 700 have no surface in this build (the design assigns
+         them to a second graph series and a throughput sparkline, neither of which exists
+         yet) but they stay: a ramp with holes in it is worse than an unused token, and the
+         values are not guessable — they must come from the same mixing function as the rest. -->
+    <color name="accent">#006a52</color>
+    <color name="accent_300">#004434</color>
+    <color name="accent_400">#005542</color>
+    <color name="accent_600">#008b6d</color>
+    <color name="accent_700">#33ac8b</color>
+    <color name="accent_800">#96d4be</color>
+    <color name="accent_900">#d3efe4</color>
+    <color name="rule">#E2E4EC</color>
+    <color name="switch_off_edge">#A8ACBC</color>
+    <color name="icon_muted">#767A8C</color>
+    <!-- The handshake decay bar. The amber keeps #c8a24a's hue and chroma but drops to
+         L*45 so it clears 4.9:1 on the light canvas, where the night value manages 2.0:1. -->
+    <color name="handshake_late">#856609</color>
+    <color name="decay_track">#DDE0EA</color>
+    <color name="decay_mark">#767A8C</color>
+</resources>

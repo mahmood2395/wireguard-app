@@ -66,7 +66,7 @@
     <string name="allow_remote_control_intents_summary_on">External apps may toggle tunnels (advanced)</string>
     <string name="allow_remote_control_intents_title">Allow remote control apps</string>
     <string name="allowed_ips">Allowed IPs</string>
-    <string name="app_name" translatable="false">WireGuard</string>
+    <string name="app_name" translatable="false">Portway</string>
     <string name="bad_config_context">%1$s\'s %2$s</string>
     <string name="bad_config_context_top_level">%s</string>
     <string name="bad_config_error">%1$s in %2$s</string>
@@ -82,7 +82,32 @@
     <string name="bad_config_reason_unknown_attribute">Unknown attribute</string>
     <string name="bad_config_reason_unknown_section">Unknown section</string>
     <string name="bad_config_reason_value_out_of_range">Value out of range</string>
-    <string name="bad_extension_error">File must be .conf or .zip</string>
+    <string name="settings_category_advanced">Advanced</string>
+    <string name="settings_category_app">App</string>
+    <string name="settings_category_protection">Protection</string>
+    <string name="protection_title">Always-on VPN and kill switch</string>
+    <string name="protection_unknown">Android can reconnect the VPN after a restart and block traffic whenever it is down. Neither is on by default. Tap to set them up.</string>
+    <string name="battery_opt_title">Background restrictions</string>
+    <string name="battery_opt_exempt">Unrestricted. The tunnel can stay up in the background.</string>
+    <string name="battery_opt_restricted">Restricted — Android may stop the tunnel in the background. Tap to allow.</string>
+    <string name="connect_ping_label">Ping</string>
+    <string name="hero_protected">Protected</string>
+    <string name="hero_not_protected">Not protected</string>
+    <string name="hero_connecting">Connecting</string>
+    <string name="hero_disconnecting">Disconnecting</string>
+    <string name="a11y_open_details">Open details</string>
+    <string name="a11y_connect">Connect %1$s</string>
+    <string name="a11y_disconnect">Disconnect %1$s</string>
+    <string name="a11y_connecting">Connecting</string>
+    <string name="a11y_disconnecting">Disconnecting</string>
+    <string name="a11y_share_log">Share log</string>
+    <string name="post_update_title">Updated while connected</string>
+    <string name="post_update_detail">Android can stop passing traffic when a VPN app updates while it is running. If pages still do not load, restart your phone — this clears it.</string>
+    <string name="post_update_dismiss">Got it</string>
+    <string name="backend_error_title">VPN engine unavailable</string>
+    <string name="backend_error_retry">Try again</string>
+    <string name="not_a_config_error">That file does not contain a WireGuard configuration</string>
+    <string name="import_too_large_error">File is too large to be a configuration</string>
     <string name="error_no_qr_found">QR code not found in image</string>
     <string name="error_qr_checksum">QR code checksum verification failed</string>
     <string name="cancel">Cancel</string>
@@ -93,7 +118,9 @@
     <string name="config_rename_error">Cannot rename configuration file “%s”</string>
     <string name="config_save_error">Cannot save configuration for “%1$s”: %2$s</string>
     <string name="config_save_success">Successfully saved configuration for “%s”</string>
-    <string name="create_activity_title">Create WireGuard Tunnel</string>
+    <string name="create_activity_title">Create Tunnel</string>
+    <string name="import_from_link">Import Tunnel from Link</string>
+    <string name="deep_link_import_error">That link did not contain a valid configuration</string>
     <string name="create_bin_dir_error">Cannot create local binary directory</string>
     <string name="create_downloads_file_error">Cannot create file in downloads directory</string>
     <string name="create_empty">Create from scratch</string>
@@ -147,7 +174,7 @@
     <string name="latest_handshake_ago">%s ago</string>
     <string name="listen_port">Listen port</string>
     <string name="log_export_error">Unable to export log: %s</string>
-    <string name="log_export_subject">WireGuard Android Log File</string>
+    <string name="log_export_subject">Portway Android Log File</string>
     <string name="log_export_success">Saved to “%s”</string>
     <string name="log_export_title">Export log file</string>
     <string name="log_saver_activity_label">Save log</string>
@@ -180,8 +207,8 @@
     <string name="parse_error_integer">number</string>
     <string name="parse_error_reason">Cannot parse %1$s “%2$s”</string>
     <string name="peer">Peer</string>
-    <string name="permission_description">control WireGuard tunnels, enabling and disabling tunnels at will, potentially misdirecting Internet traffic</string>
-    <string name="permission_label">control WireGuard tunnels</string>
+    <string name="permission_description">control tunnels, enabling and disabling tunnels at will, potentially misdirecting Internet traffic</string>
+    <string name="permission_label">control tunnels</string>
     <string name="persistent_keepalive">Persistent keepalive</string>
     <string name="pre_shared_key">Pre-shared key</string>
     <string name="pre_shared_key_enabled">enabled</string>
@@ -203,7 +230,7 @@
     <string name="shell_start_error">Shell failed to start: %d</string>
     <string name="success_application_will_restart">Success. The application will now restart…</string>
     <string name="toggle_all">Toggle All</string>
-    <string name="toggle_error">Error toggling WireGuard tunnel: %s</string>
+    <string name="toggle_error">Error toggling tunnel: %s</string>
     <string name="tools_installer_already">wg and wg-quick are already installed</string>
     <string name="tools_installer_failure">Unable to install command-line tools (no root?)</string>
     <string name="tools_installer_initial">Install optional tools for scripting</string>
@@ -227,7 +254,139 @@
     <string name="tunnel_create_success">Successfully created tunnel “%s”</string>
     <string name="tunnel_error_already_exists">Tunnel “%s” already exists</string>
     <string name="tunnel_error_invalid_name">Invalid name</string>
-    <string name="tunnel_list_placeholder">Add a tunnel using the button below</string>
+    <string name="transfer_rate">%1$s/s</string>
+    <string name="auto_reconnect_title">Restart stalled tunnels</string>
+    <string name="auto_reconnect_summary">If a tunnel is connected but stops handshaking, restart it automatically</string>
+    <string name="connect_reconnecting">Reconnecting…</string>
+    <string name="connect_connected">Connected</string>
+    <string name="connect_disconnected">Not connected</string>
+    <string name="connect_no_tunnels">No tunnels yet</string>
+    <string name="connect_no_tunnels_hint">Import a config to get started</string>
+    <string name="connect_add_tunnel">Add a tunnel</string>
+    <string name="add_tunnel_sheet_title">Add a tunnel</string>
+    <string name="account_suspended">SUSPENDED</string>
+    <string name="account_expired">EXPIRED</string>
+    <string name="account_days_value">%1$d days</string>
+    <string name="account_usage_value">%s used</string>
+    <string name="account_plan_size">%s plan</string>
+    <string name="panel_url_title">Panel URL</string>
+    <string name="panel_url_summary">Address of your management panel, used to show account info for tunnels imported without a link</string>
+    <string name="ping_ms" translatable="false">%1$d ms</string>
+    <string name="ping_none" translatable="false">—</string>
+    <string name="ping_timeout">Timeout</string>
+    <!-- Portway: the handshake decay bar (Nocturne). The whole track is WireGuard's 180s
+         cutoff; the hairline is the 118s rekey. -->
+    <string name="handshake_label">Last handshake</string>
+    <string name="handshake_age_seconds">%1$ds ago</string>
+    <string name="handshake_age_minutes">%1$dm %2$02ds ago</string>
+    <string name="handshake_age_none">none in 3m</string>
+    <string name="handshake_axis_start">0s</string>
+    <string name="handshake_axis_rekey">rekey due</string>
+    <string name="handshake_axis_end">3m gone</string>
+    <string name="handshake_state_fresh">Handshake inside the last two minutes</string>
+    <string name="handshake_state_late">Rekey overdue — still inside the 3m window</string>
+    <string name="handshake_state_silent">Last handshake over three minutes ago</string>
+    <string name="handshake_spoken_seconds">%1$d seconds</string>
+    <string name="handshake_spoken_minutes">%1$d minutes %2$d seconds</string>
+    <string name="handshake_a11y_fresh">Last handshake %1$s ago, inside the rekey window</string>
+    <string name="handshake_a11y_late">Last handshake %1$s ago, rekey overdue</string>
+    <string name="handshake_a11y_silent">No handshake in over three minutes</string>
+    <!-- Portway: import confirmation (Nocturne). -->
+    <string name="confirm_check" translatable="false">\u2713</string>
+    <string name="confirm_ready">%s is ready</string>
+    <string name="confirm_subtitle_all">%1$s, routing all traffic. Give it a name you will recognise in the list.</string>
+    <string name="confirm_subtitle_split">%1$s, routing part of your traffic. Give it a name you will recognise in the list.</string>
+    <!-- Used only when this peer's place is already known from a previous connection. The app
+         never resolves geography while disconnected, so most first imports get the lines above. -->
+    <string name="confirm_subtitle_all_geo">%1$s, routing all traffic. Its IP puts it in %2$s \u2014 give it a name you will recognise in the list.</string>
+    <string name="confirm_subtitle_split_geo">%1$s, routing part of your traffic. Its IP puts it in %2$s \u2014 give it a name you will recognise in the list.</string>
+    <string name="confirm_routes">Routes</string>
+    <string name="confirm_routes_all">All traffic</string>
+    <string name="confirm_routes_some">%1$d networks</string>
+    <string name="confirm_save">Save config</string>
+    <string name="confirm_not_now">Not now</string>
+    <plurals name="confirm_peers">
+        <item quantity="one">One peer</item>
+        <item quantity="other">%d peers</item>
+    </plurals>
+
+    <!-- Portway: Home, built to the Nocturne prototype. -->
+    <string name="wordmark" translatable="false">portway</string>
+    <string name="days_left_chip">%1$d days left</string>
+    <string name="ring_caption_idle">Tap to connect</string>
+    <string name="ring_caption_connecting">Opening the tunnel\u2026</string>
+    <string name="hero_sub_connected">Your traffic surfaces through this config\'s peer.</string>
+    <string name="hero_sub_connected_geo">Your traffic surfaces in %1$s, resolved from the peer\'s IP.</string>
+    <string name="hero_sub_idle">Nothing is encrypted right now. Tap to connect.</string>
+    <string name="hero_sub_connecting">Waiting for the first handshake.</string>
+    <string name="hero_sub_disconnecting">Tearing down the interface.</string>
+    <string name="hero_sub_no_tunnels">Import the config your provider sent to get started.</string>
+    <string name="location_from">from %1$s</string>
+    <string name="location_geo_from">%1$s \u00b7 from %2$s</string>
+    <string name="location_dot" translatable="false">%1$s \u00b7 %2$s</string>
+    <string name="peer_no_route">No route to peer</string>
+    <string name="month_label">This month</string>
+    <string name="month_axis_today">today</string>
+    <string name="month_of">%1$s of %2$s</string>
+    <string name="month_used">%1$s used</string>
+    <string name="quota_renews">Renews %1$s \u00b7 %2$s remaining</string>
+    <string name="nav_home">Home</string>
+    <string name="configs_footnote">These are the configs you were given — Portway has no server list of its own. The city under each name is resolved from the peer\'s IP, not chosen from a menu. Tapping one switches to it; only one is up at a time unless you allow several in Settings.</string>
+    <string name="hero_off_figure">Off</string>
+    <string name="hero_busy_figure" translatable="false">\u00b7\u00b7\u00b7</string>
+    <string name="hero_connected_figure">On</string>
+
+    <!-- Portway: three-step introduction (Nocturne). Every sentence is a fact about what the
+         app does; nothing here is aspirational copy. -->
+    <string name="onboard_skip">Skip — I already have a config file</string>
+    <string name="onboard_kicker_1">Welcome</string>
+    <string name="onboard_title_1">Portway is a door, not a service.</string>
+    <string name="onboard_body_1">It carries your traffic to a server you or your provider control. There is no account here and nothing to subscribe to — only the config you were given.</string>
+    <string name="onboard_cta_1">Continue</string>
+    <string name="onboard_kicker_2">Step 1 of 2</string>
+    <string name="onboard_title_2">Add the code your provider sent.</string>
+    <string name="onboard_body_2">A QR code or a .conf file. Portway reads it once, keeps the private key on this device, and never sends it anywhere.</string>
+    <string name="onboard_cta_2">Scan a QR code</string>
+    <string name="onboard_kicker_3">Step 2 of 2</string>
+    <string name="onboard_title_3">Android will ask for permission.</string>
+    <string name="onboard_body_3">A VPN needs the system\'s consent to route traffic. Android shows its own dialog — Portway cannot skip or fake it.</string>
+    <string name="onboard_cta_3">Understood</string>
+
+    <!-- Portway: config detail screen (Nocturne). -->
+    <string name="detail_usage_label">Last 14 days</string>
+    <string name="detail_health_label">Health</string>
+    <string name="detail_configuration">Configuration</string>
+    <string name="detail_remove">Remove this config</string>
+    <string name="detail_remove_confirm">Remove %1$s?</string>
+    <string name="detail_remove_detail">The config and its private key are deleted from this device. Your provider is not told.</string>
+    <string name="detail_keepalive_seconds">every %1$d seconds</string>
+    <string name="detail_keepalive_off">Off</string>
+    <string name="detail_connect">Connect</string>
+    <string name="detail_disconnect">Disconnect</string>
+    <string name="detail_show">Show</string>
+    <string name="detail_hide">Hide</string>
+    <string name="detail_session_total">%s this session</string>
+    <string name="detail_sentence_connected">All traffic on this device is going through %s.</string>
+    <string name="detail_sentence_connected_geo">All traffic on this device is going through %1$s, which surfaces in %2$s.</string>
+    <string name="detail_sentence_down">This config is not carrying traffic right now.</string>
+    <string name="detail_resolved_location">Resolved location</string>
+    <string name="connect_download">Download</string>
+    <string name="connect_upload">Upload</string>
+    <string name="add">Add</string>
+    <string name="nav_configs">Configs</string>
+    <string name="language_title">Language</string>
+    <!-- Endonyms: each names its own language, so neither is ever translated. -->
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_persian" translatable="false">فارسی</string>
+    <string name="language_follow_system">Follow system</string>
+    <string name="theme_mode_title">Theme</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_system">Follow system</string>
+    <string name="tunnel_status_active">Connected</string>
+    <string name="tunnel_status_inactive">Not connected</string>
+    <string name="tunnel_list_empty_title">No configs yet</string>
+    <string name="tunnel_list_placeholder">Use Add, above, to scan a QR code or open a .conf file your provider sent you.</string>
     <string name="tunnel_name">Tunnel Name</string>
     <string name="tunnel_on_error">Unable to turn tunnel on (wgTurnOn returned %d)</string>
     <string name="tunnel_dns_failure">Unable to resolve DNS hostname: “%s”</string>
@@ -236,20 +395,25 @@
     <string name="type_name_go_userspace">Go userspace</string>
     <string name="type_name_kernel_module">Kernel module</string>
     <string name="unknown_error">Unknown error</string>
-    <string name="updater_avalable">An application update is available. Please update now.</string>
-    <string name="updater_action">Download &amp; Update</string>
-    <string name="updater_rechecking">Fetching update metadata…</string>
-    <string name="updater_download_progress">Downloading update: %1$s / %2$s (%3$.2f%%)</string>
-    <string name="updater_download_progress_nototal">Downloading update: %s</string>
-    <string name="updater_installing">Installing update…</string>
-    <string name="updater_failure">Update failure: %s. Will retry momentarily…</string>
-    <string name="updater_corrupt_title">Application Corrupt</string>
-    <string name="updater_corrupt_message">This application is corrupt. Please re-download the APK from the website linked below. After, uninstall this application, and reinstall it from the downloaded APK.</string>
-    <string name="updater_corrupt_navigate">Open Website</string>
+    <string name="expiry_channel_name">Plan expiry</string>
+    <string name="expiry_channel_description">Warns you before your plan runs out</string>
+    <string name="expiry_soon_text">%1$s will stop connecting when it runs out. Renew to stay connected.</string>
+    <string name="expiry_today_title">Your plan expires today</string>
+    <string name="expiry_today_text">%1$s will stop connecting once it lapses. Renew to stay connected.</string>
+    <string name="expiry_suspended_title">Your account is suspended</string>
+    <string name="expiry_suspended_text">%1$s cannot connect until the account is reactivated.</string>
+    <string name="update_available">Version %1$s is available</string>
+    <string name="update_action">Update</string>
+    <string name="update_downloading">Downloading…</string>
+    <string name="update_required">This version is no longer supported. Update to keep connecting.</string>
+    <string name="update_disconnect_note">Your tunnel will disconnect while the update installs.</string>
+    <string name="update_permission_needed">Allow Portway to install apps</string>
+    <string name="update_failed">Update failed: %1$s</string>
+    <string name="update_later">Later</string>
     <string name="version_summary">%1$s backend %2$s</string>
     <string name="version_summary_checking">Checking %s backend version</string>
     <string name="version_summary_unknown">Unknown %s version</string>
-    <string name="version_title">WireGuard for Android v%s</string>
+    <string name="version_title">Portway for Android v%s</string>
     <string name="vpn_not_authorized_error">VPN service not authorized by user</string>
     <string name="vpn_start_error">Unable to start Android VPN service</string>
     <string name="zip_export_error">Unable to export tunnels: %s</string>
@@ -260,4 +424,29 @@
     <string name="biometric_prompt_private_key_title">Authenticate to view private key</string>
     <string name="biometric_auth_error">Authentication failure</string>
     <string name="biometric_auth_error_reason">Authentication failure: %s</string>
+    <string-array name="theme_mode_entries">
+        <item>@string/theme_mode_dark</item>
+        <item>@string/theme_mode_light</item>
+        <item>@string/theme_mode_system</item>
+    </string-array>
+    <string-array name="theme_mode_values" translatable="false">
+        <item>DARK</item>
+        <item>LIGHT</item>
+        <item>SYSTEM</item>
+    </string-array>
+    <plurals name="expiry_soon_title">
+        <item quantity="one">Your plan expires tomorrow</item>
+        <item quantity="other">Your plan expires in %1$d days</item>
+    </plurals>
+    <!-- Portway: one config, one device at a time (SessionGuard). -->
+    <string name="session_dialog_title">Already connected on another device</string>
+    <string name="session_dialog_message">%1$s is connected on %2$s right now. A config can only be connected on one device at a time — using it on two breaks both connections.</string>
+    <string name="session_use_here">Use here instead</string>
+    <string name="session_other_device_unknown">another device</string>
+    <string name="session_conflict_title">Config in use on another device</string>
+    <string name="session_conflict_text">%1$s is connected on %2$s. Using one config on two devices at once breaks both connections.</string>
+    <string name="session_superseded_title">Disconnected: in use on another device</string>
+    <string name="session_superseded_text">%1$s was moved to %2$s. A config can only be connected on one device at a time.</string>
+    <string name="session_channel_name">Config in use elsewhere</string>
+    <string name="session_channel_description">When a config is connected on another device, or was moved to one</string>
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ The label. #9397ab measures 4.5:1 on the ground; #75798c does not, which is why the icon
+  ~ selector next door is allowed to be darker and this one is not.
+  -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/accent_300" android:state_checked="true" />
+    <item android:color="@color/clay_text_muted" />
+</selector>

@@ -2,31 +2,255 @@
   ~ Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
   ~ SPDX-License-Identifier: Apache-2.0
   -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Portway: transparent, not colorSurface. The ActionBar's internal Toolbar inherits
+         toolbarStyle, so a surface colour here paints a strip across the top of every screen
+         regardless of what the actionBarStyle says. -->
     <style name="WireGuardTheme.Toolbar" parent="Widget.Material3.Toolbar">
-        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="AppThemeBase" parent="WireGuardTheme">
         <item name="materialCardViewStyle">@style/WireGuardTheme.MaterialCardView</item>
         <item name="toolbarStyle">@style/WireGuardTheme.Toolbar</item>
         <item name="bottomSheetDialogTheme">@style/WireGuardTheme.BottomSheetDialog</item>
-        <item name="android:statusBarColor">?android:colorBackground</item>
+        <!-- Transparent so the Aurora canvas gradient runs under the system bars.
+             The light/dark icon booleans still flip per night qualifier. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">@bool/light_status_bar</item>
+
+        <!-- Aurora brand layer. Every one of these must be defined HERE rather than in a
+             Connect-only overlay: TvTheme extends AppTheme and would crash on inflate
+             if a layout referenced an attr the theme did not resolve. -->
+        <item name="statusConnectingColor">@color/status_connecting</item>
+        <item name="rowSurfaceColor">@color/row_surface</item>
+
+        <!-- Swapping these at theme level restyles every screen at once, including the
+             ones this redesign has not touched. -->
+        <item name="actionBarStyle">@style/Portway.ActionBar</item>
+        <item name="textInputStyle">@style/Portway.TextInput</item>
+        <item name="preferenceTheme">@style/Portway.Preference</item>
+        <!-- Same gradient behind the action bar strip as under the content, so the two do
+             not read as different surfaces. -->
+        <item name="android:windowBackground">@drawable/window_background</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="textAppearanceDisplaySmall">@style/Portway.Text.Display</item>
+        <item name="textAppearanceHeadlineSmall">@style/Portway.Text.Headline</item>
+        <item name="textAppearanceTitleLarge">@style/Portway.Text.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/Portway.Text.TitleMedium</item>
+        <item name="textAppearanceBodyLarge">@style/Portway.Text.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/Portway.Text.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/Portway.Text.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/Portway.Text.Label</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
     </style>
 
     <!-- Various additional API-specific features in values-v*/styles.xml -->
     <style name="AppTheme" parent="AppThemeBase" />
 
     <style name="WireGuardTheme.MaterialCardView" parent="Widget.Material3.CardView.Elevated">
-        <item name="cornerRadius">4dp</item>
-        <item name="contentPadding">8dp</item>
+        <item name="cornerRadius">26dp</item>
+        <item name="contentPadding">24dp</item>
+        <!-- Soft-depth direction: cards are raised, and the shadow is tinted toward the
+             canvas instead of platform black (API 28+; below that it falls back to black,
+             which on a dark ground is simply invisible rather than wrong). -->
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="p">@color/clay_shadow</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="p">@color/clay_shadow</item>
+        <!-- A drop shadow is invisible against a dark canvas, so the card is defined by a
+             hairline accent stroke and a surface a step lighter than the background. -->
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/clay_stroke</item>
+        <item name="cardBackgroundColor">@color/clay_surface_lo</item>
+        <item name="cardElevation">8dp</item>
     </style>
 
     <style name="WireGuardTheme.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!-- Portway type scale. Inter everywhere, negative tracking at display sizes (Inter is
+         drawn loose by default and looks generic without it), JetBrains Mono for figures. -->
+    <!-- preferenceTheme is the supported hook for restyling androidx-preference; the
+         alternative is overriding layoutResource on every Preference in code. -->
+    <style name="Portway.Preference" parent="@style/PreferenceThemeOverlay">
+        <item name="preferenceStyle">@style/Portway.Preference.Item</item>
+        <item name="preferenceCategoryStyle">@style/Portway.Preference.Category</item>
+        <item name="switchPreferenceCompatStyle">@style/Portway.Preference.Switch</item>
+        <item name="dialogPreferenceStyle">@style/Portway.Preference.Item</item>
+        <!-- EditTextPreference resolves its own style attribute, not dialogPreferenceStyle.
+             Without this line the Panel URL row keeps the stock Material layout and sits
+             visibly further indented than every row around it — it reserves icon space that
+             preference_clay does not. -->
+        <item name="editTextPreferenceStyle">@style/Portway.Preference.EditText</item>
+        <item name="preferenceCategoryTitleTextColor">@color/clay_accent</item>
+    </style>
+
+    <style name="Portway.Preference.Item" parent="@style/Preference.Material">
+        <item name="android:layout">@layout/preference_clay</item>
+    </style>
+
+    <style name="Portway.Preference.EditText" parent="@style/Preference.DialogPreference.EditTextPreference.Material">
+        <item name="android:layout">@layout/preference_clay</item>
+    </style>
+
+    <style name="Portway.Preference.Category" parent="@style/Preference.Category.Material">
+        <item name="android:layout">@layout/preference_category_clay</item>
+    </style>
+
+    <!-- Material 3's switchStyle applies a thumbTint and a trackTint, and a tint is applied
+         OVER whatever drawable you set — which is why the Nocturne pill came out as a pale
+         Material switch even once app:track was right. This style has neither. -->
+    <style name="Portway.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="thumbTint">@null</item>
+        <item name="trackTint">@null</item>
+        <item name="android:background">@null</item>
+        <item name="showText">false</item>
+        <item name="switchMinWidth">42dp</item>
+        <item name="android:thumb">@drawable/switch_thumb</item>
+        <item name="track">@drawable/switch_track</item>
+    </style>
+
+    <style name="Portway.Preference.Switch" parent="@style/Preference.SwitchPreferenceCompat.Material">
+        <item name="android:layout">@layout/preference_clay</item>
+        <!-- The row layout and the widget inside it are separate attributes; overriding only
+             the first left Material's own switch sitting in a Nocturne row. -->
+        <item name="android:widgetLayout">@layout/preference_switch_clay</item>
+    </style>
+
+    <style name="Portway.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeColor">@color/clay_accent</item>
+        <item name="hintTextColor">@color/clay_text_muted</item>
+    </style>
+
+    <!-- A soft square rather than Material's default pill, to match the puck and the cards. -->
+    <!-- Transparent on purpose: the visible active state is the raised puck drawn by
+         itemBackground, but the indicator still has to exist so Material reserves the space
+         that separates the icon from its label. -->
+    <style name="Portway.NavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@android:color/transparent</item>
+        <item name="android:width">54dp</item>
+        <item name="android:height">44dp</item>
+        <item name="shapeAppearance">@style/Portway.NavIndicator.Shape</item>
+    </style>
+
+    <style name="Portway.NavIndicator.Shape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">17dp</item>
+    </style>
+
+    <!-- The framework ActionBar does not read Material 3 text appearances, so without this
+         its title stays on the system font while every other screen switches to Inter. -->
+    <!-- The bar draws no surface of its own: colorSurface and the canvas are different
+         values, so any ActionBar background shows as a strip across the top of every screen. -->
+    <style name="Portway.ActionBar" parent="Widget.Material3.ActionBar.Solid">
+        <item name="background">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="backgroundSplit">@android:color/transparent</item>
+        <item name="backgroundStacked">@android:color/transparent</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="titleTextStyle">@style/Portway.ActionBar.Title</item>
+    </style>
+
+    <!-- Nocturne is Inter over Inter — the prototype sets every screen header at 19px/500 with
+         -.03em, so the Outfit Bold display face used earlier is gone. It made the title read as
+         a name; the design wants it to read as a place. -->
+    <style name="Portway.ActionBar.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:letterSpacing">@dimen/tracking_display</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="Portway.Text" parent="" />
+
+    <style name="Portway.Text.Display" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textFontWeight" tools:targetApi="p">600</item>
+        <item name="android:letterSpacing">@dimen/tracking_display</item>
+    </style>
+
+    <style name="Portway.Text.Headline" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textFontWeight" tools:targetApi="p">600</item>
+        <item name="android:letterSpacing">@dimen/tracking_heading</item>
+    </style>
+
+    <style name="Portway.Text.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textFontWeight" tools:targetApi="p">600</item>
+        <item name="android:letterSpacing">@dimen/tracking_subhead</item>
+    </style>
+
+    <style name="Portway.Text.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textFontWeight" tools:targetApi="p">600</item>
+        <item name="android:letterSpacing">@dimen/tracking_body</item>
+    </style>
+
+    <style name="Portway.Text.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="Portway.Text.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="Portway.Text.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:letterSpacing">@dimen/tracking_tiny</item>
+    </style>
+
+    <style name="Portway.Text.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textFontWeight" tools:targetApi="p">600</item>
+    </style>
+
+    <!-- The detail screen's disclosed config listing: a label over its value, each pair
+         separated from the next by nothing but space. Both are styles rather than repeated
+         attributes because there are eight pairs and they must stay identical. -->
+    <style name="Portway.Detail.Label" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelSmall</item>
+        <item name="android:textColor">@color/clay_text_muted</item>
+        <item name="android:textSize">11.5sp</item>
+    </style>
+
+    <style name="Portway.Detail.Value" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">13.5sp</item>
+        <item name="android:textIsSelectable">false</item>
+    </style>
+
+    <!-- Portway: the introduction draws its own header (three progress marks), so the action
+         bar would be a second, contradictory one saying the app's name. -->
+    <style name="OnboardingTheme" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="NoBackgroundTheme" parent="AppTheme">

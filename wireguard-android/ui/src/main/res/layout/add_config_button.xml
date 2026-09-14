@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~ 7/12dp padding, 8dp radius, 1dp accent hairline, accent-300 at 12.5sp — the prototype's Add.
+  -->
+<com.google.android.material.button.MaterialButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/create_fab"
+    style="@style/Widget.Material3.Button.OutlinedButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|end"
+    android:layout_marginEnd="22dp"
+    android:insetTop="0dp"
+    android:insetBottom="0dp"
+    android:minHeight="0dp"
+    android:minWidth="0dp"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="7dp"
+    android:text="@string/add"
+    android:textColor="@color/accent_300"
+    android:textSize="12.5sp"
+    app:cornerRadius="8dp"
+    app:strokeColor="@color/accent" />

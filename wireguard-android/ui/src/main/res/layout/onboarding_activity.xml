@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ One layout for all three steps. The steps differ only in their words, so three fragments
+  ~ would be three copies of this file kept in sync by hand; OnboardingActivity swaps the text
+  ~ and animates the rise.
+  ~
+  ~ No illustrations, by design: every sentence here is a fact about what the app does, and a
+  ~ drawing beside it would only pad the screen a consumer wants to get past.
+  -->
+<!-- Two nested roots on purpose: fitsSystemWindows sets the view's padding to the system-bar
+     insets, wholesale, so any padding declared on the same view is silently discarded. The
+     outer frame takes the insets; the inner one owns the 26dp gutter. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/aurora_canvas"
+    android:fitsSystemWindows="true">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="26dp"
+    android:paddingTop="34dp"
+    android:paddingBottom="26dp">
+
+    <LinearLayout
+        android:id="@+id/step_marks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/lang_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lang_switch">
+
+        <View
+            android:id="@+id/step_mark_1"
+            android:layout_width="26dp"
+            android:layout_height="2dp"
+            android:background="@color/accent" />
+
+        <View
+            android:id="@+id/step_mark_2"
+            android:layout_width="26dp"
+            android:layout_height="2dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/rule" />
+
+        <View
+            android:id="@+id/step_mark_3"
+            android:layout_width="26dp"
+            android:layout_height="2dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/rule" />
+    </LinearLayout>
+
+    <!-- The language switch, on the welcome screen before anything else asks for a decision.
+         Two segments rather than a list because there are two answers, and a first-run screen
+         should not open a dialog to answer a question the user can see the answer to. It sits
+         opposite the step marks, at the top end, where it is findable without competing with
+         the sentence that is the point of the screen. Settings keeps the fuller control — it
+         is the only place that can put the choice back to "follow system". -->
+    <LinearLayout
+        android:id="@+id/lang_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lang_switch_bg"
+        android:contentDescription="@string/language_title"
+        android:orientation="horizontal"
+        android:padding="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/lang_en"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="60dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="@string/language_english"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceLabelMedium"
+            android:textSize="12.5sp" />
+
+        <TextView
+            android:id="@+id/lang_fa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:minWidth="60dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="@string/language_persian"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceLabelMedium"
+            android:textSize="12.5sp" />
+    </LinearLayout>
+
+    <!-- Vertically centred as a group, flush left. -->
+    <LinearLayout
+        android:id="@+id/step_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/onboard_cta"
+        app:layout_constraintTop_toBottomOf="@+id/lang_switch"
+        app:layout_constraintVertical_bias="0.42">
+
+        <TextView
+            android:id="@+id/onboard_kicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="@dimen/tracking_kicker"
+            android:textAllCaps="true"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
+            android:textColor="@color/accent"
+            android:textSize="11sp"
+            tools:text="WELCOME" />
+
+        <TextView
+            android:id="@+id/onboard_title"
+            android:textAlignment="viewStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:letterSpacing="@dimen/tracking_hero"
+            android:lineSpacingMultiplier="1.06"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="34sp"
+            tools:text="Portway is a door, not a service." />
+
+        <View
+            android:layout_width="64dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="22dp"
+            android:background="@color/accent" />
+
+        <TextView
+            android:id="@+id/onboard_body"
+            android:textAlignment="viewStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:lineSpacingMultiplier="1.65"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="@color/clay_text_muted"
+            android:textSize="15sp"
+            tools:text="It carries your traffic to a server you or your provider control." />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/onboard_cta"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/onboard_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Continue" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/onboard_skip"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_marginTop="6dp"
+        android:text="@string/onboard_skip"
+        android:textColor="@color/clay_text_muted"
+        android:textSize="13.5sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

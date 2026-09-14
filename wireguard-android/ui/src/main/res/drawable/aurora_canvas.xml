@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2026 Portway. All Rights Reserved.
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~ Soft-depth direction: the canvas stays quiet because the depth lives in the objects on
+  ~ it. Colours are @color/clay_* rather than ?attr/ — a <gradient> only resolves theme
+  ~ attributes when inflated with a theme, so the values-night qualifier does the switching.
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/clay_canvas_top"
+        android:endColor="@color/clay_canvas_bottom"
+        android:type="linear" />
+</shape>

@@ -65,7 +65,6 @@
     <string name="bad_config_reason_unknown_attribute">Thuộc tính không tồn tại</string>
     <string name="bad_config_reason_unknown_section">Mục không xác định</string>
     <string name="bad_config_reason_value_out_of_range">Giá trị vượt ngoài khoảng cho phép</string>
-    <string name="bad_extension_error">File phải là .conf hoặc .zip</string>
     <string name="error_no_qr_found">Không tìm thấy QR code trong ảnh</string>
     <string name="error_qr_checksum">Kiểm tra checksum QR code không thành công</string>
     <string name="cancel">Hủy</string>
@@ -130,7 +129,7 @@
     <string name="latest_handshake_ago">%s giây trước</string>
     <string name="listen_port">Cổng</string>
     <string name="log_export_error">Không thể xuất nhật ký: %s</string>
-    <string name="log_export_subject">File nhật ký WireGuard Android</string>
+    <string name="log_export_subject">File nhật ký Portway Android</string>
     <string name="log_export_success">Đã lưu vào \"%s\"</string>
     <string name="log_export_title">Xuất file nhật ký</string>
     <string name="log_saver_activity_label">Lưu nhật ký</string>
