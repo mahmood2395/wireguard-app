@@ -76,6 +76,12 @@ Every state change goes through `TunnelManager.setTunnelState`, which takes an e
   **Under always-on it only notifies.** Disconnecting there makes Android restart the VPN and
   loop, and in lockdown mode every bounce cuts the user's internet.
 
+The release is not tied to the call that asked for a disconnect. It happens in
+`TunnelManager.onBackendStateChange`, which sees **every** teardown the backend performs:
+an explicit disconnect, deleting a config, the system tearing the VPN down, and — the case
+that motivated it — the backend taking config A down on its own when config B connects.
+`NONE` operations mark their tunnel for their duration so that report is ignored.
+
 `ADVISORY` exists because blocking always-on is worse than a conflict. `NONE` exists because
 releasing during a 700ms watchdog restart would hand the session to anyone who asked in that
 window.

@@ -235,11 +235,35 @@ class ConnectFragment : BaseFragment(), MenuProvider {
                         val result = AccountRepository.fetch(tunnel)
                         if (result is AccountRepository.Result.Ok) onAccountLoaded(tunnel.name, result.info)
                         withContext(Dispatchers.Main.immediate) {
-                            accountResult = result
-                            render()
+                            // A fetch can take seconds. If the user switched configs meanwhile,
+                            // this answer is about the old one: dropping it is right, because
+                            // bindTunnel already fetched for the new config, and applying it
+                            // showed the wrong account's days and quota for up to a minute.
+                            if (tunnel === connectTunnel) {
+                                accountResult = result
+                                render()
+                            }
                         }
                     }
                     delay(60_000)
+                }
+            }
+        }
+        // Portway: a backend that never started used to be completely invisible here — the
+        // screen sat in its idle state forever with no hint that connecting could not work.
+        // Launched here, once per view, and not from onStart: repeatOnLifecycle already restarts
+        // it at every STARTED, so launching it from onStart stacked one more collector on top of
+        // the previous ones each time the app came back from the background.
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                Application.backendResult.collect { result ->
+                    val error = result?.exceptionOrNull()
+                    val binding = binding ?: return@collect
+                    binding.backendErrorCard.visibility = if (error == null) View.GONE else View.VISIBLE
+                    if (error != null) {
+                        binding.backendErrorDetail.text = ErrorMessages[error]
+                        binding.backendErrorRetry.setOnClickListener { Application.retryBackend() }
+                    }
                 }
             }
         }
@@ -269,21 +293,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
 
     override fun onStart() {
         super.onStart()
-        // Portway: a backend that never started used to be completely invisible here — the
-        // screen sat in its idle state forever with no hint that connecting could not work.
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                Application.backendResult.collect { result ->
-                    val error = result?.exceptionOrNull()
-                    val binding = binding ?: return@collect
-                    binding.backendErrorCard.visibility = if (error == null) View.GONE else View.VISIBLE
-                    if (error != null) {
-                        binding.backendErrorDetail.text = ErrorMessages[error]
-                        binding.backendErrorRetry.setOnClickListener { Application.retryBackend() }
-                    }
-                }
-            }
-        }
         viewLifecycleOwner.lifecycleScope.launch {
             // Throttled inside the checker, so opening the app repeatedly costs one request a day.
             (UpdateChecker.check() as? UpdateChecker.Result.Update)?.let {

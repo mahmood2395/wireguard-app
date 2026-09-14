@@ -34,6 +34,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,6 +63,12 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
      * guarded function.
      */
     private val backendMutex = Mutex()
+
+    /**
+     * Tunnels whose teardown right now must not release their session. Added on Main, read from
+     * the backend's IO thread inside the same call, so concurrent.
+     */
+    private val releaseSuppressed: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     /**
      * Portway. Bumped on every requested tunnel state change, from any entry point. The
@@ -212,6 +219,15 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
      * saying nothing.
      */
     fun onBackendStateChange(tunnel: ObservableTunnel, newState: Tunnel.State) {
+        // Portway: the one-device session is released here, where the backend reports EVERY
+        // teardown — not in setTunnelState, which only sees the tunnel it was asked about.
+        // Connecting config B makes the backend take config A down on its own, and A's session
+        // used to stay claimed until the panel's lease ran out, so another device trying A was
+        // told it was "already connected" here for minutes. Read before onStateChanged, so
+        // tunnel.state is still the state being left.
+        if (newState == Tunnel.State.DOWN && tunnel.state == Tunnel.State.UP &&
+            tunnel.name !in releaseSuppressed
+        ) SessionGuard.afterDown(tunnel, SessionGuard.Gate.USER)
         tunnel.onStateChanged(newState)
         applicationScope.launch { saveState() }
         WatchdogAlarm.reschedule()
@@ -283,6 +299,11 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         val goingUp = !wasUp && (state == Tunnel.State.UP || state == Tunnel.State.TOGGLE)
         // Before the lock: it is a network round trip, and may throw AccountInUseException.
         if (goingUp) SessionGuard.beforeUp(tunnel, gate, takeover)
+        // Gate.NONE state changes (a watchdog restart, the updater, a superseded disconnect) must
+        // not release the session when the backend reports the teardown; see onBackendStateChange.
+        val suppress = gate == SessionGuard.Gate.NONE
+        if (suppress) releaseSuppressed.add(tunnel.name)
+        try {
         backendMutex.withLock {
         stateChangeGeneration++
         var newState = tunnel.state
@@ -304,9 +325,10 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         WatchdogAlarm.reschedule()
         if (throwable != null)
             throw throwable
-        if (wasUp && newState == Tunnel.State.DOWN)
-            SessionGuard.afterDown(tunnel, gate)
         newState
+        }
+        } finally {
+            if (suppress) releaseSuppressed.remove(tunnel.name)
         }
     }
 

@@ -162,14 +162,22 @@ object HandshakeWatchdog {
     private suspend fun refreshEndpoints(tunnel: ObservableTunnel) {
         runCatching {
             val config = tunnel.getConfigAsync()
-            config.peers.forEach { peer ->
-                peer.endpoint.orElse(null)?.let { endpoint ->
-                    val before = endpoint.getResolved().orElse(null)?.host
-                    endpoint.invalidateResolution()
-                    withContext(Dispatchers.IO) { endpoint.getResolved() }
-                    val after = endpoint.getResolved().orElse(null)?.host
-                    if (before != null && after != null && before != after)
-                        Log.i(TAG, "Endpoint ${endpoint.host} moved: $before -> $after")
+            // All of it on IO, not just the middle call. getResolved() is a blocking DNS lookup
+            // whenever its cached answer is stale or missing, and this pass runs on the
+            // application's Main scope: the "before" read resolves once the cache is two
+            // minutes old, and the "after" read resolves AGAIN if the refresh failed — which is
+            // the usual case here, because a tunnel that stopped handshaking takes the app's own
+            // DNS down with it. Each of those used to freeze the main thread for seconds, on
+            // every restart attempt, exactly when the tunnel was already in trouble.
+            withContext(Dispatchers.IO) {
+                config.peers.forEach { peer ->
+                    peer.endpoint.orElse(null)?.let { endpoint ->
+                        val before = endpoint.getResolved().orElse(null)?.host
+                        endpoint.invalidateResolution()
+                        val after = endpoint.getResolved().orElse(null)?.host
+                        if (before != null && after != null && before != after)
+                            Log.i(TAG, "Endpoint ${endpoint.host} moved: $before -> $after")
+                    }
                 }
             }
         }.onFailure { Log.w(TAG, "Could not refresh endpoint resolution", it) }

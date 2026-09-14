@@ -85,7 +85,7 @@ object UpdateChecker {
                 }
                 try {
                     if (conn.responseCode != 200) return@withContext Result.Unavailable
-                            parse(base, JSONObject(conn.inputStream.bufferedReader().use { it.readText() }))
+                    parse(base, JSONObject(conn.inputStream.bufferedReader().use { it.readText() }))
                 } finally {
                     conn.disconnect()
                 }
@@ -142,7 +142,8 @@ object UpdateChecker {
         )
     }
 
-    private fun sameOrigin(base: String, candidate: String): Boolean = runCatching {
+    /** Also used by UpdateInstaller to keep a download's redirects inside the same origin. */
+    internal fun sameOrigin(base: String, candidate: String): Boolean = runCatching {
         val a = URL(base)
         val b = URL(candidate)
         // Effective ports, not raw ones: URL.port is -1 when the port is implied, so a panel

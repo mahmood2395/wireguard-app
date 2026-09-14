@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import com.wireguard.android.Application
 import com.wireguard.android.backend.Tunnel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.HttpURLConnection
@@ -55,16 +56,24 @@ object UpdateInstaller {
     var inProgress = false
         private set
 
+    /**
+     * The tunnels this installer took down, so they can be brought back if the install does not
+     * happen. In memory only: the process survives a pending or cancelled install, and a
+     * successful one replaces the process anyway.
+     */
+    @Volatile
+    private var takenDown: List<String> = emptyList()
+
     suspend fun downloadAndInstall(context: Context, update: UpdateChecker.Available): Outcome {
         if (inProgress) return Outcome.Failed("already running")
         if (!canInstall(context)) return Outcome.NeedsPermission
         inProgress = true
         progress = null
         try {
-            // Down first, and only then install. Doing this the other way round is precisely the
-            // case that wedges the network stack on Android 16.
-            takeTunnelsDown()
-
+            // Download and verify FIRST, with the VPN still up. This used to take the tunnels
+            // down before downloading and never bring them back, so a download that failed —
+            // most likely where the panel is only reachable through the tunnel — or a checksum
+            // mismatch left the user disconnected by an update that never happened.
             val apk = withContext(Dispatchers.IO) { download(context, update) }
                 ?: return Outcome.Failed("download failed")
 
@@ -75,10 +84,20 @@ object UpdateInstaller {
                 return Outcome.Failed("checksum mismatch")
             }
 
+            // Down only now, immediately before Android gets the package: installing over a live
+            // VPN is the case that wedges the network stack on Android 16. From here on, anything
+            // that stops the install from happening must bring the tunnels back.
+            takeTunnelsDown()
+
             // Recorded before the hand-off, because the process may be replaced the moment
             // the user confirms and there is no reliable "after".
             UserKnobs.setLastAttemptedUpdate(update.versionCode)
-            withContext(Dispatchers.IO) { commit(context, apk) }
+            try {
+                withContext(Dispatchers.IO) { commit(context, apk) }
+            } catch (e: Throwable) {
+                restoreTunnels()
+                throw e
+            }
             return Outcome.HandedOff
         } catch (e: Throwable) {
             Log.e(TAG, "Update failed", e)
@@ -99,21 +118,41 @@ object UpdateInstaller {
     private suspend fun takeTunnelsDown() {
         runCatching {
             val tunnels = Application.getTunnelManager().getTunnels()
-            tunnels.filter { it.state == Tunnel.State.UP }.forEach { tunnel ->
+            val up = tunnels.filter { it.state == Tunnel.State.UP }
+            takenDown = up.map { it.name }
+            up.forEach { tunnel ->
                 Log.i(TAG, "Taking ${tunnel.name} down before installing")
                 tunnel.setStateAsync(Tunnel.State.DOWN, SessionGuard.Gate.NONE)
             }
         }.onFailure { Log.w(TAG, "Could not take tunnels down before update", it) }
     }
 
+    /**
+     * Brings back what [takeTunnelsDown] stopped, when the install did not happen: the hand-off
+     * threw, Android rejected the package, or the user cancelled its install dialog.
+     *
+     * Gate.NONE on the way up, matching the way down: this device never gave up its session, so
+     * there is nothing to claim, and a claim could only fail on a device that is about to have
+     * its connection back.
+     */
+    fun restoreTunnels() {
+        val names = takenDown
+        takenDown = emptyList()
+        if (names.isEmpty()) return
+        applicationScope.launch {
+            val tunnels = runCatching { Application.getTunnelManager().getTunnels() }.getOrNull() ?: return@launch
+            names.mapNotNull { tunnels[it] }.forEach { tunnel ->
+                runCatching { tunnel.setStateAsync(Tunnel.State.UP, SessionGuard.Gate.NONE) }
+                    .onSuccess { Log.i(TAG, "Restored ${tunnel.name} after the update did not install") }
+                    .onFailure { Log.w(TAG, "Could not restore ${tunnel.name}", it) }
+            }
+        }
+    }
+
     private fun download(context: Context, update: UpdateChecker.Available): File? {
         val target = File(context.cacheDir, "update-${update.versionCode}.apk")
         if (target.exists()) target.delete()
-        val conn = (URL(update.url).openConnection() as HttpURLConnection).apply {
-            connectTimeout = 15_000
-            readTimeout = 30_000
-            instanceFollowRedirects = true
-        }
+        val conn = openFollowingSameOrigin(update.url) ?: return null
         try {
             if (conn.responseCode != 200) {
                 Log.w(TAG, "Download returned HTTP ${conn.responseCode}")
@@ -137,6 +176,39 @@ object UpdateInstaller {
         } finally {
             conn.disconnect()
         }
+    }
+
+    /**
+     * Opens [url], following redirects only while they stay on its origin.
+     *
+     * UpdateChecker accepts a download URL only when it shares the panel's origin. Letting
+     * HttpURLConnection follow redirects on its own undid that: any same-scheme redirect, to any
+     * host, was followed silently. The checksum and the signing key still stop a tampered APK, but
+     * the origin rule is supposed to mean what it says, so redirects are walked by hand and one
+     * that leaves the origin ends the download. A same-host redirect — a panel serving the file
+     * from a storage path — still works.
+     */
+    private fun openFollowingSameOrigin(url: String): HttpURLConnection? {
+        var current = url
+        repeat(MAX_REDIRECTS + 1) {
+            val conn = (URL(current).openConnection() as HttpURLConnection).apply {
+                connectTimeout = 15_000
+                readTimeout = 30_000
+                instanceFollowRedirects = false
+            }
+            val code = conn.responseCode
+            if (code !in 300..399) return conn
+            val location = conn.getHeaderField("Location")
+            conn.disconnect()
+            val next = location?.let { runCatching { URL(URL(current), it).toString() }.getOrNull() }
+            if (next == null || !UpdateChecker.sameOrigin(url, next)) {
+                Log.w(TAG, "Download redirected outside the panel's origin; refusing")
+                return null
+            }
+            current = next
+        }
+        Log.w(TAG, "Download redirected too many times; refusing")
+        return null
     }
 
     private fun sha256(file: File): String {
@@ -210,14 +282,22 @@ object UpdateInstaller {
                     runCatching { context.startActivity(confirm) }
                 }
                 PackageInstaller.STATUS_SUCCESS -> Log.i(TAG, "Update installed")
-                else -> Log.w(TAG, "Install finished with status $status: " +
-                    intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE))
+                else -> {
+                    // Rejected, failed, or the user cancelled Android's install dialog
+                    // (STATUS_FAILURE_ABORTED). Either way the old version keeps running, so the
+                    // tunnels this installer took down must come back.
+                    Log.w(TAG, "Install finished with status $status: " +
+                        intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE))
+                    restoreTunnels()
+                }
             }
-            // Whatever happened, the cached APK has served its purpose.
+            // The APK is no longer needed once the session holds its own copy — which it does
+            // from the moment of commit, so this is safe even while the user is still deciding.
             context.cacheDir.listFiles { f -> f.name.startsWith("update-") }?.forEach { it.delete() }
         }
     }
 
     private const val TAG = "Portway/UpdateInstaller"
+    private const val MAX_REDIRECTS = 5
     private const val ACTION_STATUS = "com.wireguard.android.action.INSTALL_STATUS"
 }
