@@ -246,7 +246,13 @@ class TunnelListFragment : BaseFragment(), MenuProvider {
         super.onViewStateRestored(savedInstanceState)
         binding ?: return
         binding!!.fragment = this
-        lifecycleScope.launch { binding!!.tunnels = Application.getTunnelManager().getTunnels() }
+        // The view's scope, and a null check on the way back: getTunnels() waits for the configs
+        // to load, and with the bottom navigation a user can leave this tab before that finishes
+        // on a cold start. The fragment's own scope outlived the view, and binding!! then crashed.
+        viewLifecycleOwner.lifecycleScope.launch {
+            val tunnels = Application.getTunnelManager().getTunnels()
+            binding?.tunnels = tunnels
+        }
         binding!!.rowConfigurationHandler = object : RowConfigurationHandler<TunnelListItemBinding, ObservableTunnel> {
             override fun onConfigureRow(binding: TunnelListItemBinding, item: ObservableTunnel, position: Int) {
                 binding.fragment = this@TunnelListFragment

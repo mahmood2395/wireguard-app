@@ -13,6 +13,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.wireguard.android.Application
 import com.wireguard.android.BuildConfig
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 object UserKnobs {
@@ -178,13 +179,25 @@ object UserKnobs {
         Application.getPreferencesDataStore().edit { it[LAST_ATTEMPTED_UPDATE] = versionCode }
     }
 
-    private val LAST_EXPIRY_NOTICE = stringPreferencesKey("last_expiry_notice")
-    val lastExpiryNotice: Flow<String?>
-        get() = Application.getPreferencesDataStore().data.map { it[LAST_EXPIRY_NOTICE] }
+    /**
+     * Which expiry stage each config was last warned about, as "tunnelName:stage" entries (tunnel
+     * names cannot contain ':'). Per config since 2026-09-15: a single global marker was cleared by
+     * whichever config happened to be checked next, so an expiring config was warned again on every
+     * twice-daily check that also looked at a healthy one.
+     */
+    private val EXPIRY_NOTICES = stringSetPreferencesKey("expiry_notices")
+    private val LEGACY_LAST_EXPIRY_NOTICE = stringPreferencesKey("last_expiry_notice")
 
-    suspend fun setLastExpiryNotice(marker: String?) {
+    suspend fun expiryNoticeFor(tunnelName: String): String? =
+        Application.getPreferencesDataStore().data.first()[EXPIRY_NOTICES]
+            ?.firstOrNull { it.substringBefore(':') == tunnelName }
+            ?.substringAfter(':')
+
+    suspend fun setExpiryNotice(tunnelName: String, stage: String?) {
         Application.getPreferencesDataStore().edit {
-            if (marker == null) it.remove(LAST_EXPIRY_NOTICE) else it[LAST_EXPIRY_NOTICE] = marker
+            val others = (it[EXPIRY_NOTICES] ?: emptySet()).filterNot { m -> m.substringBefore(':') == tunnelName }.toSet()
+            it[EXPIRY_NOTICES] = if (stage == null) others else others + "$tunnelName:$stage"
+            it.remove(LEGACY_LAST_EXPIRY_NOTICE)
         }
     }
 

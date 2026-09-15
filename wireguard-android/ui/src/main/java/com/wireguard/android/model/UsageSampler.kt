@@ -16,6 +16,7 @@
  */
 package com.wireguard.android.model
 
+import android.os.SystemClock
 import android.util.Log
 import com.wireguard.android.Application
 import com.wireguard.android.backend.Tunnel
@@ -24,6 +25,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 object UsageSampler {
     /**
@@ -35,6 +38,15 @@ object UsageSampler {
     /** Last cumulative rx+tx seen per tunnel, so we can record the difference. */
     private val lastCumulative = mutableMapOf<String, Long>()
 
+    /**
+     * elapsedRealtime at the start of the previous pass; 0 before the first. A tunnel that came up
+     * after it started from zero counters inside a window we were watching (see [sampleLocked]).
+     */
+    private var lastPassAt = 0L
+
+    /** The 60s loop and [flush] must not interleave, or two passes difference against each other. */
+    private val mutex = Mutex()
+
     fun start(scope: CoroutineScope) {
         scope.launch {
             while (isActive) {
@@ -44,13 +56,27 @@ object UsageSampler {
         }
     }
 
-    private suspend fun sample() {
+    /**
+     * Records what the running tunnels have carried since the last pass, right now. Called before a
+     * state change that can take a tunnel down: once it is down its counters are gone, and the
+     * traffic since the last 60s pass used to vanish with them — up to a minute lost per session.
+     * A teardown the system performs on its own (another VPN taking over) still cannot be caught.
+     */
+    suspend fun flush() {
+        runCatching { mutex.withLock { sampleLocked() } }.onFailure { Log.w(TAG, "usage flush failed", it) }
+    }
+
+    private suspend fun sample() = mutex.withLock { sampleLocked() }
+
+    private suspend fun sampleLocked() {
+        val passStartedAt = SystemClock.elapsedRealtime()
         val manager = Application.getTunnelManager()
         // Non-suspending on purpose: getTunnels() awaits a deferred that is completed later in
         // startup, and awaiting it from a background loop is how this file could deadlock the
         // very restore it is meant to be independent of.
         if (!manager.hasTunnelUp()) {
             lastCumulative.clear()
+            lastPassAt = passStartedAt
             return
         }
         val tunnels = manager.getTunnels()
@@ -63,16 +89,21 @@ object UsageSampler {
             val cumulative = statistics.totalRx() + statistics.totalTx()
             val previous = lastCumulative[tunnel.name]
             lastCumulative[tunnel.name] = cumulative
-            // No baseline yet means this is the first sample of a session; the traffic before it
-            // belongs to a session we did not watch, so it is not ours to attribute to today.
+            // No baseline yet: the first sample of this session. WireGuard's counters start at zero
+            // when a tunnel comes up, so if it came up after our previous pass began — or in this
+            // process before any pass — everything counted so far is this session's, and dropping
+            // it lost up to a minute per connection. A tunnel adopted at process start carries no
+            // stamp; its earlier traffic belongs to a session we did not watch, so it is not ours.
             // A smaller value than last time means the tunnel restarted between samples.
+            val since = tunnel.connectedSinceElapsedRealtime
             val delta = when {
-                previous == null -> 0L
+                previous == null -> if (since != null && since >= lastPassAt) cumulative else 0L
                 cumulative >= previous -> cumulative - previous
                 else -> cumulative
             }
             UsageHistory.record(delta)
         }
+        lastPassAt = passStartedAt
     }
 
     private const val TAG = "WireGuard/UsageSampler"

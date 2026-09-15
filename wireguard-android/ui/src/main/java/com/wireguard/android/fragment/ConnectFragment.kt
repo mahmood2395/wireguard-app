@@ -413,9 +413,17 @@ class ConnectFragment : BaseFragment(), MenuProvider {
                 }
             }
         }
-        // Show cached info instantly while the fresh fetch runs.
+        // Show cached info instantly while the fresh fetch runs. The comment always said so, but
+        // nothing read the cache: onStop unbinds and nulls the result, so the days chip and quota
+        // rail vanished on every return to Home until the panel answered again.
         tunnel?.let { t ->
             viewLifecycleOwner.lifecycleScope.launch {
+                AccountRepository.cached(t)?.let { info ->
+                    if (t === connectTunnel && accountResult == null) {
+                        accountResult = AccountRepository.Result.Ok(info)
+                        render()
+                    }
+                }
                 val result = AccountRepository.fetch(t)
                 if (result is AccountRepository.Result.Ok) onAccountLoaded(t.name, result.info)
                 withContext(Dispatchers.Main.immediate) {

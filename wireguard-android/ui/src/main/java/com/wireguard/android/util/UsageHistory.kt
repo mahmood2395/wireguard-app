@@ -9,10 +9,12 @@
  * it cannot tell them is the shape — the four quiet days, then the evening that ate a third of
  * the month. That shape is what the band on the detail screen draws.
  *
- * Buckets are keyed by the epoch-millis of local midnight rather than by an "epoch day" integer.
- * minSdk is 24 and this module has no core-library desugaring, so java.time is unavailable, and
- * dividing an instant by 86_400_000 quietly disagrees with the calendar across DST and for
- * negative UTC offsets. Calendar.add(DAY_OF_YEAR, -1) is exact on every one of those days.
+ * Buckets are keyed by the local calendar DATE as a yyyyMMdd number (20260915), not by an instant.
+ * They used to be keyed by the epoch-millis of local midnight, which is an instant, and instants
+ * move when the timezone does: after travelling, no stored key equalled any midnight of the new
+ * zone, so the whole history drew as empty. A date means the same day in every zone. It is still
+ * computed with Calendar — dividing an instant by 86_400_000 disagrees with the calendar across
+ * DST and for negative UTC offsets — and older millis keys are converted on read.
  */
 package com.wireguard.android.util
 
@@ -36,7 +38,7 @@ object UsageHistory {
     const val FORTNIGHT_DAYS = 14
 
     /**
-     * One preference holding the whole history as `midnightMillis:bytes` pairs.
+     * One preference holding the whole history as `yyyyMMdd:bytes` pairs.
      *
      * A single key rather than fourteen: the whole set is read and written together, so this
      * keeps every update atomic and makes pruning a filter rather than fourteen removals.
@@ -55,11 +57,11 @@ object UsageHistory {
      */
     suspend fun record(bytes: Long) {
         if (bytes <= 0L) return
-        val today = midnightOfToday()
+        val today = dayKey(System.currentTimeMillis())
         Application.getPreferencesDataStore().edit { prefs ->
             val buckets = parse(prefs[USAGE_DAYS]).toMutableMap()
             buckets[today] = (buckets[today] ?: 0L) + bytes
-            val oldest = midnightsBack(DAYS).last()
+            val oldest = dayKey(midnightsBack(DAYS).last())
             buckets.keys.retainAll { it >= oldest }
             prefs[USAGE_DAYS] = buckets.entries.joinToString(",") { "${it.key}:${it.value}" }
         }
@@ -71,7 +73,7 @@ object UsageHistory {
      * eye, and only one of them is true.
      */
     fun series(buckets: Map<Long, Long>, count: Int = DAYS): List<Long> =
-        midnightsBack(count).reversed().map { buckets[it] ?: 0L }
+        midnightsBack(count).reversed().map { buckets[dayKey(it)] ?: 0L }
 
     /** Total bytes over the last [count] days, for the "12.4 of 30 GB" readout. */
     fun total(buckets: Map<Long, Long>, count: Int = DAYS): Long =
@@ -92,16 +94,30 @@ object UsageHistory {
         }
     }
 
-    private fun midnightOfToday(): Long = midnightsBack(1).first()
+    /** The local calendar date of [millis] as yyyyMMdd — the same number in every timezone. */
+    private fun dayKey(millis: Long): Long {
+        val c = Calendar.getInstance().apply { timeInMillis = millis }
+        return c.get(Calendar.YEAR) * 10_000L + (c.get(Calendar.MONTH) + 1) * 100L + c.get(Calendar.DAY_OF_MONTH)
+    }
+
+    /** yyyyMMdd has eight digits; anything longer is a pre-2026-09-15 midnight-millis key. */
+    private const val LEGACY_KEY_THRESHOLD = 99_999_999L
 
     private fun parse(stored: String?): Map<Long, Long> {
         if (stored.isNullOrEmpty()) return emptyMap()
         return stored.split(',').mapNotNull { entry ->
             val separator = entry.indexOf(':')
             if (separator <= 0) return@mapNotNull null
-            val day = entry.substring(0, separator).toLongOrNull() ?: return@mapNotNull null
+            val stored = entry.substring(0, separator).toLongOrNull() ?: return@mapNotNull null
             val bytes = entry.substring(separator + 1).toLongOrNull() ?: return@mapNotNull null
+            // An old midnight-millis key becomes its date in the current zone. Before any
+            // timezone change that is exactly the day it was recorded on; the next record()
+            // rewrites everything in the new form.
+            val day = if (stored > LEGACY_KEY_THRESHOLD) dayKey(stored) else stored
             day to bytes
-        }.toMap()
+        }
+            // Two legacy keys can land on the same date; add them rather than dropping one.
+            .groupBy({ it.first }, { it.second })
+            .mapValues { (_, values) -> values.sum() }
     }
 }

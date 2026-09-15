@@ -10,10 +10,13 @@
 package com.wireguard.android.util
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.net.ConnectException
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.concurrent.TimeUnit
@@ -41,17 +44,32 @@ object Pinger {
      * round trip, so time-to-connect and time-to-refusal are both honest RTTs; only a silent
      * drop (timeout) means "unreachable".
      */
-    suspend fun ping(host: String, timeoutSeconds: Int = 2): Double? =
-        icmp(host, timeoutSeconds)
-            ?: tcpRtt(host, 443, timeoutSeconds)
-            ?: tcpRtt(host, 80, timeoutSeconds)
+    suspend fun ping(host: String, timeoutSeconds: Int = 2): Double? {
+        icmp(host, timeoutSeconds)?.let { return it }
+        // Resolved once, up front, for both TCP attempts. It used to happen inside the timed
+        // connect — InetSocketAddress(host, port) resolves in its constructor — so the "latency"
+        // for a hostname endpoint included a DNS lookup, and a slow lookup was bounded by nothing.
+        val address = resolve(host, timeoutSeconds * 1000L) ?: return null
+        return tcpRtt(address, 443, timeoutSeconds) ?: tcpRtt(address, 80, timeoutSeconds)
+    }
 
-    private suspend fun tcpRtt(host: String, port: Int, timeoutSeconds: Int): Double? = withContext(Dispatchers.IO) {
+    /**
+     * The lookup, with a real ceiling. getByName blocks and ignores coroutine cancellation, so it
+     * runs detached and the caller simply stops waiting; an abandoned lookup finishes on its own.
+     */
+    private suspend fun resolve(host: String, timeoutMillis: Long): InetAddress? {
+        val lookup = applicationScope.async(Dispatchers.IO) { runCatching { InetAddress.getByName(host) }.getOrNull() }
+        return withTimeoutOrNull(timeoutMillis) { lookup.await() }
+            .also { if (it == null) android.util.Log.d(TAG, "resolve $host timed out or failed") }
+    }
+
+    private suspend fun tcpRtt(address: InetAddress, port: Int, timeoutSeconds: Int): Double? = withContext(Dispatchers.IO) {
         runCatching {
             Socket().use { socket ->
+                val target = InetSocketAddress(address, port)
                 val start = System.nanoTime()
                 try {
-                    socket.connect(InetSocketAddress(host, port), timeoutSeconds * 1000)
+                    socket.connect(target, timeoutSeconds * 1000)
                 } catch (e: ConnectException) {
                     // Refused means an RST made the round trip — an honest RTT. Anything else
                     // (network unreachable, ...) fails locally in ~0ms and must not be counted.
@@ -59,7 +77,7 @@ object Pinger {
                 }
                 (System.nanoTime() - start) / 1_000_000.0
             }
-        }.getOrNull().also { android.util.Log.d(TAG, "tcp $host:$port -> $it") }
+        }.getOrNull().also { android.util.Log.d(TAG, "tcp ${address.hostAddress}:$port -> $it") }
     }
 
     /**

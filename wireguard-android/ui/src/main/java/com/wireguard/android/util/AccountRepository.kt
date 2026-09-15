@@ -51,6 +51,10 @@ object AccountRepository {
 
     fun cached(pubkey: String): AccountInfo? = cache[pubkey]
 
+    /** The last answer for [tunnel]'s peer, without asking the panel again. */
+    suspend fun cached(tunnel: ObservableTunnel): AccountInfo? =
+        runCatching { tunnel.getConfigAsync().`interface`.keyPair.publicKey.toBase64() }.getOrNull()?.let { cache[it] }
+
     suspend fun fetch(tunnel: ObservableTunnel): Result {
         val config = runCatching { tunnel.getConfigAsync() }.getOrNull() ?: return Result.NotLinked
         val pubkey = config.`interface`.keyPair.publicKey.toBase64()

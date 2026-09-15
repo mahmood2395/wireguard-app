@@ -302,6 +302,10 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         // Gate.NONE state changes (a watchdog restart, the updater, a superseded disconnect) must
         // not release the session when the backend reports the teardown; see onBackendStateChange.
         val suppress = gate == SessionGuard.Gate.NONE
+        // Any change may take a running tunnel down — this one, or another the backend stops to
+        // make room — and its byte counters go with it. Count what they hold first. Outside the
+        // lock: it is a statistics round trip per running tunnel.
+        if (hasTunnelUp()) UsageSampler.flush()
         if (suppress) releaseSuppressed.add(tunnel.name)
         try {
         backendMutex.withLock {

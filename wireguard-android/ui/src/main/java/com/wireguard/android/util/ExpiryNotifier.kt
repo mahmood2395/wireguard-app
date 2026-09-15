@@ -69,14 +69,24 @@ object ExpiryNotifier {
         val days = info.daysLeft
         val context = Application.get()
 
-        if (days == null || days > WARN_AT_DAYS) {
-            // Nothing to say. Clear the marker so a future expiry is announced from scratch.
-            if (UserKnobs.lastExpiryNotice.first() != null) UserKnobs.setLastExpiryNotice(null)
+        // The stage this config is at, or null when there is nothing to warn about. A suspended
+        // account is a stage of its own and is warned about even when the panel sends no day
+        // count — the old early return on a missing count silently skipped exactly that case.
+        val stage = when {
+            info.disabled -> "suspended"
+            days != null && days <= WARN_AT_DAYS -> days.toString()
+            else -> null
+        }
+        // Per config: a single global marker was cleared by whichever config was checked next, so
+        // an expiring config was warned again on every check that also looked at a healthy one.
+        val warned = UserKnobs.expiryNoticeFor(tunnelName)
+        if (stage == null) {
+            // Nothing to say. Clear this config's marker so a future expiry is announced afresh.
+            if (warned != null) UserKnobs.setExpiryNotice(tunnelName, null)
             return
         }
-
-        val marker = "$tunnelName:$days"
-        if (UserKnobs.lastExpiryNotice.first() == marker) return
+        if (stage == warned) return
+        val marker = "$tunnelName:$stage"
         if (!canNotify(context)) {
             // Permission is requested from the Connect screen; without it the account card is
             // still the fallback, so this is not worth surfacing as an error.
@@ -100,21 +110,22 @@ object ExpiryNotifier {
             // Not ongoing, and dismissable: it is information, not something to fight with.
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
-        runCatching { NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification) }
+        // One slot per config, so two expiring configs no longer overwrite each other's notice.
+        runCatching { NotificationManagerCompat.from(context).notify(NOTIFICATION_ID + (tunnelName.hashCode() and 0x3ff), notification) }
             .onSuccess { Log.i(TAG, "Warned: $marker") }
             .onFailure { Log.w(TAG, "Could not post expiry notice", it) }
-        UserKnobs.setLastExpiryNotice(marker)
+        UserKnobs.setExpiryNotice(tunnelName, stage)
     }
 
     private fun message(
         context: Context,
         tunnelName: String,
-        days: Int,
+        days: Int?,
         info: AccountRepository.AccountInfo,
     ): Pair<String, String> = when {
         info.disabled -> context.getString(R.string.expiry_suspended_title) to
             context.getString(R.string.expiry_suspended_text, tunnelName)
-        days <= 0 -> context.getString(R.string.expiry_today_title) to
+        days == null || days <= 0 -> context.getString(R.string.expiry_today_title) to
             context.getString(R.string.expiry_today_text, tunnelName)
         else -> context.resources.getQuantityString(R.plurals.expiry_soon_title, days, days) to
             context.getString(R.string.expiry_soon_text, tunnelName)
