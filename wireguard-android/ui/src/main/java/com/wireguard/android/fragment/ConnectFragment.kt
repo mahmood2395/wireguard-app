@@ -92,9 +92,7 @@ class ConnectFragment : BaseFragment(), MenuProvider {
     private var watchdogRestarting = false
     private var requestStartedAt = 0L
 
-    // Throughput is differenced from cumulative counters; these are the last sample.
-
-
+    /** Throughput, differenced from the backend's cumulative counters. */
     private val throughput = ThroughputMeter()
 
     /** Newest handshake across peers; null until one is observed. */
@@ -152,7 +150,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
 
     /** Single-flight for the geo lookup, so a slow one does not queue a coroutine per tick. */
     private var geoInFlight = false
-    private var tickCount = 0
 
     /**
      * Observable callbacks fire on whichever thread changed the property. Generated
@@ -562,7 +559,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
     }
 
     private suspend fun tick() {
-        tickCount++
         val tunnel = connectTunnel
         if (tunnel == null || tunnel.state != Tunnel.State.UP) {
             lastPingMs = null
@@ -628,13 +624,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
     }
 
     /**
-     * The self-update prompt.
-     *
-     * A mandatory update cannot be dismissed — that is the whole point of the panel naming a
-     * minimum supported version — so the Later button disappears rather than being disabled,
-     * which would only invite tapping it.
-     */
-    /**
      * An account was fetched successfully: warn if it is close to running out, and take the one
      * opportunity to ask for the permission that makes warning possible.
      */
@@ -652,11 +641,10 @@ class ConnectFragment : BaseFragment(), MenuProvider {
     }
 
     /**
-     * The decay bar's one input: how old the latest handshake is, or null for the silent state.
-     *
-     * Null covers both "not connected" and "connected but never handshaked" — from the bar's
-     * point of view those are the same picture, a full track in the disconnected ink, and the
-     * second is exactly the case the watchdog is about to act on.
+     * The decay bar's inputs: whether the tunnel is up, how old its latest handshake is, and how
+     * long it has been up. The last one is what separates a connection that simply has not had
+     * time to handshake yet (neutral "waiting") from one that has gone three minutes without
+     * (silent) — see HandshakeDecayView.setState.
      */
     private fun renderHandshake(binding: ConnectFragmentBinding) {
         val tunnel = connectTunnel
@@ -669,6 +657,13 @@ class ConnectFragment : BaseFragment(), MenuProvider {
         )
     }
 
+    /**
+     * The self-update prompt.
+     *
+     * A mandatory update cannot be dismissed — that is the whole point of the panel naming a
+     * minimum supported version — so the Later button disappears rather than being disabled,
+     * which would only invite tapping it.
+     */
     private fun renderUpdate(binding: ConnectFragmentBinding) {
         val update = pendingUpdate
         val show = update != null && (update.mandatory || !updateDismissed)

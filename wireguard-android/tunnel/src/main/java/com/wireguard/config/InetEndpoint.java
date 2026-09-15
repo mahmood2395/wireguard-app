@@ -102,13 +102,6 @@ public final class InetEndpoint {
     }
 
     /**
-     * Generate an {@code InetEndpoint} instance with the same port and the host resolved using DNS
-     * to a numeric address. If the host is already numeric, the existing instance may be returned.
-     * Because this function may perform network I/O, it must not be called from the main thread.
-     *
-     * @return the resolved endpoint, or {@link Optional#empty()}
-     */
-    /**
      * Portway: drop any cached resolution so the next {@link #getResolved()} really asks.
      *
      * The one-minute window below means a tunnel restarted shortly after connecting reuses the
@@ -123,6 +116,13 @@ public final class InetEndpoint {
         }
     }
 
+    /**
+     * Generate an {@code InetEndpoint} instance with the same port and the host resolved using DNS
+     * to a numeric address. If the host is already numeric, the existing instance may be returned.
+     * Because this function may perform network I/O, it must not be called from the main thread.
+     *
+     * @return the resolved endpoint, or {@link Optional#empty()}
+     */
     public Optional<InetEndpoint> getResolved() {
         if (isResolved)
             return Optional.of(this);

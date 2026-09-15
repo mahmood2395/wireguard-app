@@ -21,13 +21,11 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageInstaller
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
-import androidx.core.content.ContextCompat
 import com.wireguard.android.Application
 import com.wireguard.android.backend.Tunnel
 import kotlinx.coroutines.Dispatchers
@@ -47,11 +45,6 @@ object UpdateInstaller {
         data class Failed(val reason: String) : Outcome()
     }
 
-    /** 0..1 while downloading, or null when the size is unknown. */
-    @Volatile
-    var progress: Float? = null
-        private set
-
     @Volatile
     var inProgress = false
         private set
@@ -68,7 +61,6 @@ object UpdateInstaller {
         if (inProgress) return Outcome.Failed("already running")
         if (!canInstall(context)) return Outcome.NeedsPermission
         inProgress = true
-        progress = null
         try {
             // Download and verify FIRST, with the VPN still up. This used to take the tunnels
             // down before downloading and never bring them back, so a download that failed —
@@ -104,8 +96,7 @@ object UpdateInstaller {
             return Outcome.Failed(e.javaClass.simpleName)
         } finally {
             inProgress = false
-            progress = null
-        }
+            }
     }
 
     /**
@@ -168,7 +159,6 @@ object UpdateInstaller {
                         if (n < 0) break
                         out.write(buf, 0, n)
                         read += n
-                        progress = if (total > 0) (read.toFloat() / total).coerceIn(0f, 1f) else null
                     }
                 }
             }

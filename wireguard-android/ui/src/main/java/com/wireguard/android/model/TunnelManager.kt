@@ -213,7 +213,7 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
      * service.
      *
      * Upstream routed those straight to the tunnel object, bypassing the manager. Since
-     * saveState() is only reached from setTunnelState, the persisted running-tunnels set kept
+     * saveState() was then only reached from setTunnelState, the persisted running-tunnels set kept
      * listing a tunnel the system had already torn down, and the next process start silently
      * tried to reconnect it — a tunnel coming back for no visible reason, or failing to and
      * saying nothing.

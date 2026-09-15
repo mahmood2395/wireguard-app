@@ -293,7 +293,7 @@ class MainActivity : BaseActivity(), FragmentManager.OnBackStackChangedListener 
 
         when (val result = ConfigDeepLink.parse(uri)) {
             is ConfigDeepLink.Result.Success ->
-                TunnelImporter.importTunnel(supportFragmentManager, result.configText, result.suggestedName, R.string.import_from_link) { showImportMessage(it) }
+                TunnelImporter.importTunnel(supportFragmentManager, result.configText, result.suggestedName) { showImportMessage(it) }
 
             is ConfigDeepLink.Result.Failure -> {
                 // The reason names the payload problem; the config itself is never logged.

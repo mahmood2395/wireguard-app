@@ -48,8 +48,6 @@ import com.wireguard.android.model.ObservableTunnel
 import com.wireguard.android.util.ErrorMessages
 import com.wireguard.android.util.QuantityFormatter
 import com.wireguard.android.util.TunnelImporter
-import com.wireguard.android.util.UserKnobs
-import com.wireguard.android.util.applicationScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

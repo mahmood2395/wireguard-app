@@ -84,9 +84,8 @@ abstract class BaseFragment : Fragment(), OnSelectedTunnelChangedListener {
                 } catch (e: Throwable) {
                     val message = activity.getString(R.string.error_prepare, ErrorMessages[e])
                     Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-                        // The FAB is gone in the Nocturne list; an absent anchor is fine and
-                        // lets the Snackbar sit above the nav bar via layout_insetEdge.
-                        .setAnchorView(view.findViewById<View?>(R.id.create_fab))
+                        // No anchor: the Nocturne list has no FAB, and the Snackbar sits above the
+                        // nav bar via layout_insetEdge.
                         .show()
                     Log.e(TAG, message, e)
                 }
@@ -130,9 +129,8 @@ abstract class BaseFragment : Fragment(), OnSelectedTunnelChangedListener {
                 val view = view
                 if (view != null)
                     Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-                        // The FAB is gone in the Nocturne list; an absent anchor is fine and
-                        // lets the Snackbar sit above the nav bar via layout_insetEdge.
-                        .setAnchorView(view.findViewById<View?>(R.id.create_fab))
+                        // No anchor: the Nocturne list has no FAB, and the Snackbar sits above the
+                        // nav bar via layout_insetEdge.
                         .show()
                 else
                     Toast.makeText(activity, message, Toast.LENGTH_LONG).show()

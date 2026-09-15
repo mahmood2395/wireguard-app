@@ -38,7 +38,6 @@ object HandshakeWatchdog {
     private data class Health(
         var attempts: Int = 0,
         var lastRestartAt: Long = 0,
-        var lastSeenHandshake: Long = 0,
     )
 
     private val health = mutableMapOf<String, Health>()
@@ -74,8 +73,8 @@ object HandshakeWatchdog {
             // Snapshot: restarting mutates state and the list is observable.
             tunnels.filter { it.state == Tunnel.State.UP }.forEach { check(it) }
             // Forget tunnels that are no longer up, so a manual reconnect starts clean.
-            // A tunnel mid-restart is momentarily DOWN; purging it here would reset its
-            // attempt counter and turn the 5-attempt cap into an infinite bounce loop.
+            // A tunnel mid-restart is momentarily DOWN; purging it here would reset its attempt
+            // counter and put it back in the quick-retry burst on every pass instead of backing off.
             val upNames = tunnels.filter { it.state == Tunnel.State.UP }.map { it.name }.toSet() +
                 setOfNotNull(_reconnecting.value)
             health.keys.retainAll(upNames)
@@ -91,10 +90,10 @@ object HandshakeWatchdog {
      *
      * A handover invalidates the UDP socket the tunnel is riding, so waiting for the ordinary
      * stale-handshake path would leave it dead for up to three minutes. We know the cause here,
-     * so act at once — and clear the attempt counters, because the five-attempt cap exists to
-     * stop us looping against a broken endpoint, not to punish a tunnel for having been on a
-     * network that went away. Without this reset a tunnel that exhausted its attempts while out
-     * of signal would stay dead forever once signal returned.
+     * so act at once — and clear the attempt counters, because the backoff exists to stop us
+     * hammering a broken endpoint, not to punish a tunnel for having been on a network that went
+     * away. Without this reset a tunnel that backed off while out of signal would wait out up to
+     * fifteen minutes after signal returned.
      */
     suspend fun onNetworkChanged() {
         if (!UserKnobs.autoReconnect.first()) return
@@ -124,7 +123,6 @@ object HandshakeWatchdog {
             .maxOrNull() ?: 0L
 
         val healthy = if (latestHandshake > 0) {
-            entry.lastSeenHandshake = latestHandshake
             // A live tunnel rekeys about every two minutes, so a handshake older than the
             // stale threshold means traffic has stopped flowing, not that it is merely idle.
             System.currentTimeMillis() - latestHandshake < STALE_HANDSHAKE_MS

@@ -59,11 +59,6 @@ object EndpointResolver {
     @Volatile
     private var dohFailures = 0
 
-    /** Last source that produced the answer, purely so a field report can say what worked. */
-    @Volatile
-    var lastSource: String? = null
-        private set
-
     private val pool: ExecutorService = Executors.newCachedThreadPool { r ->
         Thread(r, "portway-resolve").apply { isDaemon = true }
     }
@@ -110,7 +105,6 @@ object EndpointResolver {
             if (answer == null || answer.isEmpty()) Log.d(TAG, "source $source produced nothing for $host")
             if (answer != null && answer.isNotEmpty()) {
                 tasks.values.forEach { it.cancel(true) }
-                lastSource = source.name
                 Log.i(TAG, "$host resolved via $source -> ${answer.first().hostAddress}")
                 return answer
             }
@@ -119,10 +113,8 @@ object EndpointResolver {
         // possibly-stale address than refusing to connect at all.
         val late = runCatching { tasks[Source.SYSTEM]?.get(LATE_GRACE_MS, TimeUnit.MILLISECONDS) }.getOrNull()
         if (late != null && late.isNotEmpty()) {
-            lastSource = "SYSTEM_LATE"
             return late
         }
-        lastSource = null
         throw UnknownHostException(host)
     }
 

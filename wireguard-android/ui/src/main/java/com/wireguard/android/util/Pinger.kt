@@ -19,7 +19,6 @@ import java.net.ConnectException
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.util.concurrent.TimeUnit
 
 object Pinger {
     private const val TAG = "Portway/Ping"

@@ -17,10 +17,4 @@
     <attr name="statusConnectingColor" format="color" />
     <attr name="rowSurfaceColor" format="color" />
 
-    <declare-styleable name="ClayCardView">
-        <attr name="clayCornerRadius" format="dimension" />
-        <attr name="clayShadowBlur" format="dimension" />
-        <attr name="clayShadowOffset" format="dimension" />
-        <attr name="claySunken" format="boolean" />
-    </declare-styleable>
 </resources>

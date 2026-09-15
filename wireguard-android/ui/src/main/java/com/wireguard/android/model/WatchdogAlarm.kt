@@ -55,9 +55,7 @@ object WatchdogAlarm {
 
         // ACTION_SCREEN_ON cannot be declared in a manifest filter — it is registered-only.
         val filter = IntentFilter(Intent.ACTION_SCREEN_ON).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                addAction(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED)
-            }
+            addAction(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED)
         }
         val wakeReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -95,11 +93,7 @@ object WatchdogAlarm {
         }
         val at = SystemClock.elapsedRealtime() + INTERVAL_MS
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, pending)
-            } else {
-                am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, pending)
-            }
+            am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, pending)
         } catch (e: Throwable) {
             Log.w(TAG, "Could not schedule watchdog alarm", e)
         }

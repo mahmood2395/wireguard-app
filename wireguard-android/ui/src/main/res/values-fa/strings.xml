@@ -337,7 +337,6 @@
     <string name="create_from_file">وارد کردن از فایل یا آرشیو</string>
     <string name="create_from_qr_code">اسکن از کد QR</string>
     <string name="import_from_qr_code">وارد کردن کانفیگ از کد QR</string>
-    <string name="import_from_link">وارد کردن کانفیگ از لینک</string>
     <string name="deep_link_import_error">آن لینک کانفیگ معتبری نداشت</string>
     <string name="not_a_config_error">این فایل کانفیگ وایرگارد ندارد</string>
     <string name="import_too_large_error">فایل بزرگ‌تر از آن است که یک کانفیگ باشد</string>

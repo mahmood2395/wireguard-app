@@ -119,7 +119,6 @@
     <string name="config_save_error">Cannot save configuration for “%1$s”: %2$s</string>
     <string name="config_save_success">Successfully saved configuration for “%s”</string>
     <string name="create_activity_title">Create Tunnel</string>
-    <string name="import_from_link">Import Tunnel from Link</string>
     <string name="deep_link_import_error">That link did not contain a valid configuration</string>
     <string name="create_bin_dir_error">Cannot create local binary directory</string>
     <string name="create_downloads_file_error">Cannot create file in downloads directory</string>

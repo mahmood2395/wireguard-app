@@ -96,12 +96,6 @@ object UserKnobs {
         }
     }
 
-    suspend fun setThemeMode(mode: ThemeMode) {
-        Application.getPreferencesDataStore().edit {
-            it[THEME_MODE] = mode.name
-        }
-    }
-
     /**
      * Portway: base URL of the management panel. The baked-in BuildConfig default means the
      * feature works out of the box; a stored value (typed in Settings, or pushed remotely by
@@ -155,14 +149,6 @@ object UserKnobs {
     }
 
     /**
-     * Portway: which expiry warning was last shown, as "<tunnel>:<days>".
-     *
-     * Keyed on the day count rather than a timestamp so the user hears once at three days, once
-     * at two, once at one and once on the day itself — never twice for the same number, however
-     * often the account is refetched. Cleared when the count rises back above the threshold, so
-     * a renewal re-arms the whole sequence.
-     */
-    /**
      * Portway: the advertised version code we last handed to the package installer.
      *
      * Exists to break a loop that is otherwise invisible from the client: if a published APK
@@ -181,8 +167,13 @@ object UserKnobs {
 
     /**
      * Which expiry stage each config was last warned about, as "tunnelName:stage" entries (tunnel
-     * names cannot contain ':'). Per config since 2026-09-15: a single global marker was cleared by
-     * whichever config happened to be checked next, so an expiring config was warned again on every
+     * names cannot contain ':'). The stage is the day count, or "suspended".
+     *
+     * Keyed on the day count rather than a timestamp, so the user hears once at three days, once at
+     * two, once at one and once on the day itself — never twice for the same number, however often
+     * the account is refetched. Cleared when the count rises back above the threshold, so a renewal
+     * re-arms the whole sequence. Per config since 2026-09-15: a single global marker was cleared
+     * by whichever config was checked next, so an expiring config was warned again on every
      * twice-daily check that also looked at a healthy one.
      */
     private val EXPIRY_NOTICES = stringSetPreferencesKey("expiry_notices")
@@ -240,36 +231,6 @@ object UserKnobs {
                 it.remove(RUNNING_TUNNELS)
             else
                 it[RUNNING_TUNNELS] = runningTunnels
-        }
-    }
-
-    private val UPDATER_NEWER_VERSION_SEEN = stringPreferencesKey("updater_newer_version_seen")
-    val updaterNewerVersionSeen: Flow<String?>
-        get() = Application.getPreferencesDataStore().data.map {
-            it[UPDATER_NEWER_VERSION_SEEN]
-        }
-
-    suspend fun setUpdaterNewerVersionSeen(newerVersionSeen: String?) {
-        Application.getPreferencesDataStore().edit {
-            if (newerVersionSeen == null)
-                it.remove(UPDATER_NEWER_VERSION_SEEN)
-            else
-                it[UPDATER_NEWER_VERSION_SEEN] = newerVersionSeen
-        }
-    }
-
-    private val UPDATER_NEWER_VERSION_CONSENTED = stringPreferencesKey("updater_newer_version_consented")
-    val updaterNewerVersionConsented: Flow<String?>
-        get() = Application.getPreferencesDataStore().data.map {
-            it[UPDATER_NEWER_VERSION_CONSENTED]
-        }
-
-    suspend fun setUpdaterNewerVersionConsented(newerVersionConsented: String?) {
-        Application.getPreferencesDataStore().edit {
-            if (newerVersionConsented == null)
-                it.remove(UPDATER_NEWER_VERSION_CONSENTED)
-            else
-                it[UPDATER_NEWER_VERSION_CONSENTED] = newerVersionConsented
         }
     }
 

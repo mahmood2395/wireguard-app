@@ -133,13 +133,11 @@ class ConfigNamingDialogFragment : DialogFragment() {
     companion object {
         private const val KEY_CONFIG_TEXT = "config_text"
         private const val KEY_SUGGESTED_NAME = "suggested_name"
-        private const val KEY_TITLE_RES = "title_res"
 
-        fun newInstance(configText: String?, suggestedName: String? = null, titleRes: Int = R.string.import_from_qr_code): ConfigNamingDialogFragment {
+        fun newInstance(configText: String?, suggestedName: String? = null): ConfigNamingDialogFragment {
             val extras = Bundle()
             extras.putString(KEY_CONFIG_TEXT, configText)
             extras.putString(KEY_SUGGESTED_NAME, suggestedName)
-            extras.putInt(KEY_TITLE_RES, titleRes)
             val fragment = ConfigNamingDialogFragment()
             fragment.arguments = extras
             return fragment

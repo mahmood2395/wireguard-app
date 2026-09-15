@@ -121,13 +121,13 @@ object TunnelImporter {
 
     // suggestedName precedes the callback so existing trailing-lambda callers keep binding
     // their lambda to messageCallback.
-    fun importTunnel(parentFragmentManager: FragmentManager, configText: String, suggestedName: String? = null, titleRes: Int = R.string.import_from_qr_code, messageCallback: (CharSequence) -> Unit) {
+    fun importTunnel(parentFragmentManager: FragmentManager, configText: String, suggestedName: String? = null, messageCallback: (CharSequence) -> Unit) {
         try {
             // Ensure the config text is parseable before proceeding…
             Config.parse(ByteArrayInputStream(configText.toByteArray(StandardCharsets.UTF_8)))
 
             // Config text is valid, now create the tunnel…
-            ConfigNamingDialogFragment.newInstance(configText, suggestedName, titleRes).show(parentFragmentManager, null)
+            ConfigNamingDialogFragment.newInstance(configText, suggestedName).show(parentFragmentManager, null)
         } catch (e: Throwable) {
             onTunnelImportFinished(emptyList(), listOf<Throwable>(e), messageCallback)
         }

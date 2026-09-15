@@ -61,12 +61,6 @@ public final class GoBackend implements Backend {
     }
 
     /**
-     * Set a {@link AlwaysOnCallback} to be invoked when {@link VpnService} is started by the
-     * system's Always-On VPN mode.
-     *
-     * @param cb Callback to be invoked
-     */
-    /**
      * Portway. DNS pinned into a full-tunnel config that names no DNS server of its own.
      * Set by the application module, which owns the build property; null or empty disables it.
      */
@@ -74,6 +68,12 @@ public final class GoBackend implements Backend {
         fallbackDns = dns;
     }
 
+    /**
+     * Set a {@link AlwaysOnCallback} to be invoked when {@link VpnService} is started by the
+     * system's Always-On VPN mode.
+     *
+     * @param cb Callback to be invoked
+     */
     public static void setAlwaysOnCallback(final AlwaysOnCallback cb) {
         alwaysOnCallback = cb;
     }

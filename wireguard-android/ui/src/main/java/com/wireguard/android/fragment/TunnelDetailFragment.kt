@@ -59,7 +59,6 @@ class TunnelDetailFragment : BaseFragment() {
     /** Where this peer's traffic surfaces, once resolved; null means nothing resolved it yet. */
     private var place: String? = null
     private var geoInFlight = false
-    private var tickCount = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -200,7 +199,6 @@ class TunnelDetailFragment : BaseFragment() {
         val binding = binding ?: return
         val tunnel = binding.tunnel ?: return
         if (!isResumed) return
-        tickCount++
         val up = tunnel.state == Tunnel.State.UP
         if (!up) {
             lastPingMs = null
@@ -225,7 +223,7 @@ class TunnelDetailFragment : BaseFragment() {
      * One probe per visit, single-flight: a stalled probe must not stack behind itself.
      *
      * This used to fire every third tick for as long as the screen was open. A round-trip time is
-     * a property of the peer, not a live meter — the lane above it is what shows liveness — so it
+     * a property of the peer, not a live meter — the handshake bar above it is what shows liveness — so it
      * is measured when the user opens the screen and left alone after that.
      */
     private suspend fun probePing(tunnel: ObservableTunnel) {

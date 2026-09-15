@@ -12,9 +12,9 @@
  * up. An account close to expiry is often one whose tunnel is already down, which is the exact
  * population that alarm would miss.
  *
- * This is the app's only notification. Android posts its own persistent notice for any active
- * VpnService, and duplicating that was never worth a permission prompt; telling someone their
- * access ends on Thursday is.
+ * Android posts its own persistent notice for any active VpnService, and duplicating that was
+ * never worth a permission prompt; telling someone their access ends on Thursday is. (The only
+ * other notices the app posts are SessionGuard's, when a config is in use on another device.)
  */
 package com.wireguard.android.util
 
@@ -36,7 +36,6 @@ import com.wireguard.android.Application
 import com.wireguard.android.R
 import com.wireguard.android.activity.MainActivity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 object ExpiryNotifier {
@@ -162,10 +161,7 @@ object ExpiryNotifier {
         )
         val at = SystemClock.elapsedRealtime() + INTERVAL_MS
         runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, pending)
-            else
-                am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, pending)
+            am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, pending)
         }.onFailure { Log.w(TAG, "Could not schedule expiry check", it) }
     }
 
