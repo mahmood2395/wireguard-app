@@ -138,7 +138,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
      */
     private var place: String? = null
     private var lastPingMs: Double? = null
-    private var pingFailures = 0
     private var pingInFlight = false
 
     /**
@@ -213,6 +212,12 @@ class ConnectFragment : BaseFragment(), MenuProvider {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // The design gives the 30-bar month band 3dp gaps and 1dp corners (the 14-bar band's
+        // 6dp/2dp are the view's defaults). Never set, it drew noticeably thinner bars.
+        binding?.monthBand?.apply {
+            gapDp = MONTH_BAND_GAP_DP
+            radiusDp = MONTH_BAND_RADIUS_DP
+        }
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         // repeatOnLifecycle rather than a flag + while-loop: it cancels at ON_PAUSE and
         // restarts at ON_RESUME, so two loops can never overlap and nothing polls in the
@@ -390,7 +395,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
         place = null
         lastPingMs = null
         pingDone = false
-        pingFailures = 0
         accountResult = null
         // The location card names the peer whether or not the tunnel is up, so the endpoint is
         // read from the config here rather than only along the connected polling path — where
@@ -554,7 +558,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
         val tunnel = connectTunnel
         if (tunnel == null || tunnel.state != Tunnel.State.UP) {
             lastPingMs = null
-            pingFailures = 0
             // Coming back up is the other moment worth measuring, so arm the probe on the way down.
             pingDone = false
             render()
@@ -578,7 +581,6 @@ class ConnectFragment : BaseFragment(), MenuProvider {
                     try {
                         val result = Pinger.ping(host)
                         lastPingMs = result
-                        pingFailures = if (result == null) pingFailures + 1 else 0
                     } finally {
                         pingInFlight = false
                     }
@@ -649,12 +651,13 @@ class ConnectFragment : BaseFragment(), MenuProvider {
      * second is exactly the case the watchdog is about to act on.
      */
     private fun renderHandshake(binding: ConnectFragmentBinding) {
-        val connected = connectTunnel?.state == Tunnel.State.UP
+        val tunnel = connectTunnel
         val latest = latestHandshakeEpochMillis
-        binding.handshakeDecay.setAge(
-            if (connected && latest != null)
-                ((System.currentTimeMillis() - latest) / 1000L).coerceAtLeast(0L)
-            else null
+        binding.handshakeDecay.setState(
+            connected = tunnel?.state == Tunnel.State.UP,
+            ageSeconds = latest?.let { ((System.currentTimeMillis() - it) / 1000L).coerceAtLeast(0L) },
+            connectedForSeconds = tunnel?.connectedSinceElapsedRealtime
+                ?.let { (SystemClock.elapsedRealtime() - it) / 1000L },
         )
     }
 
@@ -832,15 +835,11 @@ class ConnectFragment : BaseFragment(), MenuProvider {
             else -> getString(R.string.hero_off_figure)
         }
 
-        val ping = lastPingMs
-        // Three-way readout: a live value; nothing yet while probes are still trying; a declared
-        // Timeout once several in a row have gone unanswered.
-        val timedOut = ping == null && pingFailures >= PING_TIMEOUT_AFTER
-        val pingText = when {
-            timedOut -> getString(R.string.ping_timeout)
-            ping == null -> null
-            else -> getString(R.string.ping_ms, ping.toInt())
-        }
+        // A latency when the probe answered, otherwise nothing. Home never says "Timeout": many
+        // working servers answer neither ICMP nor TCP 443/80, and a permanent alarm under a working
+        // connection is worse than the plain host name the caption falls back to. A failed probe
+        // is reported where it belongs, in the detail screen's HEALTH table.
+        val pingText = lastPingMs?.let { getString(R.string.ping_ms, it.toInt()) }
         // Nocturne puts the place and the latency in the ring's caption: "Frankfurt, DE · 42 ms".
         // Each half is optional and neither is invented — with no city it is the latency alone,
         // and with neither it is the peer's host, never a repeat of the kicker directly above.
@@ -891,7 +890,8 @@ class ConnectFragment : BaseFragment(), MenuProvider {
 
     companion object {
         private const val TAG = "WireGuard/ConnectFragment"
-        private const val PING_TIMEOUT_AFTER = 3
+        private const val MONTH_BAND_GAP_DP = 3f
+        private const val MONTH_BAND_RADIUS_DP = 1f
 
         /** Long enough that an ordinary slow first handshake is not mistaken for the bug. */
         private const val POST_UPDATE_GRACE_MS = 45_000L

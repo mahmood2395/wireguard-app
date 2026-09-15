@@ -321,10 +321,6 @@ class MainActivity : BaseActivity(), FragmentManager.OnBackStackChangedListener 
                 true
             }
 
-            R.id.menu_action_edit -> {
-                openEditor()
-                true
-            }
             // This menu item is handled by the editor fragment.
             R.id.menu_action_save -> false
             else -> super.onOptionsItemSelected(item)

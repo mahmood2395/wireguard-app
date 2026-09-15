@@ -45,7 +45,8 @@ class UsageBandView @JvmOverloads constructor(
 
     /**
      * Bar gap and corner, in dp. Two bands use this view and the design gives them different
-     * geometry: the month band is 30 bars at 3dp/1dp, the fortnight band 14 at 6dp/2dp.
+     * geometry: the month band is 30 bars at 3dp/1dp, the fortnight band 14 at 6dp/2dp. The
+     * defaults are the fortnight's; the Connect screen sets the month band's explicitly.
      */
     var gapDp: Float = GAP_DP
         set(value) { field = value; invalidate() }
@@ -72,6 +73,9 @@ class UsageBandView @JvmOverloads constructor(
 
         val peak = series.max().coerceAtLeast(1L)
         series.forEachIndexed { index, bytes ->
+            // An empty day draws nothing: the 1dp rule under the band is the design's baseline,
+            // and a row of stubs sitting on it read as a dashed line instead.
+            if (bytes <= 0L) return@forEachIndexed
             val fraction = bytes.toFloat() / peak
             val barHeight = (height * fraction).coerceAtLeast(stub)
             val column = if (rtl) series.size - 1 - index else index
@@ -88,7 +92,7 @@ class UsageBandView @JvmOverloads constructor(
         const val GAP_DP = 6f
         const val RADIUS_DP = 2f
 
-        /** Enough to read as a bar of nothing rather than as a missing bar. */
+        /** The least a day with ANY traffic draws, so a small day is still visibly not zero. */
         const val STUB_DP = 2f
     }
 }

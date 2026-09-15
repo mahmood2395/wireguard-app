@@ -11,13 +11,9 @@ package com.wireguard.android.fragment
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -45,7 +41,7 @@ import java.util.Locale
 /**
  * Fragment that shows details about a specific tunnel.
  */
-class TunnelDetailFragment : BaseFragment(), MenuProvider {
+class TunnelDetailFragment : BaseFragment() {
     private var binding: TunnelDetailFragmentBinding? = null
     private val throughput = ThroughputMeter()
 
@@ -65,14 +61,6 @@ class TunnelDetailFragment : BaseFragment(), MenuProvider {
     private var geoInFlight = false
     private var tickCount = 0
 
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        return false
-    }
-
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.tunnel_detail, menu)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,7 +73,8 @@ class TunnelDetailFragment : BaseFragment(), MenuProvider {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        // No action-bar Edit: the actions row below carries Edit beside Connect, as the prototype
+        // has it, and a header pencil as well gave the screen two ways to do one thing.
         binding?.configDisclosure?.setOnClickListener { toggleConfig() }
         // The prototype's actions row. Connect/Disconnect goes through BaseFragment so the VPN
         // consent dialog is raised exactly where every other toggle raises it; Edit and Remove
@@ -365,15 +354,20 @@ class TunnelDetailFragment : BaseFragment(), MenuProvider {
      */
     private fun renderHandshake(binding: TunnelDetailFragmentBinding, statistics: Statistics?, up: Boolean) {
         val latest = statistics?.let { latestHandshake(it) }
-        binding.detailHandshakeDecay.setAge(
-            if (up && latest != null)
-                ((System.currentTimeMillis() - latest) / 1000L).coerceAtLeast(0L)
-            else null
+        binding.detailHandshakeDecay.setState(
+            connected = up,
+            ageSeconds = latest?.let { ((System.currentTimeMillis() - it) / 1000L).coerceAtLeast(0L) },
+            connectedForSeconds = binding.tunnel?.connectedSinceElapsedRealtime
+                ?.let { (SystemClock.elapsedRealtime() - it) / 1000L },
         )
     }
 
     private companion object {
-        /** Three unanswered probes in a row before the readout says Timeout rather than "—". */
-        const val PING_TIMEOUT_AFTER = 3
+        /**
+         * One: probing is a single burst per visit (ICMP, then TCP 443, then TCP 80), so its failure
+         * IS the answer. At three the counter was reset before it could ever get there, and a
+         * failed probe read "—", exactly like one that had not run yet.
+         */
+        const val PING_TIMEOUT_AFTER = 1
     }
 }

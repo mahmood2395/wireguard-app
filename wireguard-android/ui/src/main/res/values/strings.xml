@@ -255,6 +255,12 @@
     <string name="tunnel_error_already_exists">Tunnel “%s” already exists</string>
     <string name="tunnel_error_invalid_name">Invalid name</string>
     <string name="transfer_rate">%1$s/s</string>
+    <!-- Portway: decimal units, as the Nocturne design writes quantities ("12.4 of 30 GB"). The
+         number arrives already formatted for the locale; only the unit is added here. -->
+    <string name="transfer_kilobytes" translatable="false">%1$s KB</string>
+    <string name="transfer_megabytes" translatable="false">%1$s MB</string>
+    <string name="transfer_gigabytes" translatable="false">%1$s GB</string>
+    <string name="transfer_terabytes" translatable="false">%1$s TB</string>
     <string name="auto_reconnect_title">Restart stalled tunnels</string>
     <string name="auto_reconnect_summary">If a tunnel is connected but stops handshaking, restart it automatically</string>
     <string name="connect_reconnecting">Reconnecting…</string>
@@ -270,7 +276,7 @@
     <string name="account_usage_value">%s used</string>
     <string name="account_plan_size">%s plan</string>
     <string name="panel_url_title">Panel URL</string>
-    <string name="panel_url_summary">Address of your management panel, used to show account info for tunnels imported without a link</string>
+    <string name="panel_url_summary">Address of your management panel. Used for account info, update checks and the one-device check</string>
     <string name="ping_ms" translatable="false">%1$d ms</string>
     <string name="ping_none" translatable="false">—</string>
     <string name="ping_timeout">Timeout</string>
@@ -285,6 +291,9 @@
     <string name="handshake_axis_end">3m gone</string>
     <string name="handshake_state_fresh">Handshake inside the last two minutes</string>
     <string name="handshake_state_late">Rekey overdue — still inside the 3m window</string>
+    <string name="handshake_age_waiting">waiting</string>
+    <string name="handshake_state_waiting">Waiting for the first handshake</string>
+    <string name="handshake_a11y_waiting">Connected, waiting for the first handshake</string>
     <string name="handshake_state_silent">Last handshake over three minutes ago</string>
     <string name="handshake_spoken_seconds">%1$d seconds</string>
     <string name="handshake_spoken_minutes">%1$d minutes %2$d seconds</string>
@@ -325,7 +334,7 @@
     <string name="location_geo_from">%1$s \u00b7 from %2$s</string>
     <string name="location_dot" translatable="false">%1$s \u00b7 %2$s</string>
     <string name="peer_no_route">No route to peer</string>
-    <string name="month_label">This month</string>
+    <string name="month_label">Last 30 days</string>
     <string name="month_axis_today">today</string>
     <string name="month_of">%1$s of %2$s</string>
     <string name="month_used">%1$s used</string>

@@ -172,7 +172,7 @@
     <string name="multiple_tunnels_summary_on">چند کانفیگ می‌توانند هم‌زمان روشن باشند</string>
     <string name="multiple_tunnels_summary_off">روشن کردن یکی، بقیه را خاموش می‌کند</string>
     <string name="panel_url_title">آدرس پنل</string>
-    <string name="panel_url_summary">آدرس پنل مدیریتی شما؛ برای نمایش اطلاعات اشتراک کانفیگ‌هایی که بدون لینک وارد شده‌اند</string>
+    <string name="panel_url_summary">آدرس پنل مدیریتی شما؛ برای اطلاعات اشتراک، بررسی به‌روزرسانی و کنترل استفاده روی یک دستگاه</string>
     <string name="allow_remote_control_intents_title">اجازه به برنامه‌های کنترل از راه دور</string>
     <string name="allow_remote_control_intents_summary_on">برنامه‌های دیگر می‌توانند کانفیگ‌ها را روشن و خاموش کنند (پیشرفته)</string>
     <string name="allow_remote_control_intents_summary_off">برنامه‌های دیگر نمی‌توانند کانفیگ‌ها را روشن و خاموش کنند (توصیه‌شده)</string>
@@ -234,7 +234,7 @@
     <string name="peer_no_route">مسیری به همتا نیست</string>
     <string name="connect_download">دریافت</string>
     <string name="connect_upload">ارسال</string>
-    <string name="month_label">این ماه</string>
+    <string name="month_label">۳۰ روز گذشته</string>
     <string name="month_axis_today">امروز</string>
     <string name="month_of">&#x2068;%1$s&#x2069; از &#x2068;%2$s&#x2069;</string>
     <string name="month_used">&#x2068;%1$s&#x2069; مصرف‌شده</string>
@@ -294,6 +294,9 @@
     <string name="handshake_axis_end">۳ دقیقه</string>
     <string name="handshake_state_fresh">هندشیک در دو دقیقهٔ گذشته انجام شده</string>
     <string name="handshake_state_late">تعویض کلید عقب افتاده — هنوز داخل بازهٔ ۳ دقیقه‌ای</string>
+    <string name="handshake_age_waiting">در انتظار</string>
+    <string name="handshake_state_waiting">در انتظار اولین هندشیک</string>
+    <string name="handshake_a11y_waiting">وصل است، در انتظار اولین هندشیک</string>
     <string name="handshake_state_silent">آخرین هندشیک بیش از سه دقیقه پیش بوده</string>
     <string name="handshake_spoken_seconds">%1$d ثانیه</string>
     <string name="handshake_spoken_minutes">%1$d دقیقه و %2$d ثانیه</string>

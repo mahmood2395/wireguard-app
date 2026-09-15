@@ -45,6 +45,7 @@ class HandshakeDecayView @JvmOverloads constructor(
     private val sentence: TextView
 
     private val inkFresh = ContextCompat.getColor(context, R.color.accent_300)
+    private val inkWaiting = ContextCompat.getColor(context, R.color.clay_text_muted)
     private val inkLate = ContextCompat.getColor(context, R.color.handshake_late)
     private val inkSilent = ContextCompat.getColor(context, R.color.ping_fail)
 
@@ -63,14 +64,37 @@ class HandshakeDecayView @JvmOverloads constructor(
         if (layoutDirection == LAYOUT_DIRECTION_RTL) {
             findViewById<Guideline>(R.id.decay_rekey_guide).setGuidelinePercent(1f - REKEY_FRACTION)
         }
-        setAge(null)
+        setState(connected = false, ageSeconds = null, connectedForSeconds = null)
     }
 
     /**
-     * @param ageSeconds seconds since the latest handshake, or null when the tunnel is not up
-     *                   (or is up but has never handshaked) — the silent state.
+     * @param connected whether the tunnel is up.
+     * @param ageSeconds seconds since the latest handshake, or null when there has been none.
+     * @param connectedForSeconds how long the tunnel has been up, or null when unknown (a tunnel
+     *        adopted at process start carries no stamp).
+     *
+     * Four states. Silent covers "down" and "up for three minutes with no handshake"; WAITING is
+     * the gap this view used to fall into: a connection a few seconds old has not handshaked yet
+     * simply because it has not had time to, and painting that as the red "over three minutes
+     * ago" flashed an alarm on every single connect. Once the tunnel has been up for the full
+     * cutoff with still nothing, silent is the truth again.
      */
-    fun setAge(ageSeconds: Long?) {
+    fun setState(connected: Boolean, ageSeconds: Long?, connectedForSeconds: Long?) {
+        val waiting = connected && ageSeconds == null &&
+            connectedForSeconds != null && connectedForSeconds < HANDSHAKE_LIMIT
+        if (waiting) {
+            track.inkColor = inkWaiting
+            ageView.setTextColor(inkWaiting)
+            ageView.setText(R.string.handshake_age_waiting)
+            sentence.setText(R.string.handshake_state_waiting)
+            contentDescription = context.getString(R.string.handshake_a11y_waiting)
+            animateFill(0f)
+            return
+        }
+        setAge(if (connected) ageSeconds else null)
+    }
+
+    private fun setAge(ageSeconds: Long?) {
         val connected = ageSeconds != null
         val age = ageSeconds ?: HANDSHAKE_LIMIT
         val late = connected && age > LATE_AFTER
