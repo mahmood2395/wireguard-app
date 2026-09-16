@@ -274,6 +274,25 @@ object UserKnobs {
     }
 
     /**
+     * Portway: peers this panel says are not its own, as "pubkey:whenCheckedMillis" (a base64 key
+     * contains no ':'). The app is open to anyone, so a config from another provider is a normal
+     * thing to hold — and the panel has nothing to say about it. Remembering the answer is what
+     * stops the app reporting a stranger's config, and this device's identity, to a panel that
+     * disowned it. Rechecked occasionally, because the operator may add a peer later.
+     */
+    private val FOREIGN_PEERS = stringSetPreferencesKey("foreign_peers")
+
+    val foreignPeers: Flow<Set<String>>
+        get() = Application.getPreferencesDataStore().data.map { it[FOREIGN_PEERS] ?: emptySet() }
+
+    suspend fun setForeignPeer(pubkey: String, whenMillis: Long?) {
+        Application.getPreferencesDataStore().edit {
+            val others = (it[FOREIGN_PEERS] ?: emptySet()).filterNot { e -> e.substringBeforeLast(':') == pubkey }.toSet()
+            it[FOREIGN_PEERS] = if (whenMillis == null) others else others + "$pubkey:$whenMillis"
+        }
+    }
+
+    /**
      * Portway: this install's identity for the one-device-at-a-time session check. A random
      * UUID, deliberately NOT derived from hardware — a reinstall is a new device as far as the
      * panel is concerned, which is fine, and nothing here can be used to track the phone.

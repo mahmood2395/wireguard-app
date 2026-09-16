@@ -49,6 +49,36 @@ object AccountRepository {
 
     private val cache = mutableMapOf<String, AccountInfo>()
 
+    /**
+     * How long a "not my peer" answer stands before the app asks again. Long, because the answer
+     * rarely changes and asking is the thing being avoided; not forever, because an operator can
+     * add a peer to the panel after its owner already installed the app.
+     */
+    private const val FOREIGN_RECHECK_MS = 7L * 24 * 60 * 60 * 1000
+
+    /** When the panel last disowned [pubkey], or null if it never has (or the answer has aged out). */
+    private suspend fun disownedAt(pubkey: String): Long? =
+        UserKnobs.foreignPeers.first()
+            .firstOrNull { it.substringBeforeLast(':') == pubkey }
+            ?.substringAfterLast(':')?.toLongOrNull()
+            ?.takeIf { System.currentTimeMillis() - it < FOREIGN_RECHECK_MS }
+
+    /**
+     * Is this config one the panel knows? Answers false without a request once the panel has said
+     * no. Used before anything that would send this device's identity.
+     */
+    suspend fun isOurs(tunnel: ObservableTunnel): Boolean = when (fetch(tunnel)) {
+        is Result.Ok -> true
+        Result.Unknown, Result.NotLinked -> false
+        Result.Unavailable -> false
+    }
+
+    /** Forget the "not mine" answer for this peer, so the next lookup really asks. */
+    suspend fun forgetForeign(pubkey: String) {
+        if (UserKnobs.foreignPeers.first().any { it.substringBeforeLast(':') == pubkey })
+            UserKnobs.setForeignPeer(pubkey, null)
+    }
+
     fun cached(pubkey: String): AccountInfo? = cache[pubkey]
 
     /** The last answer for [tunnel]'s peer, without asking the panel again. */
@@ -64,6 +94,10 @@ object AccountRepository {
 
         val base = UserKnobs.panelUrl.first()?.trimEnd('/')
         if (base.isNullOrBlank()) return Result.NotLinked
+        // Already disowned: say so without asking. Every caller — the Connect screen's minute
+        // refresh, the twice-daily expiry check, the settings card — then goes quiet for a config
+        // that is not this panel's, instead of sending its public key over and over.
+        if (disownedAt(pubkey) != null) return Result.Unknown
         val url = "$base/api/peer/info?pubkey=${URLEncoder.encode(pubkey, "UTF-8")}" +
             (address?.let { "&address=${URLEncoder.encode(it, "UTF-8")}" } ?: "")
 
@@ -90,6 +124,10 @@ object AccountRepository {
                                     ?.takeIf { it > 0 },
                             )
                             cache[pubkey] = info
+                            // The panel claims this peer after all — an operator can add one at
+                            // any time — so drop a stale "not mine" mark. Only when there is one:
+                            // this runs on every refresh, and a write per minute would be waste.
+                            forgetForeign(pubkey)
                             // Remote move: the panel's answer names its authoritative URL.
                             // Persisting it means the operator can migrate domains and any
                             // app that phones home once follows automatically.
@@ -142,7 +180,12 @@ object AccountRepository {
                             )
                             Result.Ok(info)
                         }
-                        404 -> Result.Unknown
+                        // The panel does not know this peer. Remember it, with the time, so the
+                        // next caller does not ask again until the recheck window is up.
+                        404 -> {
+                            UserKnobs.setForeignPeer(pubkey, System.currentTimeMillis())
+                            Result.Unknown
+                        }
                         else -> Result.Unavailable
                     }
                 } finally {
