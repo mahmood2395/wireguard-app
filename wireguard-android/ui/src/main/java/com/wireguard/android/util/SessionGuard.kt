@@ -151,6 +151,9 @@ object SessionGuard {
      */
     suspend fun beforeUp(tunnel: ObservableTunnel, gate: Gate, takeover: Boolean) {
         if (gate == Gate.NONE) return
+        // Not this panel's config: it cannot answer for it, and asking would hand it this
+        // device's id for a peer it disowned. Connecting is never blocked by that.
+        if (AccountRepository.disowned(tunnel)) return
         when (val claim = claim(tunnel, takeover)) {
             is Claim.Conflict ->
                 if (gate == Gate.USER) throw AccountInUseException(tunnel.name, claim.otherDevice)
@@ -165,6 +168,7 @@ object SessionGuard {
     fun afterDown(tunnel: ObservableTunnel, gate: Gate) {
         if (gate == Gate.NONE) return
         applicationScope.launch {
+            if (AccountRepository.disowned(tunnel)) return@launch
             runCatching { release(tunnel) }.onFailure { Log.d(TAG, "release failed", it) }
         }
     }
@@ -178,7 +182,9 @@ object SessionGuard {
             // Idempotent on the panel, and after startup so it never competes with restore.
             delay(15_000L)
             runCatching {
-                Application.getTunnelManager().getTunnels().forEach { register(it) }
+                Application.getTunnelManager().getTunnels().forEach {
+                    if (AccountRepository.isOurs(it)) register(it)
+                }
             }.onFailure { Log.d(TAG, "startup register failed", it) }
         }
         scope.launch {
@@ -189,10 +195,20 @@ object SessionGuard {
         }
     }
 
-    /** Called when a config is imported or created. */
+    /**
+     * Called when a config is imported or created.
+     *
+     * A fresh config is asked about first, with its public key alone: registering announces this
+     * device to the panel, and a config from another provider should never cause that. The mark is
+     * forgotten first, so re-importing a config is also the way a user retries a panel that has
+     * since been given the peer.
+     */
     fun onImported(tunnel: ObservableTunnel) {
         applicationScope.launch {
-            runCatching { register(tunnel) }.onFailure { Log.d(TAG, "register failed", it) }
+            runCatching {
+                AccountRepository.forgetForeign(tunnel)
+                if (AccountRepository.isOurs(tunnel)) register(tunnel)
+            }.onFailure { Log.d(TAG, "register failed", it) }
         }
     }
 
@@ -202,6 +218,7 @@ object SessionGuard {
         // background loop during startup can deadlock the restore it depends on.
         if (!manager.hasTunnelUp()) return
         manager.getTunnels().filter { it.state == Tunnel.State.UP }.forEach { tunnel ->
+            if (AccountRepository.disowned(tunnel)) return@forEach
             when (val beat = heartbeat(tunnel)) {
                 is Beat.Superseded -> onSuperseded(tunnel, beat.byDevice)
                 Beat.Active, Beat.Unavailable -> Unit
@@ -247,7 +264,11 @@ object SessionGuard {
             200 -> if (response.json?.optBoolean("granted", true) == false) Claim.Unavailable else Claim.Granted
             409 -> Claim.Conflict(response.json?.optString("other_device_name")?.takeIf { it.isNotBlank() })
             // Unknown peer: not ours to police. The panel's router-side check still sees it.
-            404 -> Claim.Granted
+            // Remember it, so nothing else here asks about this config again.
+            404 -> {
+                AccountRepository.markForeign(tunnel)
+                Claim.Granted
+            }
             // 429 and everything else: fail-open, by agreement with the panel.
             else -> Claim.Unavailable
         }

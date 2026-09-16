@@ -73,6 +73,23 @@ object AccountRepository {
         Result.Unavailable -> false
     }
 
+    /** Has the panel disowned this config? Answered from memory; never asks. */
+    suspend fun disowned(tunnel: ObservableTunnel): Boolean =
+        pubkeyOf(tunnel)?.let { disownedAt(it) != null } ?: false
+
+    /** Record a disowning learned from another endpoint (a claim's 404, say). */
+    suspend fun markForeign(tunnel: ObservableTunnel) {
+        pubkeyOf(tunnel)?.let { UserKnobs.setForeignPeer(it, System.currentTimeMillis()) }
+    }
+
+    private suspend fun pubkeyOf(tunnel: ObservableTunnel): String? =
+        runCatching { tunnel.getConfigAsync().`interface`.keyPair.publicKey.toBase64() }.getOrNull()
+
+    /** Forget the "not mine" answer for this config, so the next lookup really asks. */
+    suspend fun forgetForeign(tunnel: ObservableTunnel) {
+        pubkeyOf(tunnel)?.let { forgetForeign(it) }
+    }
+
     /** Forget the "not mine" answer for this peer, so the next lookup really asks. */
     suspend fun forgetForeign(pubkey: String) {
         if (UserKnobs.foreignPeers.first().any { it.substringBeforeLast(':') == pubkey })

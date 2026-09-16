@@ -23,6 +23,7 @@ import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.configStore.ConfigStore
 import com.wireguard.android.databinding.ObservableSortedKeyedArrayList
 import com.wireguard.android.util.ErrorMessages
+import com.wireguard.android.util.AccountRepository
 import com.wireguard.android.util.SessionGuard
 import com.wireguard.android.util.UserKnobs
 import com.wireguard.android.util.applicationScope
@@ -245,6 +246,10 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
                 getBackend().setState(tunnel, tunnel.state, config)
                 configStore.save(tunnel.name, config)
             })!!
+        }.also {
+            // The key may have changed, and editing is the other moment a user would expect the
+            // panel to be asked again about a config it once disowned.
+            AccountRepository.forgetForeign(tunnel)
         }
     }
 
