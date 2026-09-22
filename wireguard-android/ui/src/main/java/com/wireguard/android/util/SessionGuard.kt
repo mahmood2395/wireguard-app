@@ -133,6 +133,13 @@ object SessionGuard {
         UserKnobs.deviceId.first() ?: UUID.randomUUID().toString().also { UserKnobs.setDeviceId(it) }
     }
 
+    /**
+     * "13 (33)": the Android version a user would quote, and the API level the code actually
+     * branches on. Support questions arrive as "I'm on Android 13"; half this app's behaviour
+     * (notification permission, always-on, alarms) turns on the number in brackets.
+     */
+    val osVersion: String by lazy { "${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT})" }
+
     /** "Google Pixel 7", not "Google Google Pixel 7" — some makers put the brand in the model too. */
     val deviceName: String by lazy {
         val maker = Build.MANUFACTURER.replaceFirstChar { it.titlecase(Locale.ROOT) }
@@ -251,6 +258,7 @@ object SessionGuard {
         post(tunnel, "/api/peer/device/register", BACKGROUND_TIMEOUT_MS) {
             put("device_name", deviceName)
             put("app_version", BuildConfig.VERSION_CODE)
+            put("os_version", osVersion)
         }
     }
 
@@ -258,6 +266,7 @@ object SessionGuard {
         val response = post(tunnel, "/api/peer/session/claim", CLAIM_TIMEOUT_MS) {
             put("device_name", deviceName)
             put("app_version", BuildConfig.VERSION_CODE)
+            put("os_version", osVersion)
             put("takeover", takeover)
         } ?: return Claim.Unavailable
         return when (response.code) {
@@ -275,7 +284,12 @@ object SessionGuard {
     }
 
     private suspend fun heartbeat(tunnel: ObservableTunnel): Beat {
-        val response = post(tunnel, "/api/peer/session/heartbeat", BACKGROUND_TIMEOUT_MS) {}
+        // The name and version ride along so a phone that stays connected for weeks keeps its row
+        // current: otherwise they only refresh when the app is restarted.
+        val response = post(tunnel, "/api/peer/session/heartbeat", BACKGROUND_TIMEOUT_MS) {
+            put("device_name", deviceName)
+            put("app_version", BuildConfig.VERSION_CODE)
+        }
             ?: return Beat.Unavailable
         if (response.code != 200) return Beat.Unavailable
         val json = response.json ?: return Beat.Unavailable

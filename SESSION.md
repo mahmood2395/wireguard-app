@@ -42,9 +42,9 @@ treats as allow.
 
 | Endpoint | When | Extra fields | Response |
 |---|---|---|---|
-| `/api/peer/device/register` | on import; once per app start for every config | `device_name`, `app_version` | `200 {ok}` |
-| `/api/peer/session/claim` | before a **user** connect | `device_name`, `app_version`, `takeover` | `200 {granted:true}` · `409 {granted:false, other_device_name, other_since}` |
-| `/api/peer/session/heartbeat` | every 60s while up | — | `200 {active:true}` · `200 {active:false, superseded_by_device_name}` |
+| `/api/peer/device/register` | on import; once per app start for every config | `device_name`, `app_version`, `os_version` | `200 {ok}` |
+| `/api/peer/session/claim` | before a **user** connect | `device_name`, `app_version`, `os_version`, `takeover` | `200 {granted:true}` · `409 {granted:false, other_device_name, other_since}` |
+| `/api/peer/session/heartbeat` | every 60s while up | `device_name`, `app_version` | `200 {active:true}` · `200 {active:false, superseded_by_device_name}` |
 | `/api/peer/session/release` | on a **user** disconnect | — | `200 {ok}` |
 
 A session is **live** when its heartbeat is within 600s **and** the router saw a handshake within
@@ -56,6 +56,10 @@ when rate-limited. A heartbeat with no session, while nobody else holds a live o
 
 Rate limits are per account: claim 10/min, takeover 3 per 10 min, heartbeat 3/min per device.
 Over a limit → `429`, which the client treats as allow.
+
+`os_version` ("13 (33)") and the name/version on the heartbeat exist for the panel's Portway Apps
+page: they let it show what a fleet is running, and keep a phone that stays connected for weeks from
+going stale. Only configs this panel claims ever send any of it — see the gate above.
 
 ## Who is gated
 
