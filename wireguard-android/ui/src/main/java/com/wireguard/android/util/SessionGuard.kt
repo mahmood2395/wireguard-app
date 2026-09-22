@@ -40,6 +40,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -145,6 +146,33 @@ object SessionGuard {
         val maker = Build.MANUFACTURER.replaceFirstChar { it.titlecase(Locale.ROOT) }
         val model = Build.MODEL
         if (model.startsWith(maker, ignoreCase = true)) model else "$maker $model"
+    }
+
+    /**
+     * The three settings that answer most support questions, added to every report.
+     *
+     * "My VPN keeps dropping" is nearly always one of these: Android is not set to keep the VPN up,
+     * or it is free to kill the app in the background. And if notifications are off, the user never
+     * sees the takeover or superseded notice, which makes the one-device check look broken rather
+     * than working — so it is the permission RIGHT NOW that matters, not whether it was ever
+     * granted; people revoke it later, and that is exactly the case worth seeing.
+     *
+     * always_on and lockdown can only be read from a running VpnService (and only on Android 10+),
+     * so they ride the heartbeat and are simply absent elsewhere. An absent key means "not known
+     * here", never false.
+     */
+    private fun JSONObject.putEnvironment() {
+        val context = Application.get()
+        put("notifications", ExpiryNotifier.canNotify(context))
+        runCatching {
+            context.getSystemService(PowerManager::class.java)?.isIgnoringBatteryOptimizations(context.packageName)
+        }.getOrNull()?.let { put("battery_unrestricted", it) }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+        // .value, never an await: this runs on the path to a connect, and a backend that never
+        // initialised must not hold the claim open.
+        val backend = Application.backendResult.value?.getOrNull() ?: return
+        runCatching { backend.isAlwaysOn() }.getOrNull()?.let { put("always_on", it) }
+        runCatching { backend.isLockdownEnabled() }.getOrNull()?.let { put("lockdown", it) }
     }
 
     // ---- the gate, called from TunnelManager.setTunnelState ------------------------------------
@@ -259,6 +287,7 @@ object SessionGuard {
             put("device_name", deviceName)
             put("app_version", BuildConfig.VERSION_CODE)
             put("os_version", osVersion)
+            putEnvironment()
         }
     }
 
@@ -268,6 +297,7 @@ object SessionGuard {
             put("app_version", BuildConfig.VERSION_CODE)
             put("os_version", osVersion)
             put("takeover", takeover)
+            putEnvironment()
         } ?: return Claim.Unavailable
         return when (response.code) {
             200 -> if (response.json?.optBoolean("granted", true) == false) Claim.Unavailable else Claim.Granted
@@ -289,6 +319,7 @@ object SessionGuard {
         val response = post(tunnel, "/api/peer/session/heartbeat", BACKGROUND_TIMEOUT_MS) {
             put("device_name", deviceName)
             put("app_version", BuildConfig.VERSION_CODE)
+            putEnvironment()
         }
             ?: return Beat.Unavailable
         if (response.code != 200) return Beat.Unavailable
