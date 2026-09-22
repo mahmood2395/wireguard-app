@@ -161,6 +161,12 @@ object SessionGuard {
      * so they ride the heartbeat and are simply absent elsewhere. An absent key means "not known
      * here", never false.
      */
+    /** How the previous session of this config ended. "unknown" is a value, not an absence. */
+    private fun JSONObject.putLastDisconnect(last: Pair<String, Long?>) {
+        put("last_disconnect_reason", last.first)
+        last.second?.let { put("last_disconnect_at", it) }
+    }
+
     private fun JSONObject.putEnvironment() {
         val context = Application.get()
         put("notifications", ExpiryNotifier.canNotify(context))
@@ -271,6 +277,7 @@ object SessionGuard {
         }
         Log.i(TAG, "${tunnel.name} superseded by $byDevice; disconnecting")
         runCatching {
+            DisconnectReasons.expect(tunnel.name, DisconnectReasons.Reason.SUPERSEDED)
             withContext(Dispatchers.Main.immediate) { tunnel.setStateAsync(Tunnel.State.DOWN, Gate.NONE) }
         }.onFailure { Log.w(TAG, "could not disconnect superseded tunnel", it) }
         notifySuperseded(tunnel.name, byDevice)
@@ -283,21 +290,26 @@ object SessionGuard {
     // ---- the four panel calls ------------------------------------------------------------------
 
     private suspend fun register(tunnel: ObservableTunnel) {
+        // Read before the body is built: the builder lambda is not a suspending one.
+        val lastDisconnect = DisconnectReasons.last(tunnel.name)
         post(tunnel, "/api/peer/device/register", BACKGROUND_TIMEOUT_MS) {
             put("device_name", deviceName)
             put("app_version", BuildConfig.VERSION_CODE)
             put("os_version", osVersion)
             putEnvironment()
+            putLastDisconnect(lastDisconnect)
         }
     }
 
     private suspend fun claim(tunnel: ObservableTunnel, takeover: Boolean): Claim {
+        val lastDisconnect = DisconnectReasons.last(tunnel.name)
         val response = post(tunnel, "/api/peer/session/claim", CLAIM_TIMEOUT_MS) {
             put("device_name", deviceName)
             put("app_version", BuildConfig.VERSION_CODE)
             put("os_version", osVersion)
             put("takeover", takeover)
             putEnvironment()
+            putLastDisconnect(lastDisconnect)
         } ?: return Claim.Unavailable
         return when (response.code) {
             200 -> if (response.json?.optBoolean("granted", true) == false) Claim.Unavailable else Claim.Granted

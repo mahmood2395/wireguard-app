@@ -24,6 +24,7 @@ import com.wireguard.android.configStore.ConfigStore
 import com.wireguard.android.databinding.ObservableSortedKeyedArrayList
 import com.wireguard.android.util.ErrorMessages
 import com.wireguard.android.util.AccountRepository
+import com.wireguard.android.util.DisconnectReasons
 import com.wireguard.android.util.SessionGuard
 import com.wireguard.android.util.UserKnobs
 import com.wireguard.android.util.applicationScope
@@ -70,6 +71,10 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
      * the backend's IO thread inside the same call, so concurrent.
      */
     private val releaseSuppressed: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
+    /** The tunnel currently being brought up, if any. See onBackendStateChange. */
+    @Volatile
+    private var bringingUp: String? = null
 
     /**
      * Portway. Bumped on every requested tunnel state change, from any entry point. The
@@ -198,6 +203,12 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
             return
         val previouslyRunning = UserKnobs.runningTunnels.first()
         if (previouslyRunning.isEmpty()) return
+        // A clean disconnect empties this set, so whatever is still in it and not actually up
+        // ended with the process — killed in the background, or a reboot. The one cause that
+        // cannot be observed as it happens, and the one users complain about most.
+        DisconnectReasons.recordKilled(
+            tunnelMap.filter { previouslyRunning.contains(it.name) && it.state != Tunnel.State.UP }.map { it.name }
+        )
         withContext(Dispatchers.IO) {
             try {
                 tunnelMap.filter { previouslyRunning.contains(it.name) }.map { async(Dispatchers.IO + SupervisorJob()) { setTunnelState(it, Tunnel.State.UP, SessionGuard.Gate.ADVISORY) } }
@@ -226,9 +237,16 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         // used to stay claimed until the panel's lease ran out, so another device trying A was
         // told it was "already connected" here for minutes. Read before onStateChanged, so
         // tunnel.state is still the state being left.
-        if (newState == Tunnel.State.DOWN && tunnel.state == Tunnel.State.UP &&
-            tunnel.name !in releaseSuppressed
-        ) SessionGuard.afterDown(tunnel, SessionGuard.Gate.USER)
+        if (newState == Tunnel.State.DOWN && tunnel.state == Tunnel.State.UP) {
+            val replacing = bringingUp?.takeIf { it != tunnel.name } != null
+            applicationScope.launch {
+                DisconnectReasons.record(
+                    tunnel.name,
+                    if (replacing) DisconnectReasons.Reason.REPLACED else DisconnectReasons.Reason.SYSTEM,
+                )
+            }
+            if (tunnel.name !in releaseSuppressed) SessionGuard.afterDown(tunnel, SessionGuard.Gate.USER)
+        }
         tunnel.onStateChanged(newState)
         applicationScope.launch { saveState() }
         WatchdogAlarm.reschedule()
@@ -306,11 +324,22 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         if (goingUp) SessionGuard.beforeUp(tunnel, gate, takeover)
         // Gate.NONE state changes (a watchdog restart, the updater, a superseded disconnect) must
         // not release the session when the backend reports the teardown; see onBackendStateChange.
+        // Whoever asks for a teardown says why before it happens; see DisconnectReasons. Gate.NONE
+        // callers (watchdog, updater, a superseded session) declare their own and are left alone.
+        if (wasUp && !goingUp && gate != SessionGuard.Gate.NONE) {
+            DisconnectReasons.expect(
+                tunnel.name,
+                if (gate == SessionGuard.Gate.USER) DisconnectReasons.Reason.USER
+                else DisconnectReasons.Reason.SYSTEM,
+            )
+        }
         val suppress = gate == SessionGuard.Gate.NONE
         // Any change may take a running tunnel down — this one, or another the backend stops to
         // make room — and its byte counters go with it. Count what they hold first. Outside the
         // lock: it is a statistics round trip per running tunnel.
         if (hasTunnelUp()) UsageSampler.flush()
+        // While this is in flight, a teardown of ANOTHER tunnel is the backend making room for it.
+        if (goingUp) bringingUp = tunnel.name
         if (suppress) releaseSuppressed.add(tunnel.name)
         try {
         backendMutex.withLock {
@@ -338,6 +367,9 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         }
         } finally {
             if (suppress) releaseSuppressed.remove(tunnel.name)
+            if (goingUp) bringingUp = null
+            // A teardown that never happened must not label the next one.
+            if (wasUp && !goingUp) DisconnectReasons.forget(tunnel.name)
         }
     }
 

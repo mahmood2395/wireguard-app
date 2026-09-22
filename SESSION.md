@@ -61,6 +61,21 @@ Over a limit → `429`, which the client treats as allow.
 page: they let it show what a fleet is running, and keep a phone that stays connected for weeks from
 going stale. Only configs this panel claims ever send any of it — see the gate above.
 
+Support fields ride the same requests, for the questions that otherwise need a conversation:
+
+| Field | Where | Meaning |
+|---|---|---|
+| `notifications` | all three | permitted **right now**, not ever-granted: with them off the user never sees a takeover or superseded notice, so this check looks broken while working |
+| `battery_unrestricted` | all three | Android may not stop the app in the background |
+| `always_on`, `lockdown` | heartbeat | only readable from a running VpnService, and only on Android 10+, so **absent elsewhere — absent never means false** |
+| `last_disconnect_reason` | register, claim | how the previous session ended: `user`, `replaced`, `handshake_timeout`, `superseded`, `update`, `system`, `killed`, `unknown` |
+| `last_disconnect_at` | register, claim | epoch millis; absent when the reason is `unknown` |
+
+`unknown` is sent as a value rather than by omitting the field: a teardown the app could not
+attribute is itself information. `killed` cannot be observed as it happens — a process Android stops
+writes nothing — so it is inferred at the next start from the persisted running-tunnels set, which a
+clean disconnect empties. See `util/DisconnectReasons.kt`.
+
 ## Who is gated
 
 Every state change goes through `TunnelManager.setTunnelState`, which takes an explicit

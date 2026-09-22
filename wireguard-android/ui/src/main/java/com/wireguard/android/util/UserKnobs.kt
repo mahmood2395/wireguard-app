@@ -274,6 +274,28 @@ object UserKnobs {
     }
 
     /**
+     * Portway: how each config's last session ended, as "name:reason:whenMillis" (tunnel names
+     * cannot contain ':'). Written when a tunnel goes down, read when reporting to the panel.
+     */
+    private val LAST_DISCONNECTS = stringSetPreferencesKey("last_disconnects")
+
+    suspend fun lastDisconnect(tunnelName: String): Pair<String, Long>? =
+        Application.getPreferencesDataStore().data.first()[LAST_DISCONNECTS]
+            ?.firstOrNull { it.substringBefore(':') == tunnelName }
+            ?.let { entry ->
+                val rest = entry.substringAfter(':')
+                val at = rest.substringAfterLast(':').toLongOrNull() ?: return@let null
+                rest.substringBeforeLast(':') to at
+            }
+
+    suspend fun setLastDisconnect(tunnelName: String, reason: String, whenMillis: Long) {
+        Application.getPreferencesDataStore().edit {
+            val others = (it[LAST_DISCONNECTS] ?: emptySet()).filterNot { e -> e.substringBefore(':') == tunnelName }.toSet()
+            it[LAST_DISCONNECTS] = others + "$tunnelName:$reason:$whenMillis"
+        }
+    }
+
+    /**
      * Portway: peers this panel says are not its own, as "pubkey:whenCheckedMillis" (a base64 key
      * contains no ':'). The app is open to anyone, so a config from another provider is a normal
      * thing to hold — and the panel has nothing to say about it. Remembering the answer is what

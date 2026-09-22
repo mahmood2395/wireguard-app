@@ -113,6 +113,7 @@ object UpdateInstaller {
             takenDown = up.map { it.name }
             up.forEach { tunnel ->
                 Log.i(TAG, "Taking ${tunnel.name} down before installing")
+                DisconnectReasons.expect(tunnel.name, DisconnectReasons.Reason.UPDATE)
                 tunnel.setStateAsync(Tunnel.State.DOWN, SessionGuard.Gate.NONE)
             }
         }.onFailure { Log.w(TAG, "Could not take tunnels down before update", it) }

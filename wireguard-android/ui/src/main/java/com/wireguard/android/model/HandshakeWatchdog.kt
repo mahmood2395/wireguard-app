@@ -18,6 +18,7 @@ import com.wireguard.android.Application
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.util.UserKnobs
 import com.wireguard.android.widget.HandshakeDecayView
+import com.wireguard.android.util.DisconnectReasons
 import com.wireguard.android.util.SessionGuard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -188,6 +189,7 @@ object HandshakeWatchdog {
             // synchronously from the calling thread and those callbacks touch views.
             withContext(Dispatchers.Main.immediate) {
                 val manager = Application.getTunnelManager()
+                DisconnectReasons.expect(tunnel.name, DisconnectReasons.Reason.HANDSHAKE_TIMEOUT)
                 tunnel.setStateAsync(Tunnel.State.DOWN, SessionGuard.Gate.NONE)
                 // Our own down is the only state change we expect to see across the pause.
                 val expected = manager.stateChangeGeneration
