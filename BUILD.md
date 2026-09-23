@@ -42,6 +42,10 @@ otherwise emits an unsigned APK, so a fresh clone builds without secrets.
 Backup and restore-verification steps are in `KEYSTORE.md`.
 SHA-256 `EE:63:79:85:53:25:48:A3:3F:38:5E:47:BB:78:F7:56:BF:0F:48:E7:B6:4E:E4:C1:6A:49:5B:33:F4:96:7F:DD`
 
+`release.sh` checks the built APK's signer against this fingerprint and refuses to stage a
+mismatch. It is the one release property whose failure the user cannot recover from, so it is
+verified on every build rather than assumed.
+
 Android identifies an app by *package + signing key*. Lose this key and you cannot ship an update
 to anyone who installed the app — they would have to uninstall (losing their tunnels) and
 reinstall. Back up the `.jks` **and** its password (stored in `keystore.properties`) somewhere

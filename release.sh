@@ -20,6 +20,10 @@ case "$BUMP" in
   *) echo "usage: $0 {patch|minor|major}" >&2; exit 2 ;;
 esac
 
+# The release key's fingerprint, from KEYSTORE.md. Changing this line is changing which key
+# users can be updated from, which is not a thing to do to fix a failing build.
+EXPECTED_SIGNER=ee637985532548a33f385e47bb78f756bf0f48e7b64ee4c16a495b33f4967fdd
+
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 PROPS="$ROOT/wireguard-android/gradle.properties"
 source "$ROOT/env.sh"
@@ -73,6 +77,18 @@ if [[ -z "$BUILDCONFIG" ]] || grep -q 'PANEL_URL = "";' "$BUILDCONFIG"; then
   exit 1
 fi
 
+# The signing key, checked rather than assumed. Every other failure here costs a release; this
+# one costs the user their configs — Android identifies an app by package + key, so an APK signed
+# with the wrong one cannot install over an existing Portway at all. The customer's only way out
+# is to uninstall, which takes their tunnels with it. Cheap to check, unrecoverable to get wrong.
+SIGNER=$("$ANDROID_HOME"/build-tools/36.0.0/apksigner verify --print-certs "$APK" 2>/dev/null |
+  sed -n 's/^Signer #1 certificate SHA-256 digest: *//p' | tr 'A-F' 'a-f')
+if [[ "$SIGNER" != "$EXPECTED_SIGNER" ]]; then
+  echo "WRONG SIGNING KEY: got '${SIGNER:-none}', expected $EXPECTED_SIGNER — do not publish" >&2
+  echo "An APK signed with another key cannot update an installed Portway; see KEYSTORE.md." >&2
+  exit 1
+fi
+
 DEST="$ROOT/dist/Portway-$NEW_NAME-$NEW_CODE.apk"
 mkdir -p "$ROOT/dist"
 rm -f "$ROOT"/dist/Portway-*.apk
@@ -82,6 +98,7 @@ echo
 echo "  built    $BUILT_NAME ($BUILT_CODE)  — verified from the APK, not the properties file"
 echo "  apk      $DEST"
 echo "  sha256   $(shasum -a 256 "$DEST" | cut -d' ' -f1)"
+echo "  signer   $SIGNER  — matches the key every released build has used"
 echo
 echo "  Upload this file on the panel. Let it derive version_code and sha256 from the APK —"
 echo "  never set them by hand, that is what caused the update loop."
