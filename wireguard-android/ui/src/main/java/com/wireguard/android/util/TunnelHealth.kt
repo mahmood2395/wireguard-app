@@ -54,7 +54,11 @@ object TunnelHealth {
         /** Up past the window having never handshaked once: it never reached the server. */
         NO_HANDSHAKE("no_handshake"),
 
-        /** Not up. Reported on the way down, never by a heartbeat. */
+        /**
+         * Not up. Never sent: a tunnel that goes down between the heartbeat loop's filter and
+         * this read is skipped, and the release is what reports it. The value exists so that
+         * race has an answer other than a wrong one.
+         */
         DOWN("down"),
     }
 

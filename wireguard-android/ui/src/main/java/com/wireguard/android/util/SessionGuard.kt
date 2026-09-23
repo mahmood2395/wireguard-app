@@ -293,6 +293,10 @@ object SessionGuard {
             // Read before the request: the body builder is not a suspending lambda, and this
             // reads statistics across the JNI boundary.
             val health = TunnelHealth.of(tunnel)
+            // The tunnel went down between the filter above and the read: a heartbeat is a
+            // statement that a session is running, and the release that follows is the honest
+            // report. The panel's link_state vocabulary has no "down" for the same reason.
+            if (health.link == TunnelHealth.Link.DOWN) return@forEach
             when (val beat = heartbeat(tunnel, health)) {
                 is Beat.Superseded -> onSuperseded(tunnel, beat.byDevice)
                 Beat.Active, Beat.Unavailable -> Unit

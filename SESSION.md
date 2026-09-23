@@ -93,7 +93,7 @@ read; only `handshaking` means traffic is passing.**
 
 | Field | Meaning |
 |---|---|
-| `link_state` | `handshaking` (handshake inside 180s — healthy) · `connecting` (up, no handshake yet, too early to judge) · `stale` (handshaked once, not within 180s: it worked and stopped) · `no_handshake` (past the window having never handshaked: it never reached the server) |
+| `link_state` | `handshaking` (handshake inside 180s — healthy) · `connecting` (up, no handshake yet, too early to judge) · `stale` (handshaked once, not within 180s: it worked and stopped) · `no_handshake` (past the window having never handshaked: it never reached the server). Those four only: a tunnel found down is skipped, not reported |
 | `handshake_age` | seconds since the latest handshake. **Absent when there has never been one** — which is what separates `no_handshake` from `stale` |
 | `connected_for` | seconds since this tunnel came up. Resets on every watchdog restart, so it is not a measure of how long anything has been wrong |
 | `silent_for` | seconds not handshaking, **spanning restarts**. Present only when `link_state` is not `handshaking`. This is the number that says how long it has been broken |
@@ -110,9 +110,22 @@ connection that simply has not finished yet. That is how a dead tunnel reported 
 indefinitely. `silent_for` is the watchdog's own clock, started at its first verdict of "not
 handshaking" and kept across the restarts that follow.
 
-**What the panel should do with it:** a session whose latest heartbeat is not `handshaking` is not
-a connected device. A claim on its own is not one either — it is a device that asked to connect,
-and whether it did is the first heartbeat's news.
+**What the panel does with it** (`mikrotik-manager` `339e70a`): "connected" keys on
+`link_state = handshaking`, never on a heartbeat existing. A claim records the device and leaves
+the row unconfirmed until the first heartbeat carries a verdict. A "Not getting through" tile and
+filter collect the up-but-not-handshaking devices, with `silent_for` beside each. The link fields
+are written as a set including nulls — a recovered tunnel must lose its old `silent_for` rather
+than keep it — while a heartbeat carrying no `link_state` at all leaves them untouched.
+
+**The one-device check was never at risk from this**, from the other side: a session counts as
+live only when the device heartbeats *and* the router reports a handshake for that peer within
+180s. A holder that reaches nothing produces no router-side handshake, so it is not live and the
+second device is granted. That holds for the official WireGuard app too, because the test is the
+router's word rather than any app's.
+
+**Rollout:** 533 and older send no `link_state` and render "up · unconfirmed", excluded from the
+connected count. Until the next release reaches customers, "Connected now" reads low on purpose —
+those devices were up, and whether they reached anything is unknown.
 
 The app says the same thing to the user: past the window with nothing from the peer, the Connect
 screen reads *"Not reaching the server"* instead of *"Protected"*.
