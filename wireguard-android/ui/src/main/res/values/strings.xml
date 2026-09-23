@@ -425,6 +425,9 @@
     <string name="update_disconnect_note">Your tunnel will disconnect while the update installs.</string>
     <string name="update_permission_needed">Allow Portway to install apps</string>
     <string name="update_failed">Update failed: %1$s</string>
+    <!-- Substituted into update_failed. Android would refuse this install anyway; this says so
+         in words, because "app not installed" answers nothing for the user or for support. -->
+    <string name="update_wrong_key">this build was signed with a different key</string>
     <string name="update_later">Later</string>
     <string name="version_summary">%1$s backend %2$s</string>
     <string name="version_summary_checking">Checking %s backend version</string>

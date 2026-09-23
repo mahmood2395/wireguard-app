@@ -6,9 +6,17 @@
  *
  * The security boundary is NOT this code: Android refuses any update whose signature does not
  * match the installed app, so a substituted APK cannot replace Portway however it was obtained.
- * The SHA-256 check here is for a different failure — a truncated or corrupted download, which
- * is common on the flaky networks these users are on and would otherwise surface as a baffling
- * "app not installed" from the system installer.
+ * The checks here are for a different failure — one that is safe and completely silent.
+ *
+ * SHA-256 catches a truncated or corrupted download, common on the networks these users are on,
+ * which would otherwise surface as a baffling "app not installed" from the system installer.
+ *
+ * The signing check catches the same thing one step further back: a build signed with another
+ * key, which Android would also refuse without ever saying why. Nothing unsafe reaches the
+ * device either way — the point is that "updates stopped working" is otherwise an unanswerable
+ * support question, and it would be asked by every user at once, because a bad build in the feed
+ * is a bad build for everyone. It is deliberately the same comparison Android is about to make,
+ * made early and with words attached; nothing here is trusted to decide anything Android does not.
  *
  * The tunnel is taken down before the install is offered. That is the entire reason this class
  * exists rather than a download link: Android 16 can corrupt the device's network stack when a
@@ -22,11 +30,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import com.wireguard.android.Application
+import com.wireguard.android.R
 import com.wireguard.android.backend.Tunnel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,9 +81,17 @@ object UpdateInstaller {
 
             val actual = withContext(Dispatchers.IO) { sha256(apk) }
             if (!actual.equals(update.sha256, ignoreCase = true)) {
-                apk.delete()
+                // On IO like every other file operation here: deleting is a disk write, and
+                // StrictMode is right that it does not belong on the thread drawing the screen.
+                withContext(Dispatchers.IO) { apk.delete() }
                 Log.w(TAG, "Checksum mismatch: expected ${update.sha256}, got $actual")
                 return Outcome.Failed("checksum mismatch")
+            }
+
+            if (withContext(Dispatchers.IO) { signedByAnotherKey(context, apk) }) {
+                withContext(Dispatchers.IO) { apk.delete() }
+                Log.w(TAG, "Update is signed with a different key; Android would refuse it")
+                return Outcome.Failed(context.getString(R.string.update_wrong_key))
             }
 
             // Down only now, immediately before Android gets the package: installing over a live
@@ -200,6 +218,52 @@ object UpdateInstaller {
         }
         Log.w(TAG, "Download redirected too many times; refusing")
         return null
+    }
+
+    /**
+     * True only when this APK was positively shown to carry a different signing key than the
+     * installed app.
+     *
+     * The comparison is against the running app's own certificate rather than a fingerprint kept
+     * somewhere: a stored copy is a copy that can fall out of step with the key, and the check
+     * would then be asserting the copy. The app has its own certificate by definition, and it is
+     * exactly what Android will compare the update against.
+     *
+     * Unreadable either side answers false, not true. A wrong answer here in the cautious
+     * direction blocks every update to a user who may be on a version we are trying to fix,
+     * which is worse than the silent install failure this exists to explain — and Android still
+     * makes the real decision a moment later regardless.
+     */
+    private fun signedByAnotherKey(context: Context, apk: File): Boolean = runCatching {
+        val pm = context.packageManager
+        @Suppress("DEPRECATION")
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+            PackageManager.GET_SIGNING_CERTIFICATES else PackageManager.GET_SIGNATURES
+        val theirs = signerDigests(pm.getPackageArchiveInfo(apk.absolutePath, flag))
+        val ours = signerDigests(pm.getPackageInfo(context.packageName, flag))
+        if (theirs.isEmpty() || ours.isEmpty()) return@runCatching false
+        // Intersection rather than equality: signingCertificateHistory carries the keys a package
+        // has been signed with, so an app whose key was ever rotated still recognises its own.
+        theirs.intersect(ours).isEmpty()
+    }.getOrElse {
+        Log.d(TAG, "Could not read signing certificates; leaving the decision to Android", it)
+        false
+    }
+
+    @Suppress("DEPRECATION")
+    private fun signerDigests(info: android.content.pm.PackageInfo?): Set<String> {
+        if (info == null) return emptySet()
+        val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            info.signingInfo?.let {
+                if (it.hasMultipleSigners()) it.apkContentsSigners else it.signingCertificateHistory
+            }
+        } else {
+            info.signatures
+        }
+        return signatures.orEmpty().filterNotNull().map { signature ->
+            MessageDigest.getInstance("SHA-256").digest(signature.toByteArray())
+                .joinToString("") { "%02x".format(it) }
+        }.toSet()
     }
 
     private fun sha256(file: File): String {

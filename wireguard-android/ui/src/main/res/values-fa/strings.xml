@@ -381,6 +381,7 @@
     <string name="update_disconnect_note">هنگام نصب به‌روزرسانی، تونل شما قطع می‌شود.</string>
     <string name="update_permission_needed">به Portway اجازهٔ نصب برنامه بدهید</string>
     <string name="update_failed">به‌روزرسانی ناموفق بود: &#x2068;%1$s&#x2069;</string>
+    <string name="update_wrong_key">این نسخه با کلید دیگری امضا شده است</string>
     <string name="update_later">بعداً</string>
 
     <!-- Accessibility -->
