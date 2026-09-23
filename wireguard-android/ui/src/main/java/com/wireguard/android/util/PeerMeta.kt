@@ -22,6 +22,7 @@ object PeerMeta {
      * The prototype's four cases, in the order it shows them:
      *
      *   Connected · Frankfurt, DE      — the one carrying traffic says so first
+     *   Not reaching the server · 5.9.44.12 — up, but nothing is coming back
      *   No route to peer · 81.4.22.9   — a peer that will not answer is the headline, not the city
      *   Frankfurt, DE · 5.9.44.12      — a config we have been to before
      *   5.9.44.12                      — one we have not; never a city we did not resolve
@@ -33,11 +34,17 @@ object PeerMeta {
         pingState: ObservableTunnel.PingState?,
         geoLabel: String?,
         endpointHost: String?,
+        linkSilent: Boolean,
     ): CharSequence {
         val connected = state == Tunnel.State.UP
         val place = geoLabel?.takeIf { it.isNotBlank() }
         val host = endpointHost?.takeIf { it.isNotBlank() }
         return when {
+            // Before the connected cases, and before the city: a tunnel that is reaching nobody
+            // still has a state of UP, and the city it would have surfaced in is not the news.
+            connected && linkSilent && host != null ->
+                join(context.getString(R.string.peer_no_handshake), host)
+            connected && linkSilent -> context.getString(R.string.peer_no_handshake)
             connected && place != null ->
                 join(context.getString(R.string.tunnel_status_active), place)
             connected -> context.getString(R.string.tunnel_status_active)

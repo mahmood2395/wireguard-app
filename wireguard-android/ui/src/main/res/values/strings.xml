@@ -92,6 +92,9 @@
     <string name="battery_opt_restricted">Restricted — Android may stop the tunnel in the background. Tap to allow.</string>
     <string name="connect_ping_label">Ping</string>
     <string name="hero_protected">Protected</string>
+    <!-- Up, but past WireGuard's 180s window with no handshake: the interface exists and the
+         server is answering nothing. Saying "Protected" here is the complaint support hears. -->
+    <string name="hero_no_handshake">Not reaching the server</string>
     <string name="hero_not_protected">Not protected</string>
     <string name="hero_connecting">Connecting</string>
     <string name="hero_disconnecting">Disconnecting</string>
@@ -324,6 +327,9 @@
     <string name="ring_caption_idle">Tap to connect</string>
     <string name="ring_caption_connecting">Opening the tunnel\u2026</string>
     <string name="hero_sub_connected">Your traffic surfaces through this config\'s peer.</string>
+    <!-- Shown instead of the two above once the handshake window has passed with nothing from
+         the peer. Names the two causes a user can act on; the rest they would call support about. -->
+    <string name="hero_sub_no_handshake">The peer is not answering. The server may be down, or this config may no longer be valid.</string>
     <string name="hero_sub_connected_geo">Your traffic surfaces in %1$s, resolved from the peer\'s IP.</string>
     <string name="hero_sub_idle">Nothing is encrypted right now. Tap to connect.</string>
     <string name="hero_sub_connecting">Waiting for the first handshake.</string>
@@ -333,6 +339,8 @@
     <string name="location_geo_from">%1$s \u00b7 from %2$s</string>
     <string name="location_dot" translatable="false">%1$s \u00b7 %2$s</string>
     <string name="peer_no_route">No route to peer</string>
+    <!-- The Configs row for a tunnel that is up and handshaking with nobody. -->
+    <string name="peer_no_handshake">Not reaching the server</string>
     <string name="month_label">Last 30 days</string>
     <string name="month_axis_today">today</string>
     <string name="month_of">%1$s of %2$s</string>

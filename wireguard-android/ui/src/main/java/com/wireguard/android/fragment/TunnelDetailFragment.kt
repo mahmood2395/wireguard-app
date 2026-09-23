@@ -19,10 +19,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.wireguard.android.R
+import com.wireguard.android.widget.HandshakeDecayView
 import com.wireguard.android.activity.MainActivity
 import com.wireguard.android.backend.Statistics
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.databinding.TunnelDetailFragmentBinding
+import com.wireguard.android.model.HandshakeWatchdog
 import com.wireguard.android.model.ObservableTunnel
 import com.wireguard.android.util.GeoResolver
 import com.wireguard.android.util.Pinger
@@ -352,11 +354,16 @@ class TunnelDetailFragment : BaseFragment() {
      */
     private fun renderHandshake(binding: TunnelDetailFragmentBinding, statistics: Statistics?, up: Boolean) {
         val latest = statistics?.let { latestHandshake(it) }
+        val name = binding.tunnel?.name
         binding.detailHandshakeDecay.setState(
             connected = up,
             ageSeconds = latest?.let { ((System.currentTimeMillis() - it) / 1000L).coerceAtLeast(0L) },
             connectedForSeconds = binding.tunnel?.connectedSinceElapsedRealtime
                 ?.let { (SystemClock.elapsedRealtime() - it) / 1000L },
+            // A tunnel the watchdog keeps restarting is never up for long, so without this the
+            // bar would sit in its patient "waiting" state forever; see HandshakeDecayView.
+            silent = up && latest == null && name != null &&
+                (HandshakeWatchdog.silentForSeconds(name) ?: 0L) >= HandshakeDecayView.HANDSHAKE_LIMIT,
         )
     }
 

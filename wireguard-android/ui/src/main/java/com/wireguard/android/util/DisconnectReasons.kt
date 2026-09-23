@@ -70,11 +70,19 @@ object DisconnectReasons {
     }
 
     /**
-     * The backend reported this tunnel down. Persist whoever claimed it, or SYSTEM: nothing in the
-     * app asked, so it was Android, another VPN app, or a revoked permission.
+     * The backend reported this tunnel down: whoever claimed it, or SYSTEM — nothing in the app
+     * asked, so it was Android, another VPN app, or a revoked permission.
+     *
+     * Synchronous and separate from [persist] because two things need this answer at the same
+     * moment: the store, which can wait, and the session release, which reports it to the panel.
+     * Having each of them take the attribution for itself would mean whichever coroutine ran
+     * first won and the other saw nothing.
      */
-    suspend fun record(tunnelName: String, fallback: Reason = Reason.SYSTEM) {
-        val reason = expected.remove(tunnelName) ?: fallback
+    fun take(tunnelName: String, fallback: Reason = Reason.SYSTEM): Reason =
+        expected.remove(tunnelName) ?: fallback
+
+    /** Store an attribution already taken, for the next claim or register to report. */
+    suspend fun persist(tunnelName: String, reason: Reason) {
         UserKnobs.setLastDisconnect(tunnelName, reason.wire, System.currentTimeMillis())
         Log.i(TAG, "$tunnelName went down: ${reason.wire}")
     }

@@ -13,6 +13,7 @@ import com.wireguard.android.backend.Statistics
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.databinding.Keyed
 import com.wireguard.android.util.applicationScope
+import com.wireguard.android.widget.HandshakeDecayView
 import com.wireguard.config.Config
 import com.wireguard.android.util.SessionGuard
 import kotlinx.coroutines.Dispatchers
@@ -76,6 +77,26 @@ class ObservableTunnel internal constructor(
     var pingMillis: Double? = null
         private set
 
+    /**
+     * Portway: the watchdog's verdict that this tunnel is up and reaching nobody.
+     *
+     * @Bindable, unlike [connectedSinceElapsedRealtime], because the Configs list has no ticker
+     * of its own: a row is written once and stays as written until a binding tells it otherwise,
+     * and "Connected" under a config that is reaching nobody is the row a user reads out to
+     * support.
+     *
+     * Read from the watchdog rather than stored here, because the watchdog's restarts take this
+     * tunnel down and up: a flag would be cleared by every one of them and the row would blink
+     * back to "Connected" between attempts, which is the opposite of the point. The watchdog's
+     * own clock is the one thing that survives its restarts.
+     */
+    @get:Bindable
+    val linkSilent: Boolean
+        get() = (HandshakeWatchdog.silentForSeconds(name) ?: 0L) >= HandshakeDecayView.HANDSHAKE_LIMIT
+
+    /** The watchdog judged this tunnel again. Main thread — notification is not marshalled. */
+    fun onLinkSilenceChanged() = notifyPropertyChanged(BR.linkSilent)
+
     enum class PingState { IDLE, PROBING, OK, FAILED }
 
     @get:Bindable
@@ -133,6 +154,9 @@ class ObservableTunnel internal constructor(
         }
         this.state = state
         notifyPropertyChanged(BR.state)
+        // The line under the name reads both, and a row rebuilt for one while the other was
+        // stale is how it came to say "Connected" about a tunnel reaching nobody.
+        notifyPropertyChanged(BR.linkSilent)
         return state
     }
 

@@ -72,6 +72,10 @@ class HandshakeDecayView @JvmOverloads constructor(
      * @param ageSeconds seconds since the latest handshake, or null when there has been none.
      * @param connectedForSeconds how long the tunnel has been up, or null when unknown (a tunnel
      *        adopted at process start carries no stamp).
+     * @param silent the caller's own verdict that this tunnel is reaching nobody, which overrides
+     *        the reading below. The watchdog restarts a dead tunnel every few seconds, so its
+     *        up-time never grows past the cutoff and it would sit in "waiting" forever — patient
+     *        and wrong. Only the caller can see that; see ConnectFragment.linkSilent.
      *
      * Four states. Silent covers "down" and "up for three minutes with no handshake"; WAITING is
      * the gap this view used to fall into: a connection a few seconds old has not handshaked yet
@@ -79,8 +83,13 @@ class HandshakeDecayView @JvmOverloads constructor(
      * ago" flashed an alarm on every single connect. Once the tunnel has been up for the full
      * cutoff with still nothing, silent is the truth again.
      */
-    fun setState(connected: Boolean, ageSeconds: Long?, connectedForSeconds: Long?) {
-        val waiting = connected && ageSeconds == null &&
+    fun setState(
+        connected: Boolean,
+        ageSeconds: Long?,
+        connectedForSeconds: Long?,
+        silent: Boolean = false,
+    ) {
+        val waiting = connected && ageSeconds == null && !silent &&
             connectedForSeconds != null && connectedForSeconds < HANDSHAKE_LIMIT
         if (waiting) {
             track.inkColor = inkWaiting

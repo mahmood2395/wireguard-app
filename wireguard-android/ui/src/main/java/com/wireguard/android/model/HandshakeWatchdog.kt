@@ -39,9 +39,36 @@ object HandshakeWatchdog {
     private data class Health(
         var attempts: Int = 0,
         var lastRestartAt: Long = 0,
+        var restarts: Int = 0,
+        var silentSince: Long = 0,
     )
 
     private val health = mutableMapOf<String, Health>()
+
+    /**
+     * How many times this tunnel has been restarted since it came up. Unlike [Health.attempts],
+     * which resets the moment a handshake lands, this counts the whole session: a tunnel that
+     * breaks and recovers ten times looks perfectly healthy in any single snapshot, and that is
+     * exactly the fault a user reports as "it keeps dropping".
+     *
+     * Read from SessionGuard's heartbeat, which runs on the same Main scope as this watchdog,
+     * so the map needs no synchronisation.
+     */
+    fun restartsOf(tunnelName: String): Int = health[tunnelName]?.restarts ?: 0
+
+    /**
+     * Seconds this tunnel has been judged not-handshaking, or null while it is healthy — or
+     * while nothing has judged it, which is also the answer when auto-reconnect is off.
+     *
+     * The only clock here that survives a restart. Every other measure of "how long has this
+     * been broken" is reset by the restarts themselves: a tunnel whose server answers nothing
+     * is put back up every thirty seconds, so its uptime never grows, and judged on uptime it
+     * looks permanently like a connection that has simply not finished yet. That is how a dead
+     * tunnel reported itself as "connecting" indefinitely.
+     */
+    fun silentForSeconds(tunnelName: String): Long? =
+        health[tunnelName]?.silentSince?.takeIf { it != 0L }
+            ?.let { (SystemClock.elapsedRealtime() - it) / 1000L }
 
     fun start(scope: CoroutineScope) {
         scope.launch {
@@ -69,10 +96,13 @@ object HandshakeWatchdog {
      */
     suspend fun runPass() {
         try {
-            if (!UserKnobs.autoReconnect.first()) return
+            // Judging happens either way; only the restart is the setting's to refuse. A user who
+            // turns auto-reconnect off is asking not to have their tunnel bounced, not asking to
+            // be told nothing — and the silence clock is what the Configs list and the panel read.
+            val mayRestart = UserKnobs.autoReconnect.first()
             val tunnels = Application.getTunnelManager().getTunnels()
             // Snapshot: restarting mutates state and the list is observable.
-            tunnels.filter { it.state == Tunnel.State.UP }.forEach { check(it) }
+            tunnels.filter { it.state == Tunnel.State.UP }.forEach { check(it, mayRestart) }
             // Forget tunnels that are no longer up, so a manual reconnect starts clean.
             // A tunnel mid-restart is momentarily DOWN; purging it here would reset its attempt
             // counter and put it back in the quick-retry burst on every pass instead of backing off.
@@ -108,7 +138,7 @@ object HandshakeWatchdog {
         }
     }
 
-    private suspend fun check(tunnel: ObservableTunnel) {
+    private suspend fun check(tunnel: ObservableTunnel, mayRestart: Boolean) {
         val now = SystemClock.elapsedRealtime()
         val entry = health.getOrPut(tunnel.name) { Health() }
 
@@ -133,8 +163,15 @@ object HandshakeWatchdog {
 
         if (healthy) {
             entry.attempts = 0
+            entry.silentSince = 0
+            tunnel.onLinkSilenceChanged()
             return
         }
+        // First judgement of this silence. Kept across the restarts that follow, because it is
+        // the same silence — see silentForSeconds.
+        if (entry.silentSince == 0L) entry.silentSince = now
+        tunnel.onLinkSilenceChanged()
+        if (!mayRestart) return
         // Upstream-style "give up after N" left a tunnel dead forever once the budget was
         // spent — the worst case being a server that moved while the old address was still
         // cached, so every attempt failed for a reason that later fixed itself. Back off
@@ -183,6 +220,7 @@ object HandshakeWatchdog {
     }
 
     private suspend fun restart(tunnel: ObservableTunnel) {
+        health.getOrPut(tunnel.name) { Health() }.restarts++
         _reconnecting.value = tunnel.name
         try {
             // Main, like every other caller of setStateAsync: the backend notifies databinding

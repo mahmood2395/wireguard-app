@@ -44,8 +44,8 @@ treats as allow.
 |---|---|---|---|
 | `/api/peer/device/register` | on import; once per app start for every config | `device_name`, `app_version`, `os_version` | `200 {ok}` |
 | `/api/peer/session/claim` | before a **user** connect | `device_name`, `app_version`, `os_version`, `takeover` | `200 {granted:true}` · `409 {granted:false, other_device_name, other_since}` |
-| `/api/peer/session/heartbeat` | every 60s while up | `device_name`, `app_version` | `200 {active:true}` · `200 {active:false, superseded_by_device_name}` |
-| `/api/peer/session/release` | on a **user** disconnect | — | `200 {ok}` |
+| `/api/peer/session/heartbeat` | every 60s while up | `device_name`, `app_version`, health (below) | `200 {active:true}` · `200 {active:false, superseded_by_device_name}` |
+| `/api/peer/session/release` | on a **user** disconnect | `reason`, `restarts` | `200 {ok}` |
 
 A session is **live** when its heartbeat is within 600s **and** the router saw a handshake within
 180s. The panel reads handshakes from a snapshot up to 60s old, so a dead device frees the
@@ -75,6 +75,47 @@ Support fields ride the same requests, for the questions that otherwise need a c
 attribute is itself information. `killed` cannot be observed as it happens — a process Android stops
 writes nothing — so it is inferred at the next start from the persisted running-tunnels set, which a
 clean disconnect empties. See `util/DisconnectReasons.kt`.
+
+`release` carries the same `reason`, so the panel can close a session with its cause at the moment
+it ends rather than waiting for the next claim — which, for the session that ended badly, may never
+come.
+
+## Up is not connected
+
+A tunnel is UP the moment the interface exists. That is the app asking for a connection, not the
+server answering one, and every way a connection fails after that point leaves the tunnel sitting
+in UP with no handshake. Reporting only "up" therefore showed a device as connected while it was
+reaching nobody — an operator with a green row and a user insisting nothing works, which is the
+worst place to start a support conversation.
+
+Every heartbeat now carries what the tunnel is actually doing. **`link_state` is the field to
+read; only `handshaking` means traffic is passing.**
+
+| Field | Meaning |
+|---|---|
+| `link_state` | `handshaking` (handshake inside 180s — healthy) · `connecting` (up, no handshake yet, too early to judge) · `stale` (handshaked once, not within 180s: it worked and stopped) · `no_handshake` (past the window having never handshaked: it never reached the server) |
+| `handshake_age` | seconds since the latest handshake. **Absent when there has never been one** — which is what separates `no_handshake` from `stale` |
+| `connected_for` | seconds since this tunnel came up. Resets on every watchdog restart, so it is not a measure of how long anything has been wrong |
+| `silent_for` | seconds not handshaking, **spanning restarts**. Present only when `link_state` is not `handshaking`. This is the number that says how long it has been broken |
+| `rx_bytes`, `tx_bytes` | since the tunnel came up. `rx_bytes: 0` with a rising `tx_bytes` is a server answering nothing at all |
+| `restarts` | watchdog restarts in this session. High with a healthy link is a tunnel that keeps breaking and recovering — a fault no single snapshot shows |
+| `transport` | `wifi`, `cellular`, `ethernet`, `bluetooth`, `other`, `none`. Best-effort: with both radios up it can name the wrong one |
+
+The thresholds are WireGuard's own 180s cutoff, shared with the decay bar and the watchdog
+(`HandshakeDecayView.HANDSHAKE_LIMIT`), so the screen, the restarts and the report cannot disagree.
+
+Why `silent_for` rather than `connected_for`: against a server that answers nothing, the watchdog
+restarts the tunnel every ~30s, so its up-time never grows and it looks permanently like a
+connection that simply has not finished yet. That is how a dead tunnel reported `connecting`
+indefinitely. `silent_for` is the watchdog's own clock, started at its first verdict of "not
+handshaking" and kept across the restarts that follow.
+
+**What the panel should do with it:** a session whose latest heartbeat is not `handshaking` is not
+a connected device. A claim on its own is not one either — it is a device that asked to connect,
+and whether it did is the first heartbeat's news.
+
+The app says the same thing to the user: past the window with nothing from the peer, the Connect
+screen reads *"Not reaching the server"* instead of *"Protected"*.
 
 ## Who is gated
 

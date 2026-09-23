@@ -51,6 +51,7 @@ import com.wireguard.android.R
 import com.wireguard.android.activity.MainActivity
 import com.wireguard.android.backend.GoBackend
 import com.wireguard.android.backend.Tunnel
+import com.wireguard.android.model.HandshakeWatchdog
 import com.wireguard.android.model.ObservableTunnel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -167,6 +168,27 @@ object SessionGuard {
         last.second?.let { put("last_disconnect_at", it) }
     }
 
+    /**
+     * What this tunnel is actually doing, not merely that the app asked for it.
+     *
+     * Without this a heartbeat said "up", and up is true from the instant the interface exists
+     * — so a phone that never reached the server, or whose server stopped answering, kept
+     * reporting itself connected and the panel kept showing it that way. The operator then had
+     * a green row and a user insisting nothing worked, which is the worst possible starting
+     * point for a support conversation. `link_state` is the one field to read: only
+     * `handshaking` means traffic is passing.
+     */
+    private fun JSONObject.putHealth(health: TunnelHealth.Snapshot) {
+        put("link_state", health.link.wire)
+        health.handshakeAgeSeconds?.let { put("handshake_age", it) }
+        health.connectedForSeconds?.let { put("connected_for", it) }
+        put("rx_bytes", health.rxBytes)
+        put("tx_bytes", health.txBytes)
+        put("restarts", health.restarts)
+        health.silentForSeconds?.let { put("silent_for", it) }
+        health.transport?.let { put("transport", it) }
+    }
+
     private fun JSONObject.putEnvironment() {
         val context = Application.get()
         put("notifications", ExpiryNotifier.canNotify(context))
@@ -205,12 +227,20 @@ object SessionGuard {
         }
     }
 
-    /** After a tunnel came DOWN. Fire-and-forget: a lost release just waits out the panel's lease. */
-    fun afterDown(tunnel: ObservableTunnel, gate: Gate) {
+    /**
+     * After a tunnel came DOWN. Fire-and-forget: a lost release just waits out the panel's lease.
+     *
+     * The cause rides along so the panel can close the session with a reason at the moment it
+     * ends. It is stored too, and reported on the next claim — but that is the next time the
+     * user connects, which for the session that ended badly may be never, and "this device
+     * disconnected an hour ago because Android killed it" is worth more while the ticket is open.
+     */
+    fun afterDown(tunnel: ObservableTunnel, gate: Gate, reason: DisconnectReasons.Reason? = null) {
         if (gate == Gate.NONE) return
+        val restarts = HandshakeWatchdog.restartsOf(tunnel.name)
         applicationScope.launch {
             if (AccountRepository.disowned(tunnel)) return@launch
-            runCatching { release(tunnel) }.onFailure { Log.d(TAG, "release failed", it) }
+            runCatching { release(tunnel, reason, restarts) }.onFailure { Log.d(TAG, "release failed", it) }
         }
     }
 
@@ -260,7 +290,10 @@ object SessionGuard {
         if (!manager.hasTunnelUp()) return
         manager.getTunnels().filter { it.state == Tunnel.State.UP }.forEach { tunnel ->
             if (AccountRepository.disowned(tunnel)) return@forEach
-            when (val beat = heartbeat(tunnel)) {
+            // Read before the request: the body builder is not a suspending lambda, and this
+            // reads statistics across the JNI boundary.
+            val health = TunnelHealth.of(tunnel)
+            when (val beat = heartbeat(tunnel, health)) {
                 is Beat.Superseded -> onSuperseded(tunnel, beat.byDevice)
                 Beat.Active, Beat.Unavailable -> Unit
             }
@@ -325,13 +358,14 @@ object SessionGuard {
         }
     }
 
-    private suspend fun heartbeat(tunnel: ObservableTunnel): Beat {
+    private suspend fun heartbeat(tunnel: ObservableTunnel, health: TunnelHealth.Snapshot): Beat {
         // The name and version ride along so a phone that stays connected for weeks keeps its row
         // current: otherwise they only refresh when the app is restarted.
         val response = post(tunnel, "/api/peer/session/heartbeat", BACKGROUND_TIMEOUT_MS) {
             put("device_name", deviceName)
             put("app_version", BuildConfig.VERSION_CODE)
             putEnvironment()
+            putHealth(health)
         }
             ?: return Beat.Unavailable
         if (response.code != 200) return Beat.Unavailable
@@ -340,8 +374,11 @@ object SessionGuard {
         else Beat.Superseded(json.optString("superseded_by_device_name").takeIf { it.isNotBlank() })
     }
 
-    private suspend fun release(tunnel: ObservableTunnel) {
-        post(tunnel, "/api/peer/session/release", BACKGROUND_TIMEOUT_MS) {}
+    private suspend fun release(tunnel: ObservableTunnel, reason: DisconnectReasons.Reason?, restarts: Int) {
+        post(tunnel, "/api/peer/session/release", BACKGROUND_TIMEOUT_MS) {
+            put("reason", (reason ?: DisconnectReasons.Reason.UNKNOWN).wire)
+            put("restarts", restarts)
+        }
     }
 
     private class Response(val code: Int, val json: JSONObject?)

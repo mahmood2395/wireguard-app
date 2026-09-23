@@ -40,6 +40,7 @@ import com.wireguard.android.databinding.ObservableSortedKeyedArrayList
 import com.wireguard.android.model.HandshakeWatchdog
 import com.wireguard.android.model.ObservableTunnel
 import com.wireguard.android.widget.ConnectRingView
+import com.wireguard.android.widget.HandshakeDecayView
 import androidx.core.content.ContextCompat
 import com.wireguard.android.util.ErrorMessages
 import com.wireguard.android.util.GeoResolver
@@ -641,6 +642,36 @@ class ConnectFragment : BaseFragment(), MenuProvider {
     }
 
     /**
+     * Up, and past WireGuard's cutoff with nothing from the peer.
+     *
+     * The watchdog normally covers this by restarting, and the kicker then reads "Reconnecting".
+     * But its backoff widens to fifteen minutes against an endpoint that keeps failing, and it
+     * can be switched off entirely — and in both of those stretches the screen used to sit on
+     * "Protected" with a tunnel that was reaching nobody.
+     *
+     * An unknown up-time is treated as fine here, the opposite of TunnelHealth's reading of the
+     * same gap: this repaints every second, including in the moment after the app is opened and
+     * before the first statistics arrive, and a headline that cries wolf once is never believed
+     * again. A report sent a minute into a session has no such excuse.
+     */
+    private fun linkSilent(): Boolean {
+        val tunnel = connectTunnel ?: return false
+        if (tunnel.state != Tunnel.State.UP) return false
+        val age = latestHandshakeEpochMillis?.let { (System.currentTimeMillis() - it) / 1000L }
+        if (age != null) return age >= HandshakeDecayView.HANDSHAKE_LIMIT
+        val upFor = tunnel.connectedSinceElapsedRealtime
+            ?.let { (SystemClock.elapsedRealtime() - it) / 1000L } ?: return false
+        // Each watchdog restart resets that clock, so against a server that answers nothing the
+        // tunnel is permanently a few seconds old and the cutoff below would never be reached —
+        // which is exactly the case this line exists for. The watchdog's own silence clock
+        // spans its restarts; when it has none to offer, nothing is restarting the tunnel and
+        // the up-time is the honest measure again.
+        HandshakeWatchdog.silentForSeconds(tunnel.name)
+            ?.let { return it >= HandshakeDecayView.HANDSHAKE_LIMIT }
+        return upFor >= HandshakeDecayView.HANDSHAKE_LIMIT
+    }
+
+    /**
      * The decay bar's inputs: whether the tunnel is up, how old its latest handshake is, and how
      * long it has been up. The last one is what separates a connection that simply has not had
      * time to handshake yet (neutral "waiting") from one that has gone three minutes without
@@ -654,6 +685,7 @@ class ConnectFragment : BaseFragment(), MenuProvider {
             ageSeconds = latest?.let { ((System.currentTimeMillis() - it) / 1000L).coerceAtLeast(0L) },
             connectedForSeconds = tunnel?.connectedSinceElapsedRealtime
                 ?.let { (SystemClock.elapsedRealtime() - it) / 1000L },
+            silent = linkSilent(),
         )
     }
 
@@ -762,12 +794,17 @@ class ConnectFragment : BaseFragment(), MenuProvider {
         // Nocturne's kicker states the security fact rather than the transport state: what a
         // user wants from the top of the screen is whether they are covered, not whether a
         // socket is up. The layout uppercases it, so these stay sentence case as strings.
+        val silent = linkSilent()
         binding.statusLabel.text = when {
             !hasTunnel -> getString(R.string.connect_no_tunnels)
             watchdogRestarting -> getString(R.string.connect_reconnecting)
             phase == Phase.CONNECTING -> getString(R.string.hero_connecting)
             phase == Phase.DISCONNECTING -> getString(R.string.hero_disconnecting)
             phase == Phase.ERROR -> binding.statusLabel.text
+            // Before the kicker can say "Protected" the peer has to have answered. The decay
+            // bar below already showed this, but the headline said the opposite, and the
+            // headline is what a user reads back to support.
+            phase == Phase.CONNECTED && silent -> getString(R.string.hero_no_handshake)
             phase == Phase.CONNECTED -> getString(R.string.hero_protected)
             else -> getString(R.string.hero_not_protected)
         }
@@ -776,6 +813,7 @@ class ConnectFragment : BaseFragment(), MenuProvider {
         binding.statusLabel.setTextColor(
             when {
                 watchdogRestarting -> context.resolveAttribute(R.attr.statusConnectingColor)
+                silent -> context.resolveAttribute(androidx.appcompat.R.attr.colorError)
                 else -> null
             } ?: when (phase) {
                 Phase.CONNECTING -> ContextCompat.getColor(context, R.color.accent)
@@ -863,6 +901,9 @@ class ConnectFragment : BaseFragment(), MenuProvider {
             !hasTunnel -> getString(R.string.hero_sub_no_tunnels)
             phase == Phase.CONNECTING -> getString(R.string.hero_sub_connecting)
             phase == Phase.DISCONNECTING -> getString(R.string.hero_sub_disconnecting)
+            // Before the geography, which is about a connection that exists: naming the country
+            // a dead tunnel would have surfaced in is the most confident possible way to be wrong.
+            connected && linkSilent() -> getString(R.string.hero_sub_no_handshake)
             connected && here != null -> getString(R.string.hero_sub_connected_geo, here)
             connected -> getString(R.string.hero_sub_connected)
             else -> getString(R.string.hero_sub_idle)

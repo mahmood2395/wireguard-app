@@ -239,13 +239,14 @@ class TunnelManager(private val configStore: ConfigStore) : BaseObservable() {
         // tunnel.state is still the state being left.
         if (newState == Tunnel.State.DOWN && tunnel.state == Tunnel.State.UP) {
             val replacing = bringingUp?.takeIf { it != tunnel.name } != null
-            applicationScope.launch {
-                DisconnectReasons.record(
-                    tunnel.name,
-                    if (replacing) DisconnectReasons.Reason.REPLACED else DisconnectReasons.Reason.SYSTEM,
-                )
-            }
-            if (tunnel.name !in releaseSuppressed) SessionGuard.afterDown(tunnel, SessionGuard.Gate.USER)
+            // Taken here, once and synchronously, so the store and the panel report the same
+            // cause; see DisconnectReasons.take.
+            val reason = DisconnectReasons.take(
+                tunnel.name,
+                if (replacing) DisconnectReasons.Reason.REPLACED else DisconnectReasons.Reason.SYSTEM,
+            )
+            applicationScope.launch { DisconnectReasons.persist(tunnel.name, reason) }
+            if (tunnel.name !in releaseSuppressed) SessionGuard.afterDown(tunnel, SessionGuard.Gate.USER, reason)
         }
         tunnel.onStateChanged(newState)
         applicationScope.launch { saveState() }

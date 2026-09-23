@@ -98,7 +98,7 @@
                     android:layout_marginTop="2dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@{PeerMeta.line(context, item.state, item.pingState, item.geoLabel, item.endpointHost)}"
+                    android:text="@{PeerMeta.line(context, item.state, item.pingState, item.geoLabel, item.endpointHost, item.linkSilent)}"
                     android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="@color/clay_text_muted"
                     android:textSize="12.5sp"

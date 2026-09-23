@@ -213,6 +213,7 @@
 
     <!-- Home: the ring, its caption and the sentence under it -->
     <string name="hero_protected">محافظت‌شده</string>
+    <string name="hero_no_handshake">سرور پاسخ نمی‌دهد</string>
     <string name="hero_not_protected">محافظت نشده</string>
     <string name="hero_connecting">در حال اتصال</string>
     <string name="hero_disconnecting">در حال قطع</string>
@@ -221,6 +222,7 @@
     <string name="ring_caption_idle">برای اتصال ضربه بزنید</string>
     <string name="ring_caption_connecting">در حال باز کردن تونل…</string>
     <string name="hero_sub_connected">ترافیک شما از همتای این کانفیگ بیرون می‌رود.</string>
+    <string name="hero_sub_no_handshake">سرور پاسخ نمی‌دهد. ممکن است سرور قطع باشد یا این کانفیگ دیگر معتبر نباشد.</string>
     <string name="hero_sub_connected_geo">ترافیک شما در &#x2068;%1$s&#x2069; بیرون می‌آید؛ این محل از روی آی‌پی همتا به دست آمده.</string>
     <string name="hero_sub_idle">هیچ‌چیز رمزگذاری نمی‌شود. برای اتصال ضربه بزنید.</string>
     <string name="hero_sub_connecting">منتظر اولین هندشیک.</string>
@@ -232,6 +234,7 @@
     <string name="location_from">از &#x2068;%1$s&#x2069;</string>
     <string name="location_geo_from">&#x2068;%1$s&#x2069; · از &#x2068;%2$s&#x2069;</string>
     <string name="peer_no_route">مسیری به همتا نیست</string>
+    <string name="peer_no_handshake">سرور پاسخ نمی‌دهد</string>
     <string name="connect_download">دریافت</string>
     <string name="connect_upload">ارسال</string>
     <string name="month_label">۳۰ روز گذشته</string>
